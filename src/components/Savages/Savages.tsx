@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 
 import { ErrorBoundary } from 'components/ErrorBoundary';
 import { MainView } from 'components/MainView';
@@ -14,7 +15,9 @@ export class Savages extends React.Component {
     return (
       <ErrorBoundary>
         <StoreContext.Provider value={this.store}>
-          <MainView />
+          <BrowserRouter>
+            <MainView />
+          </BrowserRouter>
         </StoreContext.Provider>
       </ErrorBoundary>
     );

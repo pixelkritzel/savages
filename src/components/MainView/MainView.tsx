@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { Switch, Redirect, Route } from 'react-router-dom';
 
-import { Character } from 'components/Character';
 import { StoreContext } from 'components/StoreContext';
+import { Characters } from 'components/Characters';
 
 @observer
 export class MainView extends React.Component {
@@ -10,7 +11,15 @@ export class MainView extends React.Component {
   context!: React.ContextType<typeof StoreContext>;
 
   render() {
-    console.log(this.context);
-    return <Character character={this.context.characters.get('0')} />;
+    return (
+      <Switch>
+        <Route path="/characters">
+          <Characters />
+        </Route>
+        <Route path="/">
+          <Redirect to="/characters" />>
+        </Route>
+      </Switch>
+    );
   }
 }
