@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import { StoreContext } from 'components/StoreContext';
 import { useRouteMatch, Link } from 'react-router-dom';
+
+import { StoreContext } from 'components/StoreContext';
 
 export const CharacterCollection: React.FC = observer(() => {
   const store = React.useContext(StoreContext);

@@ -1,7 +1,7 @@
 import React, { useContext, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import { CharacterForm } from 'components/Characters/CharacterForm';
 
+import { CharacterForm } from 'components/Characters/CharacterForm';
 import { StoreContext } from 'components/StoreContext';
 
 export const NewCharacter: React.FC = () => {
@@ -14,8 +14,8 @@ export const NewCharacter: React.FC = () => {
     <form onSubmit={(event) => event.preventDefault()}>
       NewCharacter
       <button
-        onClick={() => {
-          if (characters.saveNewCharacter() === 'SUCCESS') {
+        onClick={async () => {
+          if ((await characters.saveNewCharacter()) === 'SUCCESS') {
             history.replace('/characters');
           }
         }}
