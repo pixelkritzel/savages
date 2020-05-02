@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Icharacter } from 'store/characters';
+
 import { Input } from 'ui/Input';
-import { Select } from 'ui/Select';
-import { DICE_TYPES, BONI_TYPES } from 'store/characters/trait';
 import { IncDec } from 'ui/IncDec';
+
+import { Icharacter } from 'store/characters';
 
 export const CharacterForm: React.FC<{ character: Icharacter }> = observer(({ character }) => {
   const { agility, smarts, spirit, strength, vigor } = character.attributes;
   return (
-    <form onSubmit={(event) => event.preventDefault()}>
-      CharacterForm
+    <div>
       <Input
         labelContent="Name"
         name="name"
@@ -61,6 +60,6 @@ export const CharacterForm: React.FC<{ character: Icharacter }> = observer(({ ch
           value={vigor.value}
         />
       </fieldset>
-    </form>
+    </div>
   );
 });

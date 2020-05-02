@@ -3,14 +3,14 @@ import { Instance, types } from 'mobx-state-tree';
 export const DICE_TYPES: Itrait['dice'][] = ['D4', 'D6', 'D8', 'D10', 'D12'];
 export const BONI_TYPES: Itrait['bonus'][] = ['-2', '-1', '0', '+1', '+2', '+3', '+4'];
 
-const modifier = {
-  strength: {
-    dice: 'D6',
-    maximum: {
-      bonus: '+1',
-    },
-  },
-};
+// const modifier = {
+//   strength: {
+//     dice: 'D6',
+//     maximum: {
+//       bonus: '+1',
+//     },
+//   },
+// };
 
 export const trait = types
   .model('trait', {
@@ -20,17 +20,17 @@ export const trait = types
     minimum: types.optional(
       types.model({
         dice: types.enumeration(['D4', 'D6', 'D8', 'D10', 'D12']),
-        bonus: types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4']),
+        bonus: types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4'])
       }),
       { dice: 'D4', bonus: '0' }
     ),
     maximum: types.optional(
       types.model({
         dice: types.enumeration(['D4', 'D6', 'D8', 'D10', 'D12']),
-        bonus: types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4']),
+        bonus: types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4'])
       }),
       { dice: 'D12', bonus: '0' }
-    ),
+    )
   })
   .views((self) => ({
     get isDecrementable(): boolean {
@@ -45,7 +45,7 @@ export const trait = types
       } else {
         return `${self.dice} ${self.bonus}`;
       }
-    },
+    }
   }))
   .actions((self) => ({
     decrement() {
@@ -67,7 +67,7 @@ export const trait = types
       } else if (self.dice === 'D12' && Number(self.bonus) < 4) {
         self.bonus = BONI_TYPES[BONI_TYPES.indexOf(self.bonus) + 1];
       }
-    },
+    }
   }));
 
 export const traitFactory = (name: string) =>

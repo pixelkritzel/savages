@@ -1,5 +1,6 @@
 # Todos
 
+[] Firebase
 [] Setting-Rules
   [] Creation
     [] Attibute minima
@@ -35,6 +36,7 @@
       [] Name exists and is unique
       [] Checks attribute points
     [] Save new character
+    [] Discard new character
 [] Resources
   [] Races CRUD
   [] Profesions CRUD
@@ -42,4 +44,3 @@
   [] Other traits CRUD
   [] Powers CRUD
   [] Equipment CRUD
-[] Firebase

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { useHistory, useParams } from 'react-router-dom';
 import { StoreContext } from 'components/StoreContext';
 
-export const SingleCharacter: React.FC<{}> = observer(function () {
+export const SingleCharacter: React.FC<{}> = observer(function() {
   const { characterId } = useParams();
   const history = useHistory();
   const store = React.useContext(StoreContext);
