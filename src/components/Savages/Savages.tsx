@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import Container from 'react-bootstrap/Container';
-
 import { ErrorBoundary } from 'components/ErrorBoundary';
-import { MainView } from 'components/MainView';
+import { Layout } from 'components/Layout';
 import { StoreContext } from 'components/StoreContext';
 
 import { createStore } from 'store';
@@ -18,9 +16,7 @@ export class Savages extends React.Component {
       <ErrorBoundary>
         <StoreContext.Provider value={this.store}>
           <BrowserRouter>
-            <Container>
-              <MainView />
-            </Container>
+            <Layout />
           </BrowserRouter>
         </StoreContext.Provider>
       </ErrorBoundary>

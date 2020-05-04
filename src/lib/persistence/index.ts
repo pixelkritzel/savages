@@ -1,5 +1,7 @@
 import localForage from 'localforage';
 
+import { deleteItem } from './deleteItem';
+
 import { loadCollection } from './loadCollection';
 import { saveItem } from './saveItem';
 
@@ -11,6 +13,7 @@ localForage.config({
 });
 
 export const persistence = {
+  deleteItem,
   loadCollection,
   saveItem,
 };

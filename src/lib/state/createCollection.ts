@@ -5,6 +5,7 @@ import { persistence } from 'lib/persistence';
 const _modelPrototype = types
   .model({
     id: types.identifier,
+    name: types.optional(types.string, ''),
   })
   .views((self) => ({
     get hasErrors() {
@@ -24,6 +25,7 @@ export function createCollection<T extends TmodelPrototype>(
   return types
     .model(name, {
       all: types.map(model),
+      isLoaded: false,
       newModel: types.maybe(model),
     })
     .views((self) => ({
@@ -39,6 +41,10 @@ export function createCollection<T extends TmodelPrototype>(
       },
     }))
     .actions((self) => ({
+      deleteModel(id: ImodelPrototype['id']) {
+        self.all.delete(id);
+        persistence.deleteItem(name, id);
+      },
       discardNewModel() {
         if (self.newModel) {
           destroy(self.newModel);
@@ -64,6 +70,9 @@ export function createCollection<T extends TmodelPrototype>(
       set(character: ImodelPrototype | SImodelPrototype) {
         self.all.set(character.id, character);
       },
+      setIsLoaded(isLoaded: typeof self['isLoaded']) {
+        self.isLoaded = isLoaded;
+      },
     }))
     .actions((self) => {
       function afterCreate() {
@@ -73,11 +82,14 @@ export function createCollection<T extends TmodelPrototype>(
       async function loadCollection() {
         const collectionData = await persistence.loadCollection(name);
         collectionData.forEach((modelData) => self.set(modelData));
+        self.setIsLoaded(true);
       }
 
       return { afterCreate };
     });
 }
+
+export type Icollection = Instance<ReturnType<typeof createCollection>>;
 
 export const collectionScaffold = {
   all: {},

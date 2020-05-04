@@ -5,16 +5,16 @@ import { useRouteMatch } from 'react-router-dom';
 import { StoreContext } from 'components/StoreContext';
 import { CRUDTable } from 'ui/CRUDTable';
 
-export const CharacterCollection: React.FC = observer(() => {
+export const SettingsCollection: React.FC = observer(() => {
   const store = React.useContext(StoreContext);
   const match = useRouteMatch();
-
+  console.log(match.url);
   return (
     <CRUDTable
-      collection={store.characters}
+      collection={store.settings}
       baseUrl={match.url}
-      newLinkLabel="Create new character"
-      title="Characters"
+      newLinkLabel="Create new setting"
+      title="Settings"
     />
   );
 });
