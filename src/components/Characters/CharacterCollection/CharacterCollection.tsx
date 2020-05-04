@@ -2,6 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useRouteMatch, Link } from 'react-router-dom';
 
+import Button from 'react-bootstrap/Button';
+
 import { StoreContext } from 'components/StoreContext';
 
 export const CharacterCollection: React.FC = observer(() => {
@@ -10,6 +12,7 @@ export const CharacterCollection: React.FC = observer(() => {
 
   return (
     <>
+      <h2>Characters</h2>
       <ul>
         {store.characters.asArray.map(({ id, name }) => (
           <li key={id}>
@@ -17,7 +20,9 @@ export const CharacterCollection: React.FC = observer(() => {
           </li>
         ))}
       </ul>
-      <Link to={`${match.url}/new`}>Create new character</Link>
+      <Link to={`${match.url}/new`}>
+        <Button as="span">Create new character</Button>
+      </Link>
     </>
   );
 });

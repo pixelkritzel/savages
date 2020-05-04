@@ -12,14 +12,14 @@ export const character = types
       smarts: trait,
       spirit: trait,
       strength: trait,
-      vigor: trait
+      vigor: trait,
     }),
-    skills: types.map(trait)
+    skills: types.map(trait),
   })
   .views((self) => ({
     get hasErrors() {
       return self.name.length < 2;
-    }
+    },
   }))
   .actions((self) => ({
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
@@ -28,7 +28,7 @@ export const character = types
     ) {
       // @ts-ignore
       self[key] = value;
-    }
+    },
   }));
 
 export type Icharacter = Instance<typeof character>;
@@ -42,6 +42,6 @@ export const createCharacterScaffold = () => ({
     smarts: { name: 'smarts' },
     spirit: { name: 'spirit' },
     strength: { name: 'strength' },
-    vigor: { name: 'vigor' }
-  }
+    vigor: { name: 'vigor' },
+  },
 });

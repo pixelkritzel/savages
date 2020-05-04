@@ -4,7 +4,7 @@ import 'mobx-react-lite/batchingForReactDom';
 
 import { Savages } from 'components/Savages';
 
-import './index.css';
+import 'styles/styles.scss';
 
 import * as serviceWorker from './serviceWorker';
 
