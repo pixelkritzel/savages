@@ -1,12 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import 'mobx-react-lite/batchingForReactDom';
+
+import { Savages } from 'components/Savages';
+
+import 'styles/styles.scss';
+
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Savages />
   </React.StrictMode>,
   document.getElementById('root')
 );
