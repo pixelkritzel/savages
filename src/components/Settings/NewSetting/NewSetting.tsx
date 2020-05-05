@@ -13,7 +13,8 @@ export const NewSetting: React.FC = () => {
 
   useEffect(() => {
     settings.new();
-  }, [false]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <form onSubmit={(event) => event.preventDefault()}>
       <h2>Create a new character</h2>

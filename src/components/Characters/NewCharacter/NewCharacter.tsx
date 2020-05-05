@@ -14,7 +14,7 @@ export const NewCharacter: React.FC = observer(() => {
 
   useEffect(() => {
     characters.new();
-  }, [false]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form onSubmit={(event) => event.preventDefault()}>

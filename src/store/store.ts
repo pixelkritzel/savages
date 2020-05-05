@@ -1,3 +1,4 @@
+import { resources, resourcesScaffold } from './resources/resources';
 import { types, Instance } from 'mobx-state-tree';
 
 import { collectionScaffold } from 'lib/state/createCollection';
@@ -8,6 +9,7 @@ import { settingsCollection } from './settings/settingsCollection';
 const store = types
   .model('store', {
     characters: charactersCollection,
+    resources,
     settings: settingsCollection,
   })
   .actions((self) => ({
@@ -22,6 +24,7 @@ export type Istore = Instance<typeof store>;
 export function createStore() {
   return store.create({
     characters: collectionScaffold,
+    resources: resourcesScaffold,
     settings: collectionScaffold,
   });
 }

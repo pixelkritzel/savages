@@ -3,6 +3,9 @@ import { Instance, types } from 'mobx-state-tree';
 export const DICE_TYPES: Itrait['dice'][] = ['D4', 'D6', 'D8', 'D10', 'D12'];
 export const BONI_TYPES: Itrait['bonus'][] = ['-2', '-1', '0', '+1', '+2', '+3', '+4'];
 
+export const diceType = types.enumeration(['D4', 'D6', 'D8', 'D10', 'D12']);
+export const bonusType = types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4']);
+
 // const modifier = {
 //   strength: {
 //     dice: 'D6',
@@ -15,19 +18,19 @@ export const BONI_TYPES: Itrait['bonus'][] = ['-2', '-1', '0', '+1', '+2', '+3',
 export const trait = types
   .model('trait', {
     name: types.identifier,
-    dice: types.optional(types.enumeration(['D4', 'D6', 'D8', 'D10', 'D12']), 'D4'),
-    bonus: types.optional(types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4']), '0'),
+    dice: types.optional(diceType, 'D4'),
+    bonus: types.optional(bonusType, '0'),
     minimum: types.optional(
       types.model({
-        dice: types.enumeration(['D4', 'D6', 'D8', 'D10', 'D12']),
-        bonus: types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4']),
+        dice: diceType,
+        bonus: bonusType,
       }),
       { dice: 'D4', bonus: '0' }
     ),
     maximum: types.optional(
       types.model({
-        dice: types.enumeration(['D4', 'D6', 'D8', 'D10', 'D12']),
-        bonus: types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4']),
+        dice: diceType,
+        bonus: bonusType,
       }),
       { dice: 'D12', bonus: '0' }
     ),

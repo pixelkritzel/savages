@@ -1,7 +1,10 @@
 import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-state-tree';
-import { settingModel } from './../settings/settingModel';
-import { trait } from './trait';
 import { v4 as uuidv4 } from 'uuid';
+
+import { settingModel } from 'store/settings/settingModel';
+import { meleeWeapon } from 'store/resources/meleeWeapon';
+import { rangedWeapon } from 'store/resources/rangedWespons';
+import { trait } from './trait';
 
 export const character = types
   .model('character', {
@@ -16,6 +19,17 @@ export const character = types
       strength: trait,
       vigor: trait,
     }),
+    bennies: 3,
+    size: 3,
+    freeEdges: 0,
+    pace: types.model({
+      onFoot: 6,
+      swimming: 3,
+      flying: 0,
+    }),
+    armor: 0,
+    meleeWeapons: types.array(types.reference(meleeWeapon)),
+    rangedWeapons: types.array(types.reference(rangedWeapon)),
     log: types.array(
       types.model({
         date: types.number,
@@ -106,4 +120,5 @@ export const createCharacterScaffold = (): SIcharacter => ({
     strength: { name: 'strength' },
     vigor: { name: 'vigor' },
   },
+  pace: {},
 });
