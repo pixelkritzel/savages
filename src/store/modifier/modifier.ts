@@ -1,34 +1,81 @@
-import { types } from 'mobx-state-tree';
+import { SnapshotIn, types, Instance } from 'mobx-state-tree';
+import { v4 as uuidV4 } from 'uuid';
 
-import { meleeWeapon } from 'store/resources/meleeWeapon';
-import { rangedWeapon } from 'store/resources/rangedWespons';
+import { ImeleeWeapon, meleeWeapon } from 'store/resources/meleeWeapon';
+import { IrangedWeapon, rangedWeapon } from 'store/resources/rangedWespons';
+import { traitModifierModel } from './traitModifierModel';
+import { paceModel } from './paceModel';
 
-const traitModifier = types.model('traitModifier', {
-  value: 0,
-  maximum: 0,
-  minimum: 0,
-  specialization: types.array(types.string),
-  optional: types.maybe(types.string),
-});
+export const modifierModel = types
+  .model('modifier', {
+    id: types.optional(types.identifier, uuidV4),
+    agility: traitModifierModel,
+    smarts: traitModifierModel,
+    spirit: traitModifierModel,
+    strength: traitModifierModel,
+    vigor: traitModifierModel,
+    bennies: 0,
+    toughness: 0,
+    size: 0,
+    freeEdges: 0,
+    meleeWeapons: types.array(types.reference(meleeWeapon)),
+    rangedWeapons: types.array(types.reference(rangedWeapon)),
+    pace: paceModel,
+    armor: 0,
+  })
+  .views((self) => ({
+    get modifications() {
+      const modifications: {
+        name: string;
+        value: number | string | ImeleeWeapon[] | IrangedWeapon;
+      }[] = [];
+      (['agility', 'smarts', 'spirit', 'strength', 'vigor'] as [
+        'agility',
+        'smarts',
+        'spirit',
+        'strength',
+        'vigor'
+      ]).forEach((attributeName) => {
+        self[attributeName].modifications.forEach(({ name, value }) =>
+          modifications.push({ name: `${attributeName} ${name}`, value })
+        );
+      });
+      (['bennies', 'toughness', 'size', 'freeEdges', 'armor'] as [
+        'bennies',
+        'toughness',
+        'size',
+        'freeEdges',
+        'armor'
+      ]).forEach((name) => {
+        if (self[name] !== 0) {
+          modifications.push({ name, value: self[name] });
+        }
+      });
+      (['meleeWeapons', 'rangedWeapons'] as ['meleeWeapons', 'rangedWeapons']).forEach((name) => {
+        if (self[name].length > 0) {
+          modifications.push({ name, value: self[name] });
+        }
+      });
+      return modifications;
+    },
+  }))
+  .actions((self) => ({
+    set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
+      key: K,
+      value: T[K]
+    ) {
+      // @ts-ignore
+      self[key] = value;
+    },
+  }));
 
-export const modifier = types.model('modifier', {
-  attributes: types.model({
-    agility: traitModifier,
-    smarts: traitModifier,
-    spirit: traitModifier,
-    strength: traitModifier,
-    vigor: traitModifier,
-  }),
-  bennies: 0,
-  toughness: 0,
-  size: 0,
-  freeEdges: 0,
-  meleeWeapons: types.array(types.reference(meleeWeapon)),
-  rangedWeapons: types.array(types.reference(rangedWeapon)),
-  pace: types.model({
-    onFoot: 0,
-    swimming: 0,
-    flying: 0,
-  }),
-  armor: 0,
-});
+export const modifierScaffold: SnapshotIn<typeof modifierModel> = {
+  agility: {},
+  smarts: {},
+  spirit: {},
+  strength: {},
+  vigor: {},
+  pace: {},
+};
+
+export type Imodifier = Instance<typeof modifierModel>;
