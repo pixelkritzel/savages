@@ -8,9 +8,7 @@ export function Characters() {
   const match = useRouteMatch();
   return (
     <Switch>
-      <Route path={`${match.path}/new`}>
-        <NewCharacter />
-      </Route>
+      <Route path={`${match.path}/new`}>{/* <NewCharacter /> */}</Route>
       <Route path={`${match.path}/:characterId`}>
         <SingleCharacter />
       </Route>

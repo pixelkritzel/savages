@@ -1,0 +1,26 @@
+.dice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.name {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.form {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.formRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.value {
+  font-family: 'Courier New', Courier, monospace;
+}

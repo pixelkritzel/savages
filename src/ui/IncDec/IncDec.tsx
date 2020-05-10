@@ -22,7 +22,7 @@ export const IncDec: React.FC<IncDec> = ({
   value,
 }) => {
   return (
-    <InputGroup className={CSS.incDec}>
+    <InputGroup size="sm" className={CSS.incDec}>
       <InputGroup.Prepend>
         <Button variant="outline-secondary" disabled={disableDecrement} onClick={onDecrement}>
           -

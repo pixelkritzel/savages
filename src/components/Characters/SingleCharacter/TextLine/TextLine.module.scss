@@ -1,0 +1,15 @@
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  font-weight: bold;
+  padding-right: 20px;
+}
+
+.value {
+  flex-grow: 1;
+  font-family: 'Courier New', Courier, monospace;
+}

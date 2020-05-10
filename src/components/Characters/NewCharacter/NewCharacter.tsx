@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-import { CharacterForm } from 'components/Characters/CharacterForm';
+// import { CharacterForm } from 'components/Characters/CharacterForm';
 import { StoreContext } from 'components/StoreContext';
 
 export const NewCharacter: React.FC = observer(() => {
@@ -20,7 +20,7 @@ export const NewCharacter: React.FC = observer(() => {
     <form onSubmit={(event) => event.preventDefault()}>
       <h2>Create a new character</h2>
 
-      <CharacterForm character={characters.newModel!} />
+      {/* <CharacterForm character={characters.newModel!} /> */}
 
       <div className="pull-right">
         <ButtonGroup>

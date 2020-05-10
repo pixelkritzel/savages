@@ -1,7 +1,7 @@
 import { Instance, types } from 'mobx-state-tree';
 
 export const DICE_TYPES: Itrait['dice'][] = ['D4', 'D6', 'D8', 'D10', 'D12'];
-export const BONI_TYPES: Itrait['bonus'][] = ['-2', '-1', '0', '+1', '+2', '+3', '+4'];
+export const BONUS_TYPES: Itrait['bonus'][] = ['-2', '-1', '0', '+1', '+2', '+3', '+4'];
 
 export const diceType = types.enumeration(['D4', 'D6', 'D8', 'D10', 'D12']);
 export const bonusType = types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4']);
@@ -17,7 +17,7 @@ export const bonusType = types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '
 
 export const trait = types
   .model('trait', {
-    name: types.identifier,
+    name: types.optional(types.string, ''),
     dice: types.optional(diceType, 'D4'),
     bonus: types.optional(bonusType, '0'),
     minimum: types.optional(
@@ -32,15 +32,21 @@ export const trait = types
         dice: diceType,
         bonus: bonusType,
       }),
-      { dice: 'D12', bonus: '0' }
+      { dice: 'D12', bonus: '+4' }
     ),
   })
   .views((self) => ({
-    get isDecrementable(): boolean {
-      return !(self.dice === self.minimum.dice && self.bonus === self.minimum.bonus);
+    get isBonusDecrementable(): boolean {
+      return self.bonus !== '-2';
     },
-    get isIncrementable() {
-      return !(self.dice === self.maximum.dice && self.bonus === self.maximum.bonus);
+    get isDiceDecrementable(): boolean {
+      return self.dice !== 'D4';
+    },
+    get isBonusIncrementable() {
+      return self.bonus !== '+4';
+    },
+    get isDiceIncrementable() {
+      return self.dice !== 'D12';
     },
     get value() {
       if (self.bonus === '0') {
@@ -51,14 +57,27 @@ export const trait = types
     },
   }))
   .actions((self) => ({
-    decrement() {
-      if (
-        (self.dice === 'D4' && self.bonus !== '-2') ||
-        (self.dice === 'D12' && Number(self.bonus) > 0)
-      ) {
-        self.bonus = BONI_TYPES[BONI_TYPES.indexOf(self.bonus) - 1];
-      } else {
+    decrementBonus() {
+      if (self.isBonusDecrementable) {
+        self.bonus = BONUS_TYPES[BONUS_TYPES.indexOf(self.bonus) - 1];
+      }
+    },
+
+    decrementDice() {
+      if (self.isDiceDecrementable) {
         self.dice = DICE_TYPES[DICE_TYPES.indexOf(self.dice) - 1];
+      }
+    },
+
+    incrementBonus() {
+      if (self.isBonusIncrementable) {
+        self.bonus = BONUS_TYPES[BONUS_TYPES.indexOf(self.bonus) + 1];
+      }
+    },
+
+    incrementDice() {
+      if (self.isDiceIncrementable) {
+        self.dice = DICE_TYPES[DICE_TYPES.indexOf(self.dice) + 1];
       }
     },
 
@@ -68,7 +87,7 @@ export const trait = types
       } else if (self.dice !== 'D12') {
         self.dice = DICE_TYPES[DICE_TYPES.indexOf(self.dice) + 1];
       } else if (self.dice === 'D12' && Number(self.bonus) < 4) {
-        self.bonus = BONI_TYPES[BONI_TYPES.indexOf(self.bonus) + 1];
+        self.bonus = BONUS_TYPES[BONUS_TYPES.indexOf(self.bonus) + 1];
       }
     },
   }));

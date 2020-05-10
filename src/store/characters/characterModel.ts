@@ -6,10 +6,18 @@ import { meleeWeapon } from 'store/resources/meleeWeapon';
 import { rangedWeapon } from 'store/resources/rangedWespons';
 import { trait } from './trait';
 
-export const character = types
+export const characterModel = types
   .model('character', {
     id: types.identifier,
     name: types.optional(types.string, ''),
+    race: types.optional(types.string, ''),
+    origin: types.optional(types.string, ''),
+    money: 0,
+    age: 0,
+    conviction: types.optional(types.boolean, true),
+    wounds: types.optional(types.array(types.boolean), [false, false, false]),
+    fatigue: types.optional(types.array(types.boolean), [false, false, false]),
+    incapcitaded: types.optional(types.boolean, false),
     advances: 0,
     spendAttributesPoints: 0,
     attributes: types.model({
@@ -21,6 +29,7 @@ export const character = types
     }),
     bennies: 3,
     size: 3,
+
     freeEdges: 0,
     pace: types.model({
       onFoot: 6,
@@ -35,11 +44,6 @@ export const character = types
         date: types.number,
         message: types.string,
       })
-    ),
-    mode: types.union(
-      types.literal('creation'),
-      types.literal('advancement'),
-      types.literal('free_mode')
     ),
     setting: types.reference(settingModel),
     skills: types.map(trait),
@@ -76,6 +80,10 @@ export const character = types
       key: K,
       value: T[K]
     ) {
+      if (typeof value !== typeof self[key]) {
+        console.warn('TYPE ERROR ! !!!!!  !!!');
+        return;
+      }
       // @ts-ignore
       self[key] = value;
     },
@@ -105,12 +113,11 @@ export const character = types
     };
   });
 
-export type Icharacter = Instance<typeof character>;
-export type SIcharacter = SnapshotIn<typeof character>;
+export type Icharacter = Instance<typeof characterModel>;
+export type SIcharacter = SnapshotIn<typeof characterModel>;
 
 export const createCharacterScaffold = (): SIcharacter => ({
   id: uuidv4(),
-  mode: 'creation',
   name: '',
   setting: 'vanilla-rules',
   attributes: {

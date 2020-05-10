@@ -1,2 +1,2 @@
-export * from './character';
+export * from './characterModel';
 export * from './charactersCollection';
