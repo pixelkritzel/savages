@@ -3,12 +3,9 @@ import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Spinner from 'react-bootstrap/Spinner';
-
 import { BsPencil, BsTrash } from 'react-icons/bs';
 
+import { Button } from 'ui/Button';
 import { Icollection } from 'lib/state/createCollection';
 
 import CSS from './CRUDTable.module.scss';
@@ -25,7 +22,7 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
     <>
       <h2>{title}</h2>
       {!collection.isLoaded ? (
-        <Spinner animation="grow" variant="info" />
+        'Loading'
       ) : (
         <>
           <div className={cx(CSS.header, 'pull-apart')}>
@@ -38,24 +35,21 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
               <li className={cx(CSS.tableRow, 'pull-apart')} key={id}>
                 <Link to={`${baseUrl}/${id}`}>{name}</Link>
 
-                <ButtonGroup>
-                  <Link to={`${baseUrl}/${id}/edit`}>
-                    <Button as="span">
-                      Edit
-                      <BsPencil className={CSS.iconInButton} />
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="danger"
-                    onClick={() => {
-                      if (window.confirm(`Are you sure, you want to delete ${name}`)) {
-                        collection.deleteModel(id);
-                      }
-                    }}
-                  >
-                    Delete <BsTrash className={CSS.iconInButton} />
+                <Link to={`${baseUrl}/${id}/edit`}>
+                  <Button<'span'> as="span">
+                    Edit
+                    <BsPencil className={CSS.iconInButton} />
                   </Button>
-                </ButtonGroup>
+                </Link>
+                <Button
+                  onClick={() => {
+                    if (window.confirm(`Are you sure, you want to delete ${name}`)) {
+                      collection.deleteModel(id);
+                    }
+                  }}
+                >
+                  Delete <BsTrash className={CSS.iconInButton} />
+                </Button>
               </li>
             ))}
           </ul>

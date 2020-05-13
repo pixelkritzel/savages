@@ -1,5 +1,6 @@
-@import '~bootstrap/scss/bootstrap.scss';
-
+@import 'reset';
+@import 'variables';
+@import 'typography';
 @import 'utils';
 
 .btn-inline-link {

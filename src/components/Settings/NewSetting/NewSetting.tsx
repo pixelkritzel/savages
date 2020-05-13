@@ -1,8 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import { Button } from 'ui/Button';
 
 import { SettingForm } from 'components/Settings/SettingForm';
 import { StoreContext } from 'components/StoreContext';
@@ -22,30 +21,27 @@ export const NewSetting: React.FC = () => {
       <SettingForm setting={settings.newModel!} />
 
       <div className="pull-right">
-        <ButtonGroup>
-          <Button
-            variant="danger"
-            onClick={() => {
-              if (window.confirm('Are you sure?')) {
-                settings.discardNewModel();
-                history.replace(`/characters`);
-              }
-            }}
-            type="button"
-          >
-            Discard Character
-          </Button>
-          <Button
-            onClick={async () => {
-              if ((await settings.saveNewModel()) === 'SUCCESS') {
-                history.replace(`/characters`);
-              }
-            }}
-            type="button"
-          >
-            Save character
-          </Button>
-        </ButtonGroup>
+        <Button
+          onClick={() => {
+            if (window.confirm('Are you sure?')) {
+              settings.discardNewModel();
+              history.replace(`/characters`);
+            }
+          }}
+          type="button"
+        >
+          Discard Character
+        </Button>
+        <Button
+          onClick={async () => {
+            if ((await settings.saveNewModel()) === 'SUCCESS') {
+              history.replace(`/characters`);
+            }
+          }}
+          type="button"
+        >
+          Save character
+        </Button>
       </div>
     </form>
   );

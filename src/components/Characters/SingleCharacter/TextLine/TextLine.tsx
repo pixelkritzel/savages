@@ -3,9 +3,7 @@ import { observer } from 'mobx-react-lite';
 
 import { BsCheck, BsPencil } from 'react-icons/bs';
 
-import Button from 'react-bootstrap/Button';
-import FormControl from 'react-bootstrap/FormControl';
-import InputGroup from 'react-bootstrap/InputGroup';
+import { Button } from 'ui/Button';
 
 import CSS from './TextLine.module.scss';
 
@@ -24,17 +22,20 @@ export const TextLine: React.FC<TextLineProps> = observer(({ label, onValueChang
       {!isEdit ? (
         <div className={CSS.value}>{value}</div>
       ) : (
-        <InputGroup>
-          <FormControl value={value} onChange={(event) => onValueChange(event.target.value)} />
-          <InputGroup.Append>
-            <Button onClick={() => setIsEdit(false)}>
-              <BsCheck />
-            </Button>
-          </InputGroup.Append>
-        </InputGroup>
+        <>
+          <input
+            type="text"
+            value={value}
+            onChange={(event) => onValueChange(event.target.value)}
+          />
+
+          <Button onClick={() => setIsEdit(false)}>
+            <BsCheck />
+          </Button>
+        </>
       )}
       {!isEdit && (
-        <Button className="btn-inline-link" variant="link" onClick={() => setIsEdit(true)}>
+        <Button className="btn-inline-link" onClick={() => setIsEdit(true)}>
           <BsPencil />
         </Button>
       )}

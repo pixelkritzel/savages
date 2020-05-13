@@ -1,8 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 
-import Form from 'react-bootstrap/Form';
-
 import { SWFormGroup } from 'ui/SWFormGroup/SWFormgroup';
 import { Isetting } from 'store/settings';
 
@@ -17,9 +15,10 @@ export const SettingForm: React.FC<SettingFormProps> = observer(({ setting }) =>
 
   return (
     <div>
-      <SWFormGroup controlId="name" label="Name">
-        <Form.Control
+      <SWFormGroup id="name" label="Name">
+        <input
           type="text"
+          id="name"
           placeholder="Setting name"
           value={setting.id}
           onChange={(event) => setting.set('id', event.target.value)}
@@ -28,9 +27,10 @@ export const SettingForm: React.FC<SettingFormProps> = observer(({ setting }) =>
 
       <hr />
       <h3>Creation Rules</h3>
-      <SWFormGroup controlId="attributePoints" label="Attribute points">
-        <Form.Control
+      <SWFormGroup id="attributePoints" label="Attribute points">
+        <input
           type="number"
+          id="attributePoints"
           placeholder="5"
           value={setting.creation.attributePoints}
           onChange={(event) => setting.creation.set('attributePoints', Number(event.target.value))}

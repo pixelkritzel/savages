@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-import Container from 'react-bootstrap/Container';
-
 import { Navbar } from 'components/Navbar';
 import { Router } from 'components/Router';
 import { StoreContext } from 'components/StoreContext';
 
 import CSS from './Layout.module.scss';
+import { Container } from 'ui/Container';
 
 @observer
 export class Layout extends React.Component {

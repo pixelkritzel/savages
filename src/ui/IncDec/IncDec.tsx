@@ -1,10 +1,7 @@
 import React from 'react';
 
-import Button from 'react-bootstrap/Button';
-import FormControl from 'react-bootstrap/FormControl';
-import InputGroup from 'react-bootstrap/InputGroup';
-
 import CSS from './IncDec.module.scss';
+import { Button } from 'ui/Button';
 
 interface IncDec extends React.HTMLProps<HTMLDivElement> {
   disableDecrement?: boolean;
@@ -22,18 +19,16 @@ export const IncDec: React.FC<IncDec> = ({
   value,
 }) => {
   return (
-    <InputGroup size="sm" className={CSS.incDec}>
-      <InputGroup.Prepend>
-        <Button variant="outline-secondary" disabled={disableDecrement} onClick={onDecrement}>
-          -
-        </Button>
-      </InputGroup.Prepend>
-      <FormControl className={CSS.input} readOnly value={value} />
-      <InputGroup.Append>
-        <Button variant="outline-secondary" disabled={disableIncrement} onClick={onIncrement}>
-          +
-        </Button>
-      </InputGroup.Append>
-    </InputGroup>
+    <div className={CSS.incDec}>
+      <Button disabled={disableDecrement} onClick={onDecrement}>
+        -
+      </Button>
+
+      <input className={CSS.input} readOnly value={value} />
+
+      <Button disabled={disableIncrement} onClick={onIncrement}>
+        +
+      </Button>
+    </div>
   );
 };

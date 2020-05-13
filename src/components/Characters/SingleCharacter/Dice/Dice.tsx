@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 import { BsPencil } from 'react-icons/bs';
 
-import Button from 'react-bootstrap/Button';
+import { Button } from 'ui/Button';
 
 import { IncDec } from 'ui/IncDec';
 
@@ -13,6 +13,7 @@ import { Itrait } from 'store/characters/trait';
 
 import CSS from './Dice.module.scss';
 import { SWFormGroup } from 'ui/SWFormGroup';
+import { capitalizeFirstLetter } from 'lib/strings';
 
 @observer
 export class Dice extends React.Component<
@@ -35,7 +36,7 @@ export class Dice extends React.Component<
     return (
       <div className={CSS.dice}>
         <div className={CSS.name}>
-          <span>{trait.name}</span>
+          <span>{capitalizeFirstLetter(trait.name)}</span>
           {this.isEdit && (
             <>
               <Button variant="success" onClick={() => (this.isEdit = false)}>
@@ -67,7 +68,7 @@ export class Dice extends React.Component<
         {!this.isEdit && (
           <>
             <div className={CSS.value}>{trait.value}</div>
-            <Button className="btn-inline-link" variant="link" onClick={() => (this.isEdit = true)}>
+            <Button className="btn-inline-link" onClick={() => (this.isEdit = true)}>
               <BsPencil />
             </Button>
           </>
