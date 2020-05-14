@@ -1,7 +1,19 @@
 .incDec {
-  max-width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 200px;
 }
 
-.input {
+.button {
+  text-align: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+}
+
+.value {
+  display: inline-block;
+  width: 60px;
   text-align: center;
 }

@@ -35,7 +35,7 @@ export const TextLine: React.FC<TextLineProps> = observer(({ label, onValueChang
         </>
       )}
       {!isEdit && (
-        <Button className="btn-inline-link" onClick={() => setIsEdit(true)}>
+        <Button className="btn-inline-link" variant="link" onClick={() => setIsEdit(true)}>
           <BsPencil />
         </Button>
       )}

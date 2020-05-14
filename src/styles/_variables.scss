@@ -9,6 +9,32 @@ sans-serif,
 "Segoe UI Emoji",
 "Segoe UI Symbol";
 
+/*  Colors */
+
+$danger: #c4063c;
+$danger-light: #ef6894;
+$danger-lighter: #FEDDE4;
+$danger-dark: #7B0218;
+
+$success: #3ba60a;
+$success-light: #98DF6D;
+
+$gray-900: #fafafa;
+$gray-800: #ddd;
+$gray-700: #999;
+
+
+$link-color: #3a506b;
+$link-color-disabled: #5e7389;
+$link-color-hover: #003249;
+$link-color-visited: #29274c;
+
+$input-border-color: $gray-800;
+$input-border-bottom-color: $gray-700;
+
+$input-border: 1px solid $input-border-color;
+$input-border-bottom: 2px solid $input-border-bottom-color;
+
 $vertical-rhythm: 16px;
 
 /* Brakpoints */

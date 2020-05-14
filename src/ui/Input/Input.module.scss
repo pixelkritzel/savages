@@ -1,0 +1,44 @@
+@import 'src/styles/_focus-styles.scss';
+@import 'src/styles/_variables.scss';
+
+.input {
+  border: $input-border;
+  border-bottom: $input-border-bottom;
+  background-color: $gray-900;
+  padding: 6px 12px 5px;
+
+  &.hasError {
+    border-color: $danger;
+    border-bottom-color: $danger-dark;
+    background-color: $danger-lighter;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.focus {
+  display: inline-block;
+
+  @include focus-styles;
+}
+
+.inline {
+  position: relative;
+
+  .inlineInput {
+    border: none;
+    padding: 0 6px;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 2px;
+    width: 100%;
+    background-color: $input-border-bottom-color;
+  }
+}

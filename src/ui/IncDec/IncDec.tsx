@@ -20,13 +20,11 @@ export const IncDec: React.FC<IncDec> = ({
 }) => {
   return (
     <div className={CSS.incDec}>
-      <Button disabled={disableDecrement} onClick={onDecrement}>
+      <Button className={CSS.button} disabled={disableDecrement} onClick={onDecrement}>
         -
       </Button>
-
-      <input className={CSS.input} readOnly value={value} />
-
-      <Button disabled={disableIncrement} onClick={onIncrement}>
+      <span className={CSS.value}>{value}</span>
+      <Button className={CSS.button} disabled={disableIncrement} onClick={onIncrement}>
         +
       </Button>
     </div>

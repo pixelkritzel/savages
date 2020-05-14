@@ -7,7 +7,7 @@ interface ButtonProps<T extends keyof HTMLElementTagNameMap = 'button'>
   extends React.HTMLProps<HTMLElementTagNameMap[T]> {
   as?: T;
   icon?: JSX.Element;
-  variant?: 'default' | 'danger' | 'success';
+  variant?: 'default' | 'danger' | 'success' | 'link';
 }
 
 export class Button<T extends keyof HTMLElementTagNameMap = 'button'> extends React.Component<
