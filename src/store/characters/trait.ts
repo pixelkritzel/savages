@@ -1,10 +1,15 @@
 import { Instance, types } from 'mobx-state-tree';
 
-export const DICE_TYPES: Itrait['dice'][] = ['D4', 'D6', 'D8', 'D10', 'D12'];
-export const BONUS_TYPES: Itrait['bonus'][] = ['-2', '-1', '0', '+1', '+2', '+3', '+4'];
+export const DICE_TYPES: Itrait['dice'][] = [4, 6, 8, 10, 12];
 
-export const diceType = types.enumeration(['D4', 'D6', 'D8', 'D10', 'D12']);
-export const bonusType = types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '+4']);
+export const diceType = types.union(
+  types.literal(4),
+  types.literal(6),
+  types.literal(8),
+  types.literal(10),
+  types.literal(12)
+);
+export const bonusType = types.number;
 
 // const modifier = {
 //   strength: {
@@ -18,48 +23,48 @@ export const bonusType = types.enumeration(['-2', '-1', '0', '+1', '+2', '+3', '
 export const trait = types
   .model('trait', {
     name: types.optional(types.string, ''),
-    dice: types.optional(diceType, 'D4'),
-    bonus: types.optional(bonusType, '0'),
+    dice: types.optional(diceType, 4),
+    bonus: types.optional(bonusType, 0),
     minimum: types.optional(
       types.model({
         dice: diceType,
         bonus: bonusType,
       }),
-      { dice: 'D4', bonus: '0' }
+      { dice: 4, bonus: 0 }
     ),
     maximum: types.optional(
       types.model({
         dice: diceType,
         bonus: bonusType,
       }),
-      { dice: 'D12', bonus: '+4' }
+      { dice: 12, bonus: +4 }
     ),
   })
   .views((self) => ({
     get isBonusDecrementable(): boolean {
-      return self.bonus !== '-2';
+      return self.bonus > self.minimum.bonus;
     },
     get isDiceDecrementable(): boolean {
-      return self.dice !== 'D4';
+      return self.dice > self.minimum.dice;
     },
     get isBonusIncrementable() {
-      return self.bonus !== '+4';
+      return self.bonus < self.maximum.bonus;
     },
     get isDiceIncrementable() {
-      return self.dice !== 'D12';
+      return self.dice < self.maximum.dice;
     },
     get value() {
-      if (self.bonus === '0') {
-        return self.dice;
+      if (self.bonus === 0) {
+        return `D${self.dice}`;
       } else {
-        return `${self.dice} ${self.bonus}`;
+        return `D${self.dice} ${self.bonus}`;
       }
     },
   }))
   .actions((self) => ({
     decrementBonus() {
       if (self.isBonusDecrementable) {
-        self.bonus = BONUS_TYPES[BONUS_TYPES.indexOf(self.bonus) - 1];
+        self.bonus = self.bonus - 1;
       }
     },
 
@@ -71,23 +76,13 @@ export const trait = types
 
     incrementBonus() {
       if (self.isBonusIncrementable) {
-        self.bonus = BONUS_TYPES[BONUS_TYPES.indexOf(self.bonus) + 1];
+        self.bonus = self.bonus + 1;
       }
     },
 
     incrementDice() {
       if (self.isDiceIncrementable) {
         self.dice = DICE_TYPES[DICE_TYPES.indexOf(self.dice) + 1];
-      }
-    },
-
-    increment() {
-      if (self.dice === 'D4' && self.bonus === '-2') {
-        self.bonus = '0';
-      } else if (self.dice !== 'D12') {
-        self.dice = DICE_TYPES[DICE_TYPES.indexOf(self.dice) + 1];
-      } else if (self.dice === 'D12' && Number(self.bonus) < 4) {
-        self.bonus = BONUS_TYPES[BONUS_TYPES.indexOf(self.bonus) + 1];
       }
     },
   }));

@@ -5,8 +5,11 @@ import CSS from './Input.module.scss';
 
 interface InputProps extends React.HTMLProps<HTMLInputElement> {
   hasError?: boolean;
+  onValueChange?: (value: string) => void;
   variant?: 'default' | 'inline';
 }
+
+type o = InputProps['onChange'];
 
 export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
   state = { hasFocus: false };
@@ -14,6 +17,11 @@ export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
   onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     this.setState({ hasFocus: false });
     this.props.onBlur && this.props.onBlur(event);
+  };
+
+  onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.props.onValueChange && this.props.onValueChange(event.target.value);
+    this.props.onChange && this.props.onChange(event);
   };
 
   onFocus = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -34,6 +42,7 @@ export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
             [CSS.inlineInput]: variant === 'inline',
           })}
           onBlur={this.onBlur}
+          onChange={this.onChange}
           onFocus={this.onFocus}
           {...otherProps}
         />

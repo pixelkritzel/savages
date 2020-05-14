@@ -1,0 +1,21 @@
+@import "styles/_variables.scss";
+
+@import '../box.scss';
+
+.description {
+  grid-area: 1 / 3 / 2 / 9;
+  @extend %box;
+
+  .container {
+    display: grid;
+    grid-template-columns: 2.8fr 1.2fr;
+    grid-template-rows: 1fr;
+    gap: 6px 24px;
+  }
+
+  .childrenSpacing {
+    &>*:not(:last-child) {
+      margin-bottom: $vertical-rhythm;
+    }
+  }
+}

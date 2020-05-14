@@ -1,0 +1,10 @@
+@import '../box.scss';
+
+.health {
+  grid-area: 1 / 9 / 2 / 12;
+  @extend %box;
+
+  .checkbox:not(:last-child) {
+    margin-right: 8px;
+  }
+}

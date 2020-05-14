@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import { CharacterCollection } from './CharacterCollection';
-import { SingleCharacter } from './SingleCharacter';
+import { CharacterView } from './CharacterView';
 import { NewCharacter } from './NewCharacter';
 
 export function Characters() {
@@ -10,7 +10,7 @@ export function Characters() {
     <Switch>
       <Route path={`${match.path}/new`}>{/* <NewCharacter /> */}</Route>
       <Route path={`${match.path}/:characterId`}>
-        <SingleCharacter />
+        <CharacterView />
       </Route>
       <Route path={`${match.path}/`}>
         <CharacterCollection />

@@ -7,12 +7,13 @@ interface CheckboxProps extends Omit<React.HTMLProps<HTMLInputElement>, 'label'>
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({
+  className,
   id = uuidV4(),
   label,
   type = 'checkbox',
   ...otherProps
 }) => (
-  <label htmlFor={id}>
+  <label className={className} htmlFor={id}>
     <input type="checkbox" id={id} {...otherProps} />
     {label}
   </label>

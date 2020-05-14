@@ -3,12 +3,12 @@ import React from 'react';
 import CSS from './IncDec.module.scss';
 import { Button } from 'ui/Button';
 
-interface IncDec extends React.HTMLProps<HTMLDivElement> {
+interface IncDec extends Omit<React.HTMLProps<HTMLDivElement>, 'value'> {
   disableDecrement?: boolean;
   disableIncrement?: boolean;
   onDecrement: () => void;
   onIncrement: () => void;
-  value: string;
+  value: React.ReactNode;
 }
 
 export const IncDec: React.FC<IncDec> = ({

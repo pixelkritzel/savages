@@ -29,13 +29,9 @@ export const characterModel = types
     }),
     bennies: 3,
     size: 3,
-
     freeEdges: 0,
-    pace: types.model({
-      onFoot: 6,
-      swimming: 3,
-      flying: 0,
-    }),
+    pace: 6,
+    runningDice: trait,
     armor: 0,
     meleeWeapons: types.array(types.reference(meleeWeapon)),
     rangedWeapons: types.array(types.reference(rangedWeapon)),
@@ -53,8 +49,20 @@ export const characterModel = types
     ignoreErrors: false,
   }))
   .views((self) => ({
+    get parry() {
+      const fightingSkill = self.skills.get('fighting');
+      const parryFromFighting = fightingSkill
+        ? Math.round(fightingSkill.dice / 2) + Math.floor(fightingSkill.bonus / 2)
+        : 0;
+      return parryFromFighting + 2;
+    },
     get remainingAttributePoints() {
       return self.setting.creation.attributePoints - self.spendAttributesPoints;
+    },
+    get toughness() {
+      return (
+        Math.round(self.attributes.vigor.dice / 2) + Math.floor(self.attributes.vigor.bonus / 2) + 2
+      );
     },
   }))
   .views((self) => ({
@@ -127,5 +135,9 @@ export const createCharacterScaffold = (): SIcharacter => ({
     strength: { name: 'strength' },
     vigor: { name: 'vigor' },
   },
-  pace: {},
+  runningDice: {
+    name: 'running',
+    dice: 6,
+    bonus: 0,
+  },
 });

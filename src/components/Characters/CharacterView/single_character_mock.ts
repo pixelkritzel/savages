@@ -11,5 +11,16 @@ export const single_character_mock: SIcharacter = {
     strength: { name: 'strength' },
     vigor: { name: 'vigor' },
   },
-  pace: {},
+  skills: {
+    fighting: {
+      name: 'fighting',
+      dice: 10,
+      bonus: 0,
+    },
+  },
+  runningDice: {
+    name: 'running',
+    dice: 6,
+    bonus: 0,
+  },
 };
