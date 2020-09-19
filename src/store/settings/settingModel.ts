@@ -1,8 +1,9 @@
 import { Instance, SnapshotIn, types } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import savageWorldsVanilla from './data/SavageWorldsVanilla.json';
 import { creationRulesModel } from './creationRulesModel';
+
+import savageWorldsVanilla from './data/SavageWorldsVanilla';
 
 export const settingModel = types
   .model('setting', {
@@ -34,8 +35,8 @@ export const settingModel = types
 
 export function createSettingsScaffold() {
   return {
-    id: uuidv4(),
     ...savageWorldsVanilla,
+    id: uuidv4(),
   };
 }
 

@@ -16,7 +16,7 @@ import { single_character_mock } from './single_character_mock';
 import { Stats } from './Stats';
 
 export const CharacterView: React.FC<{}> = observer(function () {
-  const { characterId } = useParams();
+  const { characterId } = useParams<{ characterId: string }>();
   const history = useHistory();
   const store = React.useContext(StoreContext);
 

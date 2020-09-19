@@ -18,7 +18,7 @@ export function Router() {
         <Settings />
       </Route>
       <Route path="/">
-        <Redirect to="/characters" />>
+        <Redirect to="/characters" />
       </Route>
     </Switch>
   );
