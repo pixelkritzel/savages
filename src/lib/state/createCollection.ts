@@ -1,4 +1,4 @@
-import { types, SnapshotIn, destroy, Instance, detach, getSnapshot } from 'mobx-state-tree';
+import { types, SnapshotIn, destroy, Instance, detach, getSnapshot, cast } from 'mobx-state-tree';
 import { persistence } from 'lib/persistence';
 
 // This just provides the base type for the model
@@ -8,22 +8,20 @@ const _modelPrototype = types.model({
 });
 
 type TmodelPrototype = typeof _modelPrototype;
-export type ImodelPrototype = Instance<TmodelPrototype>;
-export type SImodelPrototype = SnapshotIn<TmodelPrototype>;
+export interface ImodelPrototype extends Instance<TmodelPrototype> {}
+export interface SImodelPrototype extends SnapshotIn<TmodelPrototype> {}
 
-export function createCollection<T extends TmodelPrototype>(
-  name: string,
-  model: TmodelPrototype,
-  createModelScaffoldFn: () => SnapshotIn<T>
-) {
-  type IActualModel = Instance<T>;
-  type SIActualModel = SnapshotIn<T>;
+export function createCollection<
+  T extends TmodelPrototype,
+  IActualModel extends Instance<T>,
+  SIActualModel extends SnapshotIn<T>
+>(name: string, model: T, createModelScaffoldFn: () => SIActualModel) {
   return types
     .model(name, {
-      all: types.map(model as T),
+      all: types.map(model),
       name: types.optional(types.literal(name), name),
       isLoaded: false,
-      newModel: types.maybe(model as T),
+      newModel: types.maybe(model),
     })
     .views((self) => ({
       get asArray() {
@@ -48,8 +46,8 @@ export function createCollection<T extends TmodelPrototype>(
         }
       },
       new() {
-        self.newModel = model.create(createModelScaffoldFn()) as any;
-        return self.newModel as IActualModel;
+        self.newModel = cast(model.create(createModelScaffoldFn()));
+        return self.newModel!;
       },
       async saveNewModel() {
         if (self.newModel) {
@@ -86,7 +84,7 @@ export function createCollection<T extends TmodelPrototype>(
     });
 }
 
-export type Icollection = Instance<ReturnType<typeof createCollection>>;
+export interface Icollection extends Instance<ReturnType<typeof createCollection>> {}
 
 export const collectionScaffold = {
   all: {},

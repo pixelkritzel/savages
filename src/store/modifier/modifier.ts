@@ -60,10 +60,7 @@ export const modifierModel = types
     },
   }))
   .actions((self) => ({
-    set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
-      key: K,
-      value: T[K]
-    ) {
+    set(key: any, value: any) {
       // @ts-ignore
       self[key] = value;
     },
@@ -78,4 +75,4 @@ export const modifierScaffold: SnapshotIn<typeof modifierModel> = {
   pace: {},
 };
 
-export type Imodifier = Instance<typeof modifierModel>;
+export interface Imodifier extends Instance<typeof modifierModel> {}

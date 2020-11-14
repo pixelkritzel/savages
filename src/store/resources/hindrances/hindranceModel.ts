@@ -16,16 +16,15 @@ export const hindranceModel = types
     addModifier(modifier: Imodifier) {
       self.modifiers.push(modifier);
     },
-    set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
-      key: K,
-      value: T[K]
-    ) {
+    set(key: any, value: any) {
       // @ts-ignore
       self[key] = value;
     },
   }));
 
-export type Ihindrance = Instance<typeof hindranceModel>;
+export type Thindrance = typeof hindranceModel;
+export interface Ihindrance extends Instance<Thindrance> {}
+export interface SIhindrance extends SnapshotIn<Thindrance> {}
 
 export function createHindranceScaffold() {
   return {

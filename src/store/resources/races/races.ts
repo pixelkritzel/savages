@@ -1,4 +1,4 @@
-import { types } from 'mobx-state-tree';
+import { types, Instance, SnapshotIn } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { hindranceModel } from 'store/resources/hindrances';
@@ -10,10 +10,18 @@ const raceModel = types.model('race', {
   hindrances: types.array(hindranceModel),
 });
 
+type Trace = typeof raceModel;
+interface Irace extends Instance<typeof raceModel> {}
+interface SIrace extends SnapshotIn<typeof raceModel> {}
+
 const createRaceModelScaffold = () => ({
   id: uuidv4(),
 });
 
-export const racesCollection = createCollection('races', raceModel, createRaceModelScaffold);
+export const racesCollection = createCollection<Trace, Irace, SIrace>(
+  'races',
+  raceModel,
+  createRaceModelScaffold
+);
 
 export const resourcesScaffold = { all: {} };

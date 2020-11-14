@@ -121,8 +121,10 @@ export const characterModel = types
     };
   });
 
-export type Icharacter = Instance<typeof characterModel>;
-export type SIcharacter = SnapshotIn<typeof characterModel>;
+export type Tcharacter = typeof characterModel;
+
+export interface Icharacter extends Instance<typeof characterModel> {}
+export interface SIcharacter extends SnapshotIn<typeof characterModel> {}
 
 export const createCharacterScaffold = (): SIcharacter => ({
   id: uuidv4(),

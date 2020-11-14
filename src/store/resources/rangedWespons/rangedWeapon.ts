@@ -5,4 +5,4 @@ export const rangedWeapon = types.model('rangedWeapon', {
   name: types.optional(types.string, ''),
 });
 
-export type IrangedWeapon = Instance<typeof rangedWeapon>;
+export interface IrangedWeapon extends Instance<typeof rangedWeapon> {}

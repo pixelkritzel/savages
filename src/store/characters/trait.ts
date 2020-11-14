@@ -90,4 +90,4 @@ export const trait = types
 export const traitFactory = (name: string) =>
   types.compose(trait, types.model({ name: types.optional(types.identifier, name) }));
 
-export type Itrait = Instance<typeof trait>;
+export interface Itrait extends Instance<typeof trait> {}

@@ -40,4 +40,6 @@ export function createSettingsScaffold() {
   };
 }
 
-export type Isetting = Instance<typeof settingModel>;
+export type Tsetting = typeof settingModel;
+export interface Isetting extends Instance<typeof settingModel> {}
+export interface SIsetting extends SnapshotIn<typeof settingModel> {}

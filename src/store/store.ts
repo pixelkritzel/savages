@@ -19,7 +19,7 @@ const store = types
     },
   }));
 
-export type Istore = Instance<typeof store>;
+export interface Istore extends Instance<typeof store> {}
 
 export function createStore() {
   return store.create({
