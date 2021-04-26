@@ -11,7 +11,7 @@ export const paceModel = types
         name: string;
         value: number | string;
       }[] = [];
-      (['base', 'swimming', 'flying'] as ['base', 'swimming', 'flying']).forEach((name) => {
+      (['base', 'swimming', 'flying'] as const).forEach((name) => {
         if (self[name] !== 0) {
           modifications.push({ name, value: self[name] });
         }

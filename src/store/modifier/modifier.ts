@@ -29,29 +29,17 @@ export const modifierModel = types
         name: string;
         value: number | string | ImeleeWeapon[] | IrangedWeapon;
       }[] = [];
-      (['agility', 'smarts', 'spirit', 'strength', 'vigor'] as [
-        'agility',
-        'smarts',
-        'spirit',
-        'strength',
-        'vigor'
-      ]).forEach((attributeName) => {
+      (['agility', 'smarts', 'spirit', 'strength', 'vigor'] as const).forEach((attributeName) => {
         self[attributeName].modifications.forEach(({ name, value }) =>
           modifications.push({ name: `${attributeName} ${name}`, value })
         );
       });
-      (['bennies', 'toughness', 'size', 'freeEdges', 'armor'] as [
-        'bennies',
-        'toughness',
-        'size',
-        'freeEdges',
-        'armor'
-      ]).forEach((name) => {
+      (['bennies', 'toughness', 'size', 'freeEdges', 'armor'] as const).forEach((name) => {
         if (self[name] !== 0) {
           modifications.push({ name, value: self[name] });
         }
       });
-      (['meleeWeapons', 'rangedWeapons'] as ['meleeWeapons', 'rangedWeapons']).forEach((name) => {
+      (['meleeWeapons', 'rangedWeapons'] as const).forEach((name) => {
         if (self[name].length > 0) {
           modifications.push({ name, value: self[name] });
         }

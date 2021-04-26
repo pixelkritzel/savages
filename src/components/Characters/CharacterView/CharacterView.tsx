@@ -21,6 +21,7 @@ export const CharacterView: React.FC<{}> = observer(function () {
   const store = React.useContext(StoreContext);
 
   const character = characterModel.create(single_character_mock);
+  console.log(character);
 
   const isEdit = true;
 

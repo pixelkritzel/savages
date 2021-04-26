@@ -1,3 +1,4 @@
+import { CharacterModel } from './characters/ChracterModel';
 import { resources, resourcesScaffold } from './resources/resources';
 import { types, Instance } from 'mobx-state-tree';
 
@@ -5,6 +6,8 @@ import { collectionScaffold } from 'lib/state/createCollection';
 
 import { charactersCollection } from './characters/charactersCollection';
 import { settingsCollection } from './settings/settingsCollection';
+
+import { CharacterCollection } from 'store/characters/CharacterCollection';
 
 const store = types
   .model('store', {
@@ -22,9 +25,9 @@ const store = types
 export interface Istore extends Instance<typeof store> {}
 
 export function createStore() {
-  return store.create({
-    characters: collectionScaffold,
+  return {
+    characters: new CharacterCollection('characters', CharacterModel, {}),
     resources: resourcesScaffold,
     settings: collectionScaffold,
-  });
+  };
 }

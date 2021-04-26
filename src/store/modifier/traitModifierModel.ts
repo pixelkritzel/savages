@@ -13,7 +13,7 @@ export const traitModifierModel = types
         name: string;
         value: number | string;
       }[] = [];
-      (['value', 'maximum', 'minimum'] as ['value', 'maximum', 'minimum']).forEach((name) => {
+      (['value', 'maximum', 'minimum'] as const).forEach((name) => {
         if (self[name] !== 0) {
           modifications.push({ name, value: self[name] });
         }
