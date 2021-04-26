@@ -1,4 +1,4 @@
-import { cast, types } from 'mobx-state-tree';
+import { SnapshotIn, types } from 'mobx-state-tree';
 export const traitModifierModel = types
   .model('traitModifier', {
     value: 0,
@@ -25,8 +25,10 @@ export const traitModifierModel = types
     },
   }))
   .actions((self) => ({
-    set(key: any, value: any) {
-      // @ts-ignore
-      self[key] = cast(value);
+    set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
+      key: K,
+      value: T[K]
+    ) {
+      self[key] = value;
     },
   }));

@@ -92,7 +92,6 @@ export const characterModel = types
         console.warn('TYPE ERROR ! !!!!!  !!!');
         return;
       }
-      // @ts-ignore
       self[key] = value;
     },
   }))

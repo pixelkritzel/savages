@@ -1,7 +1,7 @@
-import { SnapshotIn, types, Instance } from 'mobx-state-tree';
+import { SnapshotIn, types, Instance, cast } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { modifierModel, Imodifier } from 'store/modifier';
+import { modifierModel } from 'store/modifier';
 
 export const hindranceModel = types
   .model('hindrance', {
@@ -10,15 +10,14 @@ export const hindranceModel = types
     description: types.optional(types.string, ''),
     modifiers: types.array(modifierModel),
     isPlayerSelectable: true,
-    impact: types.maybe(types.enumeration(['minor', 'major'])),
+    impact: types.maybe(types.enumeration(['minor', 'major', 'maybe'])),
   })
   .actions((self) => ({
-    addModifier(modifier: Imodifier) {
-      self.modifiers.push(modifier);
-    },
-    set(key: any, value: any) {
-      // @ts-ignore
-      self[key] = value;
+    set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
+      key: K,
+      value: T[K]
+    ) {
+      self[key] = cast(value);
     },
   }));
 

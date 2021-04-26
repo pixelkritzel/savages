@@ -1,4 +1,4 @@
-import { SnapshotIn, types, Instance } from 'mobx-state-tree';
+import { SnapshotIn, types, Instance, cast } from 'mobx-state-tree';
 import { v4 as uuidV4 } from 'uuid';
 
 import { ImeleeWeapon, meleeWeapon } from 'store/resources/meleeWeapon';
@@ -48,9 +48,11 @@ export const modifierModel = types
     },
   }))
   .actions((self) => ({
-    set(key: any, value: any) {
-      // @ts-ignore
-      self[key] = value;
+    set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
+      key: K,
+      value: T[K]
+    ) {
+      self[key] = cast(value);
     },
   }));
 
