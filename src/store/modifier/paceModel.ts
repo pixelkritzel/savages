@@ -1,4 +1,4 @@
-import { SnapshotIn, types } from 'mobx-state-tree';
+import { types } from 'mobx-state-tree';
 export const paceModel = types
   .model({
     base: 0,

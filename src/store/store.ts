@@ -10,7 +10,7 @@ import { settingsCollection } from './settings/settingsCollection';
 import { CharacterCollection } from 'store/characters/CharacterCollection';
 
 const store = types
-  .model('store', {
+  .model('stores', {
     characters: charactersCollection,
     resources,
     settings: settingsCollection,

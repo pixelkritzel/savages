@@ -1,4 +1,4 @@
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, makeObservable } from 'mobx';
 import { BaseModel } from 'lib/state/BaseModel';
 import { TraitModel } from './TraitModel';
 
@@ -38,7 +38,7 @@ export class CharacterModel extends BaseModel {
 
   @observable
   attributes = {
-    agility: new TraitModel({ name: 'agility' }),
+    agility: new TraitModel({ name: 'sports' }),
     smarts: new TraitModel({ name: 'smarts' }),
     spirit: new TraitModel({ name: 'spirit' }),
     strength: new TraitModel({ name: 'strength' }),
@@ -78,6 +78,11 @@ export class CharacterModel extends BaseModel {
   @observable
   skills = new Map();
 
+  constructor() {
+    super();
+    makeObservable(this);
+  }
+
   @computed
   get parry() {
     const fightingSkill = this.skills.get('fighting');
@@ -100,5 +105,9 @@ export class CharacterModel extends BaseModel {
   @action
   set = (key: keyof this, value: this[typeof key]) => {
     this[key] = value;
+  };
+
+  increase = () => {
+    this['attributes'].smarts.dice = 6;
   };
 }

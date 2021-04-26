@@ -9,8 +9,6 @@ interface InputProps extends React.HTMLProps<HTMLInputElement> {
   variant?: 'default' | 'inline';
 }
 
-type o = InputProps['onChange'];
-
 export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
   state = { hasFocus: false };
 

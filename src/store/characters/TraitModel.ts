@@ -8,8 +8,6 @@ class TraitMinMax extends BaseModel {
   bonus = 0;
 }
 
-const a = new TraitMinMax({ dice: 4, bonus: 0 });
-
 export class TraitModel extends BaseModel {
   name = '';
   dice: DiceType = 4;

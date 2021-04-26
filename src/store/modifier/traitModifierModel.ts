@@ -1,4 +1,4 @@
-import { cast, SnapshotIn, types } from 'mobx-state-tree';
+import { cast, types } from 'mobx-state-tree';
 export const traitModifierModel = types
   .model('traitModifier', {
     value: 0,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import { observer } from 'mobx-react';
 import cx from 'classnames';
 
@@ -25,6 +25,11 @@ export class Dice extends React.Component<
 > {
   @observable
   isEdit = this.props.isEdit;
+
+  constructor(props: { isEdit?: boolean; trait: Itrait }) {
+    super(props);
+    makeObservable(this);
+  }
 
   render() {
     const { trait } = this.props;

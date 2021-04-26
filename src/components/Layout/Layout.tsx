@@ -11,6 +11,7 @@ import { Container } from 'ui/Container';
 @observer
 export class Layout extends React.Component {
   static contextType = StoreContext;
+  // @ts-expect-error
   context!: React.ContextType<typeof StoreContext>;
 
   render() {

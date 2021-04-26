@@ -3,7 +3,7 @@ import React from 'react';
 import CSS from './IncDec.module.scss';
 import { Button } from 'ui/Button';
 
-interface IncDec extends Omit<React.HTMLProps<HTMLDivElement>, 'value'> {
+interface IncDecProps extends Omit<React.HTMLProps<HTMLDivElement>, 'value'> {
   disableDecrement?: boolean;
   disableIncrement?: boolean;
   onDecrement: () => void;
@@ -11,7 +11,7 @@ interface IncDec extends Omit<React.HTMLProps<HTMLDivElement>, 'value'> {
   value: React.ReactNode;
 }
 
-export const IncDec: React.FC<IncDec> = ({
+export const IncDec: React.FC<IncDecProps> = ({
   disableDecrement = false,
   disableIncrement = false,
   onDecrement,

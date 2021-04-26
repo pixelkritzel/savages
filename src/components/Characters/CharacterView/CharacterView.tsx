@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import { useHistory, useParams } from 'react-router-dom';
+// import { useHistory, useParams } from 'react-router-dom';
 
-import { StoreContext } from 'components/StoreContext';
+// import { StoreContext } from 'components/StoreContext';
 
 import { characterModel } from 'store/characters';
 
@@ -16,9 +16,9 @@ import { single_character_mock } from './single_character_mock';
 import { Stats } from './Stats';
 
 export const CharacterView: React.FC<{}> = observer(function () {
-  const { characterId } = useParams<{ characterId: string }>();
-  const history = useHistory();
-  const store = React.useContext(StoreContext);
+  // const { characterId } = useParams<{ characterId: string }>();
+  // const history = useHistory();
+  // const store = React.useContext(StoreContext);
 
   const character = characterModel.create(single_character_mock);
   console.log(character);

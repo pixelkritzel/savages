@@ -1,5 +1,5 @@
 import { persistence } from 'lib/persistence';
-import { action, computed, observable, runInAction } from 'mobx';
+import { action, computed, observable, runInAction, makeObservable } from 'mobx';
 
 import { BaseModel, BaseModelParams } from './BaseModel';
 
@@ -12,6 +12,8 @@ export class BaseCollection<
     private Model: new (params: GenericParamsType) => GenericModelType,
     private modelScaffold: GenericParamsType
   ) {
+    makeObservable(this);
+    makeObservable(this);
     queueMicrotask(() => this.loadCollection());
   }
 

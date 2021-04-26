@@ -1,4 +1,4 @@
-@import "styles/_variables.scss";
+@import 'styles/_variables.scss';
 
 @import '../box.scss';
 
@@ -7,14 +7,12 @@
   @extend %box;
 
   .container {
-    display: grid;
-    grid-template-columns: 2.8fr 1.2fr;
-    grid-template-rows: 1fr;
-    gap: 6px 24px;
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .childrenSpacing {
-    &>*:not(:last-child) {
+    & > * {
       margin-bottom: $vertical-rhythm;
     }
   }
