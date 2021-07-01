@@ -1,60 +1,46 @@
-import React, { useState } from 'react';
-
-import { BsPencil, BsCheck } from 'react-icons/bs';
+import React, { HTMLAttributes } from 'react';
+import styled from 'styled-components';
+import cx from 'classnames';
 
 import CSS from './Stats.module.scss';
 
 import { Icharacter } from 'store/characters';
 import { observer } from 'mobx-react-lite';
-import { Button } from 'ui/Button';
-import { IncDec } from 'ui/IncDec';
-import { Dice } from '../Dice';
-import { SWFormGroup } from 'ui/SWFormGroup';
 
-interface StatsProps {
+interface StatsProps extends HTMLAttributes<HTMLDivElement> {
   character: Icharacter;
   isEdit: boolean;
 }
 
-export const Stats: React.FC<StatsProps> = observer(({ character, isEdit = false }) => {
-  const [isEditPace, setIsEditPace] = useState(isEdit);
-  return (
-    <div className={CSS.stats}>
-      <h3>Stats</h3>
-      <SWFormGroup<'div'> as="div" label="Toughness">
-        {character.toughness}
-      </SWFormGroup>
-      <SWFormGroup<'div'> as="div" label="Parry">
-        {character.parry}
-      </SWFormGroup>
-      <SWFormGroup<'div'>
-        as="div"
-        label={
-          <div className="pull-apart">
-            <span>Pace</span>
-            {isEditPace && (
-              <Button icon={<BsCheck />} variant="link" onClick={() => setIsEditPace(false)} />
-            )}
-          </div>
-        }
-      >
-        <div className="pull-apart">
-          {isEditPace ? (
-            <IncDec
-              disableDecrement={character.pace === 0}
-              onIncrement={() => character.set('pace', character.pace + 1)}
-              onDecrement={() => character.set('pace', character.pace - 1)}
-              value={character.pace}
-            />
-          ) : (
-            <>
-              <span>{character.pace}</span>
-              <Button icon={<BsPencil />} variant="link" onClick={() => setIsEditPace(true)} />
-            </>
-          )}
-        </div>
-      </SWFormGroup>
-      <Dice isEdit={isEdit} trait={character.runningDice} />
-    </div>
-  );
-});
+const DL = styled.dl`
+  display: flex;
+  flex-wrap: wrap;
+
+  dt {
+    width: 80%;
+    font-weight: bold;
+  }
+
+  dd {
+    width: 20%;
+  }
+`;
+
+export const Stats: React.FC<StatsProps> = observer(
+  ({ character, className, isEdit = false, ...otherProps }) => {
+    return (
+      <div className={cx(CSS.stats, className)}>
+        <DL>
+          <dt>Toughness</dt>
+          <dd>{character.toughness}</dd>
+
+          <dt>Parry</dt>
+          <dd>{character.parry}</dd>
+
+          <dt>Pace</dt>
+          <dd>{character.pace}</dd>
+        </DL>
+      </div>
+    );
+  }
+);

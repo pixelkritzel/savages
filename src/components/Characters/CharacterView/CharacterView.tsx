@@ -14,6 +14,9 @@ import { Health } from './Health';
 
 import { single_character_mock } from './single_character_mock';
 import { Stats } from './Stats';
+import { Money } from './Money';
+import { Skills } from './Skills';
+import { Powers } from './Powers';
 
 export const CharacterView: React.FC<{}> = observer(function () {
   // const { characterId } = useParams<{ characterId: string }>();
@@ -21,30 +24,29 @@ export const CharacterView: React.FC<{}> = observer(function () {
   // const store = React.useContext(StoreContext);
 
   const character = characterModel.create(single_character_mock);
-  console.log(character);
-
-  const isEdit = true;
+  const isEdit = false;
 
   return (
     <div className={CSS.characterView}>
-      <Attributes isEdit={isEdit} attributes={character.attributes} />
-      <CharacterDescription character={character} isEdit={isEdit} />
-      <Health character={character} />
-
+      <CharacterDescription className={CSS.description} character={character} isEdit={isEdit} />
       <div className={CSS.left}>
+        <Money isEdit={isEdit} character={character} />
+        <Health character={character} />
+        <Attributes isEdit={isEdit} character={character} />
         <Stats character={character} isEdit={isEdit} />
-        <div className={CSS.armor}>armor</div>
-        <div className={CSS.skills}>skills</div>
-        <div className={CSS.hindrances}>hindrances</div>
-        <div className={CSS.tap}>tap</div>
+        <div>edges</div>
+        <div>hindrances</div>
+        <div>tap</div>
       </div>
-      <div className={CSS.edges}>edges</div>
-      <div className={CSS.weapons}>weapons</div>
-      <div className={CSS.augmentations}>augmentations</div>
-      <div className={CSS.gear}>gear</div>
-      <div className={CSS.drone}>drone</div>
-      <div className={CSS.vehicle}>vehicle</div>
-      <div className={CSS.psi}>psi</div>
+      <div className={CSS.right}>
+        <Skills character={character} />
+        <Powers />
+        <div>weapons</div>
+        <div>augmentations</div>
+        <div>gear</div>
+        <div>drone</div>
+        <div>vehicle</div>
+      </div>
       <div className={CSS.contacts}>contacts</div>
       <div className={CSS.notes}>notes</div>
     </div>

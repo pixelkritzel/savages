@@ -3,10 +3,9 @@
 @import '../box.scss';
 
 .attributes {
-  grid-area: 1 / 1 / 2 / 3;
   @extend %box;
 
-  &>*:not(:last-child) {
+  & > *:not(:last-child) {
     margin-bottom: $vertical-rhythm;
   }
 }

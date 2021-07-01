@@ -7,13 +7,15 @@ import { Icharacter } from 'store/characters';
 
 import CSS from './Health.module.scss';
 
-export const Health: React.FC<{
+interface HealthProps extends React.HTMLProps<HTMLDivElement> {
   character: Icharacter;
-}> = ({ character }) => {
+}
+
+export const Health: React.FC<HealthProps> = ({ character, className, ...otherProps }) => {
   return (
-    <div className={cx(CSS.health, CSS.box)}>
+    <div className={cx(CSS.health, className)} {...otherProps}>
       <h3>Health</h3>
-      <div className="pull-apart">
+      <div>
         <strong>Wounds</strong>
         <div>
           {character.wounds.map((_, woundIndex) => (
@@ -36,7 +38,7 @@ export const Health: React.FC<{
           ))}
         </div>
       </div>
-      <div className="pull-apart">
+      <div>
         <strong>Incapacitaded</strong>
         <div>
           <Checkbox
@@ -48,7 +50,7 @@ export const Health: React.FC<{
           />
         </div>
       </div>
-      <div className="pull-apart">
+      <div>
         <strong>Fatigue</strong>
 
         <div>

@@ -57,7 +57,7 @@ export const trait = types
       if (self.bonus === 0) {
         return `D${self.dice}`;
       } else {
-        return `D${self.dice} ${self.bonus}`;
+        return `D${self.dice} ${self.bonus > 0 ? '+' + self.bonus : self.bonus}`;
       }
     },
   }))

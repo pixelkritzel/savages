@@ -1,6 +1,5 @@
 @import '../box.scss';
 
 .stats {
-  grid-area: 1 / 1 / 2 / 3;
   @extend %box;
 }

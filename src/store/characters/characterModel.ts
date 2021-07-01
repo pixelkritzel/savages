@@ -1,3 +1,5 @@
+import { powerModel } from './power';
+import { skillModel } from './skill';
 import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -5,6 +7,7 @@ import { settingModel } from 'store/settings/settingModel';
 import { meleeWeapon } from 'store/resources/meleeWeapon';
 import { rangedWeapon } from 'store/resources/rangedWespons';
 import { trait } from './trait';
+import { attributesModel } from './attributesModel';
 
 export const characterModel = types
   .model('character', {
@@ -20,13 +23,7 @@ export const characterModel = types
     incapcitaded: types.optional(types.boolean, false),
     advances: 0,
     spendAttributesPoints: 0,
-    attributes: types.model({
-      agility: trait,
-      smarts: trait,
-      spirit: trait,
-      strength: trait,
-      vigor: trait,
-    }),
+    attributes: attributesModel,
     bennies: 3,
     size: 3,
     freeEdges: 0,
@@ -42,7 +39,11 @@ export const characterModel = types
       })
     ),
     setting: types.reference(settingModel),
-    skills: types.map(trait),
+    skills: types.map(skillModel),
+    powers: types.map(powerModel),
+    basePowerPoints: 0,
+    currentPowerPoints: 0,
+    hasPowers: false,
   })
   .volatile((self) => ({
     showErrors: false,
