@@ -14,15 +14,13 @@ export const single_character_mock: SIcharacter = {
   },
   skills: {
     fighting: {
-      name: 'Fighting',
-      associatedAttribute: 'agility',
+      settingSkill: 'fighting',
       specializations: ['unarmed'],
       dice: 10,
       bonus: 0,
     },
     taunt: {
-      name: 'Taunt',
-      associatedAttribute: 'smarts',
+      settingSkill: 'taunt',
       dice: 4,
       bonus: -2,
     },

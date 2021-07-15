@@ -1,28 +1,17 @@
 import { Instance, SnapshotIn, types } from 'mobx-state-tree';
-import { v4 as uuidv4 } from 'uuid';
 
 import { creationRulesModel } from './creationRulesModel';
+import { settingsSkillModel } from './settingSkillModel';
 
-import savageWorldsVanilla from './data/SavageWorldsVanilla';
+import { vanillaSetting } from './data/SavageWorldsVanilla';
 
 export const settingModel = types
   .model('setting', {
     id: types.identifier,
     name: types.optional(types.string, ''),
     creation: creationRulesModel,
-    log: types.array(
-      types.model({
-        date: types.number,
-        message: types.string,
-      })
-    ),
+    availableSkills: types.array(settingsSkillModel),
   })
-  .views((self) => ({
-    get errors() {
-      const errors: string[] = [];
-      return errors;
-    },
-  }))
   .actions((self) => ({
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
       key: K,
@@ -35,8 +24,7 @@ export const settingModel = types
 
 export function createSettingsScaffold() {
   return {
-    ...savageWorldsVanilla,
-    id: uuidv4(),
+    ...vanillaSetting,
   };
 }
 

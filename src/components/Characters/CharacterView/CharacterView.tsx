@@ -1,29 +1,30 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-// import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
-// import { StoreContext } from 'components/StoreContext';
-
-import { characterModel } from 'store/characters';
-
-import CSS from './CharacterView.module.scss';
+import { StoreContext } from 'components/StoreContext';
+import { Istore } from 'store';
 
 import { Attributes } from './Attributes';
 import { CharacterDescription } from './CharacterDescription';
 import { Health } from './Health';
-
-import { single_character_mock } from './single_character_mock';
 import { Stats } from './Stats';
 import { Money } from './Money';
 import { Skills } from './Skills';
 import { Powers } from './Powers';
 
-export const CharacterView: React.FC<{}> = observer(function () {
-  // const { characterId } = useParams<{ characterId: string }>();
-  // const history = useHistory();
-  // const store = React.useContext(StoreContext);
+import CSS from './CharacterView.module.scss';
 
-  const character = characterModel.create(single_character_mock);
+export const CharacterView: React.FC<{}> = observer(function () {
+  const { characterId } = useParams<{ characterId: string }>();
+  const history = useHistory();
+  const store = React.useContext<Istore>(StoreContext);
+  const character = store.characters.find((character) => character.id === characterId);
+
+  if (!character) {
+    throw new Error(`Character ${characterId} wasn't found!`);
+  }
+
   const isEdit = false;
 
   return (

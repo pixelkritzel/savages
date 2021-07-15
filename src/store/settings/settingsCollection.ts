@@ -6,9 +6,4 @@ export const settingsCollection = createCollection<Tsetting, Isetting, SIsetting
   'settings',
   settingModel,
   createSettingsScaffold
-).actions((self) => ({
-  afterCreate() {
-    self.set({ ...createSettingsScaffold(), id: 'vanilla-rules' });
-    console.log(JSON.stringify(self.all, undefined, 2));
-  },
-}));
+);

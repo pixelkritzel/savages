@@ -85,6 +85,10 @@ export const trait = types
         self.dice = DICE_TYPES[DICE_TYPES.indexOf(self.dice) + 1];
       }
     },
+
+    setName(name: string) {
+      self.name = name;
+    },
   }));
 
 export const traitFactory = (name: string) =>

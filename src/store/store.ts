@@ -1,30 +1,24 @@
-import { resources, resourcesScaffold } from './resources/resources';
 import { types, Instance } from 'mobx-state-tree';
 
-import { collectionScaffold } from 'lib/state/createCollection';
+import { single_character_mock } from 'components/Characters/CharacterView/single_character_mock';
 
-import { charactersCollection } from './characters/charactersCollection';
-import { settingsCollection } from './settings/settingsCollection';
+import { vanillaSetting } from 'store/settings/data/SavageWorldsVanilla';
+import { resources, resourcesScaffold } from 'store/resources/resources';
+import { settingModel } from 'store/settings/settingModel';
+import { characterModel } from 'store/characters';
 
-const store = types
-  .model('stores', {
-    characters: charactersCollection,
-    resources,
-    settings: settingsCollection,
-  })
-  .actions((self) => ({
-    afterCreate() {
-      // MST creates instances lazily but we need this instance for reference
-      self.settings; // eslint-disable-line @typescript-eslint/no-unused-expressions
-    },
-  }));
+const store = types.model('stores', {
+  characters: types.array(characterModel),
+  resources,
+  settings: types.array(settingModel),
+});
 
 export interface Istore extends Instance<typeof store> {}
 
 export function createStore() {
-  return {
-    characters: [],
+  return store.create({
+    characters: [single_character_mock],
     resources: resourcesScaffold,
-    settings: collectionScaffold,
-  };
+    settings: [vanillaSetting],
+  });
 }
