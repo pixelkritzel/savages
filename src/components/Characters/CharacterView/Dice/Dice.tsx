@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import { observable, makeObservable, computed } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import { observer } from 'mobx-react';
 import cx from 'classnames';
 import ReactModal from 'react-modal';
@@ -12,9 +12,9 @@ import { SWFormGroup } from 'ui/SWFormGroup';
 
 import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
-import { ShowObject } from 'ui/ShowObject';
 
 import CSS from './Dice.module.scss';
+import { RollDice } from './RollDice';
 
 interface DiceProps extends HTMLAttributes<HTMLDivElement> {
   character: Icharacter;
@@ -30,29 +30,6 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
   @observable
   isRollModalOpen = false;
 
-  @computed
-  get modifierSum() {
-    const { character, trait } = this.props;
-
-    const modifierSum: Parameters<Itrait['roll']>[0] = {
-      diceDifference: 0,
-      bonus: -character.woundsPenalty - character.fatigueAsNumber,
-    };
-
-    for (const [, modifier] of this.props.trait.activeModifiers) {
-      for (const traitModifier of modifier.traitModifiers) {
-        if (traitModifier.traitName === trait.name) {
-          modifierSum.diceDifference = modifierSum.diceDifference + traitModifier.bonusDice;
-          modifierSum.bonus = modifierSum.bonus + traitModifier.bonusValue;
-        }
-      }
-    }
-    return modifierSum;
-  }
-
-  @observable
-  result: ReturnType<Itrait['roll']> | null = null;
-
   constructor(props: DiceProps) {
     super(props);
     makeObservable(this);
@@ -66,13 +43,13 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
     this.isRollModalOpen = true;
   };
 
-  rollDice = () => {
-    this.result = this.props.trait.roll(this.modifierSum, this.props.character.wildcard);
+  closeModal = () => {
+    this.props.trait.clearActiveModifiers();
+    this.isRollModalOpen = false;
   };
 
   render() {
     const { character, trait } = this.props;
-    const currentModifiers = character.getTraitModifiers(trait.name);
 
     return (
       <div className={cx({ [CSS.oneLine]: !this.isEdit })}>
@@ -118,42 +95,10 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
             <ReactModal
               isOpen={this.isRollModalOpen}
               shouldCloseOnEsc={true}
-              onRequestClose={() => (this.isRollModalOpen = false)}
+              onRequestClose={this.closeModal}
               ariaHideApp={false}
             >
-              <h2>Rolling {trait.name}</h2>
-              <h3>Active Modifiers:</h3>
-              <h4>Wounds: {-currentModifiers.nonOptionalModifiers.wounds}</h4>
-              <h4>Fatigue: {-currentModifiers.nonOptionalModifiers.fatigue}</h4>
-              <h4>Edges</h4>
-              {currentModifiers.nonOptionalModifiers.edges.map((modifier) => (
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={trait.activeModifiers.has(modifier.id)}
-                    onChange={() => trait.toggleActiveModifier(modifier)}
-                  />
-                  <strong>{modifier.name}</strong> {modifier.conditions}
-                </label>
-              ))}
-
-              <h3>Optional Modifiers:</h3>
-
-              <h4>Edges</h4>
-              {currentModifiers.optionalModifiers.edges.map((modifier) => (
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={trait.activeModifiers.has(modifier.id)}
-                    onChange={() => trait.toggleActiveModifier(modifier)}
-                  />
-                  <strong>{modifier.name}</strong> {modifier.conditions}
-                  <br /> Dice {modifier.getHumanFriendlyTraitModifierValueByTrait(trait.name)}
-                </label>
-              ))}
-              <ShowObject>{this.modifierSum}</ShowObject>
-              <Button onClick={this.rollDice}>Roll Dice</Button>
-              {this.result && <ShowObject>{this.result}</ShowObject>}
+              <RollDice character={character} trait={trait} />
             </ReactModal>
           </>
         )}
