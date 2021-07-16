@@ -1,5 +1,9 @@
 import { Instance, types } from 'mobx-state-tree';
 
+import { modifierModel, Imodifier } from 'store/modifier';
+
+import { padWithMathOperator } from 'utils/padWithMathOpertor';
+
 export const DICE_TYPES: Itrait['dice'][] = [4, 6, 8, 10, 12];
 
 export const diceType = types.union(
@@ -11,17 +15,16 @@ export const diceType = types.union(
 );
 export const bonusType = types.number;
 
-// const modifier = {
-//   strength: {
-//     dice: 'D6',
-//     maximum: {
-//       bonus: '+1',
-//     },
-//   },
-// };
+function rollDice(sides: number) {
+  let result = Math.ceil(Math.random() / (1 / sides));
+  if (result === sides) {
+    result = result + rollDice(sides);
+  }
+  return result;
+}
 
-export const trait = types
-  .model('trait', {
+export const traitModel = types
+  .model('traitModel', {
     name: types.optional(types.string, ''),
     dice: types.optional(diceType, 4),
     bonus: types.optional(bonusType, 0),
@@ -39,6 +42,7 @@ export const trait = types
       }),
       { dice: 12, bonus: +4 }
     ),
+    activeModifiers: types.map(types.reference(modifierModel)),
   })
   .views((self) => ({
     get isBonusDecrementable(): boolean {
@@ -57,8 +61,19 @@ export const trait = types
       if (self.bonus === 0) {
         return `D${self.dice}`;
       } else {
-        return `D${self.dice} ${self.bonus > 0 ? '+' + self.bonus : self.bonus}`;
+        return `D${self.dice} ${padWithMathOperator(self.bonus)}`;
       }
+    },
+    roll(
+      modifier: { diceDifference: number; bonus: number } = { diceDifference: 0, bonus: 0 },
+      isWildCard = false
+    ) {
+      const dice =
+        self.dice + modifier.diceDifference * 2 > 3 ? self.dice + modifier.diceDifference * 2 : 4;
+      const traitDiceRoll = rollDice(dice) + self.bonus + modifier.bonus;
+
+      const wildDiceRoll = rollDice(6) + self.bonus + modifier.bonus;
+      return `Trait Dice: ${traitDiceRoll}${isWildCard ? ` | Wild Dice: ${wildDiceRoll}` : ''}`;
     },
   }))
   .actions((self) => ({
@@ -85,13 +100,28 @@ export const trait = types
         self.dice = DICE_TYPES[DICE_TYPES.indexOf(self.dice) + 1];
       }
     },
-
     setName(name: string) {
       self.name = name;
+    },
+    addActiveModifier(modifier: Imodifier) {
+      self.activeModifiers.set(modifier.id, modifier);
+    },
+    clearActiveModifiers() {
+      self.activeModifiers.clear();
+    },
+    removeActiveModifier(modifier: Imodifier) {
+      self.activeModifiers.delete(modifier.id);
+    },
+    toggleActiveModifier(modifier: Imodifier) {
+      if (self.activeModifiers.has(modifier.id)) {
+        self.activeModifiers.delete(modifier.id);
+      } else {
+        self.activeModifiers.set(modifier.id, modifier);
+      }
     },
   }));
 
 export const traitFactory = (name: string) =>
-  types.compose(trait, types.model({ name: types.optional(types.identifier, name) }));
+  types.compose(traitModel, types.model({ name: types.optional(types.identifier, name) }));
 
-export interface Itrait extends Instance<typeof trait> {}
+export interface Itrait extends Instance<typeof traitModel> {}

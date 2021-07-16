@@ -4,12 +4,14 @@ import { creationRulesModel } from './creationRulesModel';
 import { settingsSkillModel } from './settingSkillModel';
 
 import { vanillaSetting } from './data/SavageWorldsVanilla';
+import { settingEdgeModel } from './settingEdgeModel';
 
 export const settingModel = types
   .model('setting', {
     id: types.identifier,
     name: types.optional(types.string, ''),
     creation: creationRulesModel,
+    availableEdges: types.array(settingEdgeModel),
     availableSkills: types.array(settingsSkillModel),
   })
   .actions((self) => ({

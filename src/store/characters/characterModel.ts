@@ -1,17 +1,21 @@
-import { powerModel } from './power';
-import { skillModel } from './skill';
 import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { settingModel } from 'store/settings/settingModel';
+import { Imodifier } from 'store/modifier';
 import { meleeWeapon } from 'store/resources/meleeWeapon';
+
+import { settingEdgeModel } from 'store/settings/settingEdgeModel';
+import { settingModel } from 'store/settings/settingModel';
 import { rangedWeapon } from 'store/resources/rangedWespons';
-import { trait } from './trait';
 import { attributesModel } from './attributesModel';
+import { powerModel } from './power';
+import { skillModel } from './skillModel';
+import { traitModel } from './traitModel';
 
 export const characterModel = types
   .model('character', {
     id: types.identifier,
+    wildcard: false,
     name: types.optional(types.string, ''),
     race: types.optional(types.string, ''),
     origin: types.optional(types.string, ''),
@@ -28,7 +32,7 @@ export const characterModel = types
     size: 3,
     freeEdges: 0,
     pace: 6,
-    runningDice: trait,
+    runningDice: traitModel,
     armor: 0,
     meleeWeapons: types.array(types.reference(meleeWeapon)),
     rangedWeapons: types.array(types.reference(rangedWeapon)),
@@ -40,6 +44,7 @@ export const characterModel = types
     ),
     setting: types.reference(settingModel),
     skills: types.map(skillModel),
+    edges: types.array(types.reference(settingEdgeModel)),
     powers: types.map(powerModel),
     basePowerPoints: 0,
     currentPowerPoints: 0,
@@ -65,6 +70,23 @@ export const characterModel = types
         Math.round(self.attributes.vigor.dice / 2) + Math.floor(self.attributes.vigor.bonus / 2) + 2
       );
     },
+    get woundsAsNumber() {
+      return self.wounds.reduce((prev, current) => (current ? prev + 1 : prev), 0);
+    },
+    get fatigueAsNumber() {
+      return self.fatigue.reduce((prev, current) => (current ? prev + 1 : prev), 0);
+    },
+  }))
+  .views((self) => ({
+    get woundsPenalty() {
+      const ignoreWoundLevels = self.edges.reduce(
+        (prev, edge) =>
+          prev + edge.modifiers.reduce((prev, modifier) => prev + modifier.ignoreWounds, 0),
+        0
+      );
+
+      return Math.max(self.woundsAsNumber - ignoreWoundLevels, 0);
+    },
   }))
   .views((self) => ({
     get errors() {
@@ -79,6 +101,32 @@ export const characterModel = types
         errors.push('You spend not all your attribute points.');
       }
       return errors;
+    },
+
+    getTraitModifiers(traitName: string) {
+      type CurrentModifiersType = { edges: Imodifier[] };
+      const { edges } = self;
+      const nonOptionalModifiers: CurrentModifiersType & { wounds: number; fatigue: number } = {
+        edges: [],
+        wounds: self.woundsPenalty,
+        fatigue: self.fatigueAsNumber,
+      };
+      const optionalModifiers: CurrentModifiersType = { edges: [] };
+
+      edges.forEach((edge) => {
+        edge.modifiers.forEach((modifier) => {
+          modifier.traitModifiers.forEach((traitMod) => {
+            if (traitMod.traitName === traitName) {
+              if (modifier.optional) {
+                optionalModifiers.edges.push(modifier);
+              } else {
+                nonOptionalModifiers.edges.push(modifier);
+              }
+            }
+          });
+        });
+      });
+      return { nonOptionalModifiers, optionalModifiers };
     },
   }))
   .actions((self) => ({

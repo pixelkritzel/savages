@@ -18,16 +18,15 @@ export const Attributes: React.FC<AttributesProps> = ({
   isEdit,
   ...otherProps
 }) => {
-  const { attributes, runningDice } = character;
   return (
     <div className={cx(CSS.attributes, className)} {...otherProps}>
       <h3>Attributes</h3>
-      <Dice isEdit={isEdit} trait={attributes.agility} />
-      <Dice isEdit={isEdit} trait={attributes.smarts} />
-      <Dice isEdit={isEdit} trait={attributes.spirit} />
-      <Dice isEdit={isEdit} trait={attributes.strength} />
-      <Dice isEdit={isEdit} trait={attributes.vigor} />
-      <Dice isEdit={isEdit} trait={runningDice} />
+      <Dice character={character} isEdit={isEdit} trait={character.attributes.agility} />
+      <Dice character={character} isEdit={isEdit} trait={character.attributes.smarts} />
+      <Dice character={character} isEdit={isEdit} trait={character.attributes.spirit} />
+      <Dice character={character} isEdit={isEdit} trait={character.attributes.strength} />
+      <Dice character={character} isEdit={isEdit} trait={character.attributes.vigor} />
+      <Dice character={character} isEdit={isEdit} trait={character.runningDice} />
     </div>
   );
 };

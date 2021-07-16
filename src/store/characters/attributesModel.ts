@@ -1,10 +1,13 @@
 import { types } from 'mobx-state-tree';
-import { trait } from './trait';
+
+import { traitModel } from './traitModel';
 
 export const attributesModel = types.model({
-  agility: trait,
-  smarts: trait,
-  spirit: trait,
-  strength: trait,
-  vigor: trait,
+  agility: traitModel,
+  smarts: traitModel,
+  spirit: traitModel,
+  strength: traitModel,
+  vigor: traitModel,
 });
+
+export const attributeNames = ['agility', 'smarts', 'spirit', 'strength', 'vigor'];

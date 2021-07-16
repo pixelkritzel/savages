@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { StoreContext } from 'components/StoreContext';
 import { Istore } from 'store';
 
 import { Attributes } from './Attributes';
 import { CharacterDescription } from './CharacterDescription';
+import { Edges } from './Edges';
 import { Health } from './Health';
-import { Stats } from './Stats';
 import { Money } from './Money';
-import { Skills } from './Skills';
 import { Powers } from './Powers';
+import { Skills } from './Skills';
+import { Stats } from './Stats';
 
 import CSS from './CharacterView.module.scss';
 
 export const CharacterView: React.FC<{}> = observer(function () {
   const { characterId } = useParams<{ characterId: string }>();
-  const history = useHistory();
   const store = React.useContext<Istore>(StoreContext);
   const character = store.characters.find((character) => character.id === characterId);
 
@@ -35,7 +35,7 @@ export const CharacterView: React.FC<{}> = observer(function () {
         <Health character={character} />
         <Attributes isEdit={isEdit} character={character} />
         <Stats character={character} isEdit={isEdit} />
-        <div>edges</div>
+        <Edges edges={character.edges} />
         <div>hindrances</div>
         <div>tap</div>
       </div>

@@ -1,3 +1,5 @@
+import { nervesOfSteel } from './edges/nerves_of_steel';
+import { strongWilled } from './edges/strongWilled';
 import { SIsetting } from './../settingModel';
 
 export const vanillaSetting: SIsetting = {
@@ -6,6 +8,7 @@ export const vanillaSetting: SIsetting = {
   creation: {
     attributePoints: 5,
   },
+  availableEdges: [strongWilled, nervesOfSteel],
   availableSkills: [
     {
       id: 'fighting',

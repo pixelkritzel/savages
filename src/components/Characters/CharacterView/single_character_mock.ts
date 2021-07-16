@@ -3,6 +3,7 @@ import { SIcharacter } from 'store/characters';
 export const single_character_mock: SIcharacter = {
   id: 'jerjer',
   name: 'Jerjer Johannson',
+  wildcard: true,
   setting: 'vanilla-rules',
   race: 'human',
   attributes: {
@@ -25,6 +26,7 @@ export const single_character_mock: SIcharacter = {
       bonus: -2,
     },
   },
+  edges: ['strong_willed', 'nerves_of_steel'],
   runningDice: {
     name: 'Running',
     dice: 6,

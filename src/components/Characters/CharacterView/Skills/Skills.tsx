@@ -1,7 +1,11 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { Icharacter } from 'store/characters';
 import styled from 'styled-components';
+
+import { Icharacter } from 'store/characters';
+import { Iskill } from 'store/characters/skillModel';
+
+import { mapToArray } from 'utils/mapToArray';
 
 interface SkillsProps {
   character: Icharacter;
@@ -31,9 +35,9 @@ export const Skills: React.FC<SkillsProps> = observer(({ character }) => {
           <th>Dice</th>
         </thead>
         <tbody>
-          {Array.from(character.skills.values()).map(({ name, value, specializations }) => (
-            <tr key={name}>
-              <td>{name}</td>
+          {mapToArray<Iskill>(character.skills).map(({ settingSkill, value, specializations }) => (
+            <tr key={settingSkill.id}>
+              <td>{settingSkill.name}</td>
               <td>{specializations?.join(' ')}</td>
               <td>{value}</td>
             </tr>

@@ -57,7 +57,7 @@ export const Health: React.FC<HealthProps> = ({ character, className, ...otherPr
           {character.fatigue.map((_, fatigueIndex) => (
             <Checkbox
               className={CSS.checkbox}
-              checked={character.wounds[fatigueIndex] || undefined}
+              checked={character.fatigue[fatigueIndex] || undefined}
               label={fatigueIndex + 1}
               type="checkbox"
               id={`fatigue-${fatigueIndex}`}
@@ -65,8 +65,8 @@ export const Health: React.FC<HealthProps> = ({ character, className, ...otherPr
               onChange={() =>
                 character.set(
                   'fatigue',
-                  character.wounds.map((existingWound, existingfatigueIndex) =>
-                    existingfatigueIndex === fatigueIndex ? !existingWound : existingWound
+                  character.fatigue.map((existingFatique, existingfatigueIndex) =>
+                    existingfatigueIndex === fatigueIndex ? !existingFatique : existingFatique
                   ) as any
                 )
               }
