@@ -8,7 +8,8 @@ export const anemic: SIhindrance = {
   description: `Anemic characters are particularly susceptible to sickness, disease, environmental effects, and fatigue. They subtract 2 from Vigor rolls made to resist Fatigue.`,
   modifiers: [
     {
-      name: 'Anemic',
+      id: '',
+      reason: 'Anemic',
       optional: true,
       conditions: '–2 Vigor when resisting Fatigue.',
       traitModifiers: [{ type: 'attribute', traitName: 'vigor', bonusValue: -2 }],

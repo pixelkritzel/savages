@@ -1,3 +1,4 @@
+import { test_die_difference } from './hindrances/test_die_difference';
 import { anemic } from './hindrances/anemic';
 import { notice } from './skills/notice';
 import { commonKnowledge } from './skills/common_knowledge';
@@ -15,7 +16,7 @@ export const vanillaSetting: SIsetting = {
     attributePoints: 5,
   },
   availableEdges: [strongWilled, nervesOfSteel],
-  availableHindrances: [anemic, clueless],
+  availableHindrances: [anemic, clueless, test_die_difference],
   availableSkills: [commonKnowledge, fighting, notice, taunt],
   rules: {
     skillSpezializations: ['fighting'],

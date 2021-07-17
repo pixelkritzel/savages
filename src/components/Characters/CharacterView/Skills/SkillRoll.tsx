@@ -1,10 +1,10 @@
-import { makeObservable, observable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import React from 'react';
 import ReactModal from 'react-modal';
 import { Icharacter } from 'store/characters';
 import { Iskill } from 'store/characters/skillModel';
-import { RollDice } from '../Dice/RollDice';
+import { RollTrait } from '../RollTrait/RollTrait';
 
 interface SkillRollProps {
   character: Icharacter;
@@ -21,11 +21,11 @@ export class SkillRoll extends React.Component<SkillRollProps> {
     makeObservable(this);
   }
 
+  @action
   openRollModal = () => {
     const { character, skill } = this.props;
 
     const traitModifiers = character.getTraitModifiers(skill.settingSkill.id);
-    console.log(JSON.stringify(traitModifiers, undefined, 2));
 
     traitModifiers.nonOptionalModifiers.edges.forEach((modifier) =>
       skill.addActiveModifier(modifier)
@@ -38,6 +38,7 @@ export class SkillRoll extends React.Component<SkillRollProps> {
     this.isRollModalOpen = true;
   };
 
+  @action
   closeRollModal = () => {
     this.props.skill.clearActiveModifiers();
     this.isRollModalOpen = false;
@@ -49,14 +50,16 @@ export class SkillRoll extends React.Component<SkillRollProps> {
     return (
       <>
         <button onClick={this.openRollModal}>{skill.value}</button>
-        <ReactModal
-          isOpen={this.isRollModalOpen}
-          shouldCloseOnEsc={true}
-          onRequestClose={this.closeRollModal}
-          ariaHideApp={false}
-        >
-          <RollDice character={character} trait={skill} />
-        </ReactModal>
+        {this.isRollModalOpen && (
+          <ReactModal
+            isOpen={this.isRollModalOpen}
+            shouldCloseOnEsc={true}
+            onRequestClose={this.closeRollModal}
+            ariaHideApp={false}
+          >
+            <RollTrait character={character} trait={skill} />
+          </ReactModal>
+        )}
       </>
     );
   }

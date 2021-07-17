@@ -26,6 +26,7 @@ function rollDice(sides: number) {
 export const traitModel = types
   .model('traitModel', {
     name: types.optional(types.string, ''),
+    type: types.string,
     dice: types.optional(diceType, 4),
     bonus: types.optional(bonusType, 0),
     minimum: types.optional(
@@ -43,6 +44,8 @@ export const traitModel = types
       { dice: 12, bonus: +4 }
     ),
     activeModifiers: types.map(types.reference(modifierModel)),
+    numberOfActions: 0,
+    isJoker: false,
   })
   .views((self) => ({
     get isBonusDecrementable(): boolean {
@@ -124,6 +127,18 @@ export const traitModel = types
       } else {
         self.activeModifiers.set(modifier.id, modifier);
       }
+    },
+    set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
+      key: K,
+      value: T[K]
+    ) {
+      if (typeof value !== typeof self[key]) {
+        console.warn('TYPE ERROR ! !!!!!  !!!');
+        return;
+      }
+      console.log('trait model', key, value);
+
+      self[key] = value;
     },
   }));
 

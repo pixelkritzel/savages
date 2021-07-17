@@ -9,6 +9,7 @@ export const modifierModel = types
   .model('modifier', {
     id: types.optional(types.identifier, uuidv4),
     name: '',
+    reason: '',
     optional: types.boolean,
     conditions: '',
     traitModifiers: types.array(traitModifierModel),

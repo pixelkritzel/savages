@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Container } from 'ui/Container';
 
 export const Navbar: React.FC = () => {
-  const match = useRouteMatch();
-  console.log(match.url);
+  // const match = useRouteMatch();
+  // console.log(match.url);
   return (
     <Container>
       <Link to="/">Savages</Link>

@@ -1,10 +1,9 @@
 import React, { HTMLAttributes } from 'react';
-import { observable, makeObservable } from 'mobx';
+import { observable, makeObservable, action } from 'mobx';
 import { observer } from 'mobx-react';
 import cx from 'classnames';
 import ReactModal from 'react-modal';
 import { BsPencil } from 'react-icons/bs';
-import { capitalizeFirstLetter } from 'lib/strings';
 
 import { Button } from 'ui/Button';
 import { IncDec } from 'ui/IncDec';
@@ -13,8 +12,11 @@ import { SWFormGroup } from 'ui/SWFormGroup';
 import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
 
+import { capitalizeFirstLetter } from 'lib/strings';
+
+import { RollTrait } from '../RollTrait/';
+
 import CSS from './Dice.module.scss';
-import { RollDice } from './RollDice';
 
 interface DiceProps extends HTMLAttributes<HTMLDivElement> {
   character: Icharacter;
@@ -35,6 +37,7 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
     makeObservable(this);
   }
 
+  @action
   openRollModal = () => {
     const { character, trait } = this.props;
     const traitModifiers = character.getTraitModifiers(trait.name);
@@ -48,6 +51,7 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
     this.isRollModalOpen = true;
   };
 
+  @action
   closeRollModal = () => {
     this.props.trait.clearActiveModifiers();
     this.isRollModalOpen = false;
@@ -103,7 +107,7 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
               onRequestClose={this.closeRollModal}
               ariaHideApp={false}
             >
-              <RollDice character={character} trait={trait} />
+              <RollTrait character={character} trait={trait} />
             </ReactModal>
           </>
         )}

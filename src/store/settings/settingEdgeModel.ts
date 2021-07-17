@@ -35,6 +35,12 @@ export const settingEdgeModel = types
     }),
   })
   .actions((self) => ({
+    afterCreate() {
+      self.modifiers.forEach((modifier) => {
+        modifier.set('name', self.name);
+        modifier.set('reason', `edge_${self.id}`);
+      });
+    },
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
       key: K,
       value: T[K]

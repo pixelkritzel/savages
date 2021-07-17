@@ -1,7 +1,6 @@
 import React from 'react';
 import { action, computed, makeObservable, observable } from 'mobx';
-import { observer } from 'mobx-react';
-import { getType } from 'mobx-state-tree';
+import { Observer, observer } from 'mobx-react';
 
 import { StoreContext } from 'components/StoreContext';
 
@@ -11,9 +10,12 @@ import { ShowObject } from 'ui/ShowObject';
 import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
 import { Istore } from 'store';
-import { Iskill } from 'store/characters/skillModel';
+import { Iskill, isSkill } from 'store/characters/skillModel';
 
 import { capitalizeFirstLetter } from 'lib/strings';
+import { Joker } from './Joker';
+import { Actions } from './Actions';
+import { createModifierAccumulator, ModifierAccumulator } from './modifierAccumulator';
 
 interface RollDiceProps {
   character: Icharacter;
@@ -21,73 +23,58 @@ interface RollDiceProps {
 }
 
 @observer
-export class RollDice extends React.Component<RollDiceProps> {
+export class RollTrait extends React.Component<RollDiceProps> {
   static contextType = StoreContext;
   // @ts-expect-error
   context!: Istore;
 
   @computed
-  get modifierSum() {
+  get modifierAccumulator() {
     const { character, trait } = this.props;
 
-    const modifierSum: Parameters<Itrait['roll']>[0] = {
-      diceDifference: 0,
-      bonus: -character.woundsPenalty - character.fatigueAsNumber,
-    };
+    const modifierAccumulator: ModifierAccumulator = createModifierAccumulator();
+    modifierAccumulator.boni.wounds = -character.woundsPenalty;
+    modifierAccumulator.boni.fatigue = -character.fatigueAsNumber;
+    modifierAccumulator.boni.numberOfActions = -(2 * trait.numberOfActions);
+    modifierAccumulator.boni.joker = trait.isJoker ? 2 : 0;
 
-    if (this.isSkillSpezialized && this.selectedSkillSpezialization === null) {
-      modifierSum.bonus = modifierSum.bonus - 2;
+    if (isSkill(trait) && trait.isSkillSpezialized && trait.selectedSkillSpezialization === null) {
+      modifierAccumulator.boni.skillSpecialization = -2;
     }
 
     for (const [, modifier] of this.props.trait.activeModifiers) {
       for (const traitModifier of modifier.traitModifiers) {
         if (traitModifier.traitName === trait.name) {
-          modifierSum.diceDifference = modifierSum.diceDifference + traitModifier.bonusDice;
-          modifierSum.bonus = modifierSum.bonus + traitModifier.bonusValue;
+          modifierAccumulator.diceDifferences[modifier.reason] = traitModifier.bonusDice;
+          modifierAccumulator.boni[modifier.reason] = traitModifier.bonusValue;
         }
       }
     }
-    return modifierSum;
+    return modifierAccumulator;
+  }
+
+  @computed
+  get modifierSum() {
+    const diceDifference = Object.values(this.modifierAccumulator.diceDifferences).reduce(
+      (sum, diceDifference) => sum + diceDifference,
+      0
+    );
+    const bonus = Object.values(this.modifierAccumulator.boni).reduce(
+      (sum, bonus) => sum + bonus,
+      0
+    );
+    return { diceDifference, bonus };
   }
 
   @observable
   result: ReturnType<Itrait['roll']> | null = null;
-
-  @computed
-  get traitType() {
-    const modelName = getType(this.props.trait).name;
-    if (modelName.includes('attribute')) {
-      return 'attribute';
-    } else if (modelName.includes('skill')) {
-      return 'skill';
-    } else if (modelName.includes('trait')) {
-      return 'trait';
-    }
-    throw new Error(`Unknown trait type: ${modelName}`);
-  }
-
-  @computed
-  get isSkillSpezialized() {
-    return (
-      this.traitType === 'skill' &&
-      this.context.selectedSetting.isSkillSpezializations &&
-      this.context.selectedSetting.isSpezializedSkill(this.props.trait.name)
-    );
-  }
-
-  @observable
-  selectedSkillSpezialization: string | null = null;
-
-  @action
-  setSelectedSkillSpezialization = (spezialization: this['selectedSkillSpezialization']) => {
-    this.selectedSkillSpezialization = spezialization;
-  };
 
   constructor(props: RollDiceProps) {
     super(props);
     makeObservable(this);
   }
 
+  @action
   rollDice = () => {
     this.result = this.props.trait.roll(this.modifierSum, this.props.character.wildcard);
   };
@@ -99,12 +86,18 @@ export class RollDice extends React.Component<RollDiceProps> {
     return (
       <>
         <h2>Rolling {trait.name}</h2>
+        <Actions trait={trait} />
+
+        <div>
+          <Joker trait={trait} />
+        </div>
+
         <h3>Active Modifiers:</h3>
         <h4>Wounds: {-currentModifiers.nonOptionalModifiers.wounds}</h4>
         <h4>Fatigue: {-currentModifiers.nonOptionalModifiers.fatigue}</h4>
         <h4>Hindrances</h4>
         {currentModifiers.nonOptionalModifiers.hindrances.map((modifier) => (
-          <label>
+          <label key={modifier.id}>
             <input
               type="checkbox"
               checked={trait.activeModifiers.has(modifier.id)}
@@ -115,7 +108,7 @@ export class RollDice extends React.Component<RollDiceProps> {
         ))}
         <h4>Edges</h4>
         {currentModifiers.nonOptionalModifiers.edges.map((modifier) => (
-          <label>
+          <label key={modifier.id}>
             <input
               type="checkbox"
               checked={trait.activeModifiers.has(modifier.id)}
@@ -128,7 +121,7 @@ export class RollDice extends React.Component<RollDiceProps> {
         <h3>Optional Modifiers:</h3>
         <h4>Hindrances</h4>
         {currentModifiers.optionalModifiers.hindrances.map((modifier) => (
-          <label>
+          <label key={modifier.id}>
             <input
               type="checkbox"
               checked={trait.activeModifiers.has(modifier.id)}
@@ -140,7 +133,7 @@ export class RollDice extends React.Component<RollDiceProps> {
 
         <h4>Edges</h4>
         {currentModifiers.optionalModifiers.edges.map((modifier) => (
-          <label>
+          <label key={modifier.id}>
             <input
               type="checkbox"
               checked={trait.activeModifiers.has(modifier.id)}
@@ -150,31 +143,39 @@ export class RollDice extends React.Component<RollDiceProps> {
             <br /> Dice {modifier.getHumanFriendlyTraitModifierValueByTrait(trait.name)}
           </label>
         ))}
-        {this.isSkillSpezialized && (
-          <>
-            <h3>Skill Spezialazitions</h3>
-            <p>Select a spezialazation for {trait.name}</p>
-            <label>
-              <input
-                type="radio"
-                checked={this.selectedSkillSpezialization === null}
-                value=""
-                onChange={() => this.setSelectedSkillSpezialization(null)}
-              />{' '}
-              None
-            </label>
-            {(trait as Iskill).specializations?.map((spezialization) => (
-              <label key={spezialization}>
-                <input
-                  type="radio"
-                  checked={this.selectedSkillSpezialization === spezialization}
-                  value={spezialization}
-                  onChange={() => this.setSelectedSkillSpezialization(spezialization)}
-                />{' '}
-                {capitalizeFirstLetter(spezialization)}
-              </label>
-            ))}
-          </>
+        {isSkill(trait) && trait.isSkillSpezialized && (
+          <Observer>
+            {() => (
+              <>
+                <h3>Skill Spezializitions</h3>
+                <p>Select a spezialization for {trait.name}</p>
+                <label>
+                  <input
+                    type="radio"
+                    name="selected-skill-specialization"
+                    checked={trait.selectedSkillSpezialization === null}
+                    value=""
+                    onChange={() => trait.set('selectedSkillSpezialization', null)}
+                  />{' '}
+                  None
+                </label>
+                {(trait as Iskill).specializations?.map((spezialization) => (
+                  <label key={spezialization}>
+                    <input
+                      type="radio"
+                      name="selected-skill-specialization"
+                      checked={trait.selectedSkillSpezialization === spezialization}
+                      value={spezialization}
+                      onChange={() =>
+                        trait.set('selectedSkillSpezialization', spezialization.toString())
+                      }
+                    />{' '}
+                    {capitalizeFirstLetter(spezialization)}
+                  </label>
+                ))}
+              </>
+            )}
+          </Observer>
         )}
         <ShowObject>{this.modifierSum}</ShowObject>
         <Button onClick={this.rollDice}>Roll Dice</Button>
