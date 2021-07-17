@@ -57,6 +57,17 @@ export class RollDice extends React.Component<RollDiceProps> {
         <h3>Active Modifiers:</h3>
         <h4>Wounds: {-currentModifiers.nonOptionalModifiers.wounds}</h4>
         <h4>Fatigue: {-currentModifiers.nonOptionalModifiers.fatigue}</h4>
+        <h4>Hindrances</h4>
+        {currentModifiers.nonOptionalModifiers.hindrances.map((modifier) => (
+          <label>
+            <input
+              type="checkbox"
+              checked={trait.activeModifiers.has(modifier.id)}
+              onChange={() => trait.toggleActiveModifier(modifier)}
+            />
+            <strong>{modifier.name}</strong> {modifier.conditions}
+          </label>
+        ))}
         <h4>Edges</h4>
         {currentModifiers.nonOptionalModifiers.edges.map((modifier) => (
           <label>
@@ -70,6 +81,17 @@ export class RollDice extends React.Component<RollDiceProps> {
         ))}
 
         <h3>Optional Modifiers:</h3>
+        <h4>Hindrances</h4>
+        {currentModifiers.optionalModifiers.hindrances.map((modifier) => (
+          <label>
+            <input
+              type="checkbox"
+              checked={trait.activeModifiers.has(modifier.id)}
+              onChange={() => trait.toggleActiveModifier(modifier)}
+            />
+            <strong>{modifier.name}</strong> {modifier.conditions}
+          </label>
+        ))}
 
         <h4>Edges</h4>
         {currentModifiers.optionalModifiers.edges.map((modifier) => (

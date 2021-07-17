@@ -5,6 +5,7 @@ import { Imodifier } from 'store/modifier';
 import { meleeWeapon } from 'store/resources/meleeWeapon';
 
 import { settingEdgeModel } from 'store/settings/settingEdgeModel';
+import { settingHindranceModel } from 'store/settings/settingHindranceModel';
 import { settingModel } from 'store/settings/settingModel';
 import { rangedWeapon } from 'store/resources/rangedWespons';
 import { attributesModel } from './attributesModel';
@@ -45,6 +46,7 @@ export const characterModel = types
     setting: types.reference(settingModel),
     skills: types.map(skillModel),
     edges: types.array(types.reference(settingEdgeModel)),
+    hindrances: types.array(types.reference(settingHindranceModel)),
     powers: types.map(powerModel),
     basePowerPoints: 0,
     currentPowerPoints: 0,
@@ -104,14 +106,15 @@ export const characterModel = types
     },
 
     getTraitModifiers(traitName: string) {
-      type CurrentModifiersType = { edges: Imodifier[] };
-      const { edges } = self;
+      type CurrentModifiersType = { edges: Imodifier[]; hindrances: Imodifier[] };
+      const { edges, hindrances } = self;
       const nonOptionalModifiers: CurrentModifiersType & { wounds: number; fatigue: number } = {
         edges: [],
+        hindrances: [],
         wounds: self.woundsPenalty,
         fatigue: self.fatigueAsNumber,
       };
-      const optionalModifiers: CurrentModifiersType = { edges: [] };
+      const optionalModifiers: CurrentModifiersType = { edges: [], hindrances: [] };
 
       edges.forEach((edge) => {
         edge.modifiers.forEach((modifier) => {
@@ -121,6 +124,20 @@ export const characterModel = types
                 optionalModifiers.edges.push(modifier);
               } else {
                 nonOptionalModifiers.edges.push(modifier);
+              }
+            }
+          });
+        });
+      });
+
+      hindrances.forEach((hindrance) => {
+        hindrance.modifiers.forEach((modifier) => {
+          modifier.traitModifiers.forEach((traitMod) => {
+            if (traitMod.traitName === traitName) {
+              if (modifier.optional) {
+                optionalModifiers.hindrances.push(modifier);
+              } else {
+                nonOptionalModifiers.hindrances.push(modifier);
               }
             }
           });

@@ -5,6 +5,7 @@ import { settingsSkillModel } from './settingSkillModel';
 
 import { vanillaSetting } from './data/SavageWorldsVanilla';
 import { settingEdgeModel } from './settingEdgeModel';
+import { settingHindranceModel } from './settingHindranceModel';
 
 export const settingModel = types
   .model('setting', {
@@ -13,6 +14,7 @@ export const settingModel = types
     creation: creationRulesModel,
     availableEdges: types.array(settingEdgeModel),
     availableSkills: types.array(settingsSkillModel),
+    availableHindrances: types.array(settingHindranceModel),
   })
   .actions((self) => ({
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(

@@ -70,10 +70,16 @@ export const traitModel = types
     ) {
       const dice =
         self.dice + modifier.diceDifference * 2 > 3 ? self.dice + modifier.diceDifference * 2 : 4;
-      const traitDiceRoll = rollDice(dice) + self.bonus + modifier.bonus;
-
-      const wildDiceRoll = rollDice(6) + self.bonus + modifier.bonus;
-      return `Trait Dice: ${traitDiceRoll}${isWildCard ? ` | Wild Dice: ${wildDiceRoll}` : ''}`;
+      const traitDiceRoll = rollDice(dice);
+      const wildDiceRoll = rollDice(6);
+      if (traitDiceRoll === 1 && wildDiceRoll === 1) {
+        return { type: 'critical_failure' };
+      }
+      return {
+        type: 'result',
+        traitRoll: traitDiceRoll + self.bonus + modifier.bonus,
+        wildDiceRolle: isWildCard && wildDiceRoll + self.bonus + modifier.bonus,
+      };
     },
   }))
   .actions((self) => ({

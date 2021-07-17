@@ -37,13 +37,18 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
 
   openRollModal = () => {
     const { character, trait } = this.props;
-    character
-      .getTraitModifiers(trait.name)
-      .nonOptionalModifiers.edges.forEach((modifier) => trait.addActiveModifier(modifier));
+    const traitModifiers = character.getTraitModifiers(trait.name);
+
+    traitModifiers.nonOptionalModifiers.edges.forEach((modifier) =>
+      trait.addActiveModifier(modifier)
+    );
+    traitModifiers.nonOptionalModifiers.hindrances.forEach((modifier) =>
+      trait.addActiveModifier(modifier)
+    );
     this.isRollModalOpen = true;
   };
 
-  closeModal = () => {
+  closeRollModal = () => {
     this.props.trait.clearActiveModifiers();
     this.isRollModalOpen = false;
   };
@@ -95,7 +100,7 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
             <ReactModal
               isOpen={this.isRollModalOpen}
               shouldCloseOnEsc={true}
-              onRequestClose={this.closeModal}
+              onRequestClose={this.closeRollModal}
               ariaHideApp={false}
             >
               <RollDice character={character} trait={trait} />

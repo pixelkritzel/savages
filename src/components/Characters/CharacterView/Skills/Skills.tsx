@@ -2,6 +2,8 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
+import { SkillRoll } from './SkillRoll';
+
 import { Icharacter } from 'store/characters';
 import { Iskill } from 'store/characters/skillModel';
 
@@ -30,16 +32,20 @@ export const Skills: React.FC<SkillsProps> = observer(({ character }) => {
       <h3>Skills</h3>
       <Table>
         <thead>
-          <th>Skill</th>
-          <th>Specialization</th>
-          <th>Dice</th>
+          <tr>
+            <th>Skill</th>
+            <th>Specialization</th>
+            <th>Dice</th>
+          </tr>
         </thead>
         <tbody>
-          {mapToArray<Iskill>(character.skills).map(({ settingSkill, value, specializations }) => (
-            <tr key={settingSkill.id}>
-              <td>{settingSkill.name}</td>
-              <td>{specializations?.join(' ')}</td>
-              <td>{value}</td>
+          {mapToArray<Iskill>(character.skills).map((skill) => (
+            <tr key={skill.settingSkill.id}>
+              <td>{skill.settingSkill.name}</td>
+              <td>{skill.specializations?.join(' ')}</td>
+              <td>
+                <SkillRoll character={character} skill={skill} />
+              </td>
             </tr>
           ))}
         </tbody>

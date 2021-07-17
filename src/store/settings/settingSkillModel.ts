@@ -1,4 +1,4 @@
-import { cast, SnapshotIn, getPropertyMembers, types } from 'mobx-state-tree';
+import { cast, Instance, SnapshotIn, getPropertyMembers, types } from 'mobx-state-tree';
 import { attributesModel } from 'store/characters/attributesModel';
 
 const { properties: attributes } = getPropertyMembers(attributesModel);
@@ -18,3 +18,6 @@ export const settingsSkillModel = types
       self[key] = cast(value);
     },
   }));
+
+export interface Iskill extends Instance<typeof settingsSkillModel> {}
+export interface SIskill extends SnapshotIn<typeof settingsSkillModel> {}

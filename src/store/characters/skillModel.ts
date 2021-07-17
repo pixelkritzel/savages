@@ -15,7 +15,7 @@ export const skillModel = types
   )
   .actions((self) => ({
     afterCreate() {
-      self.setName(self.settingSkill.name);
+      self.setName(self.settingSkill.id);
     },
   }));
 

@@ -10,7 +10,7 @@ export const modifierModel = types
     id: types.optional(types.identifier, uuidv4),
     name: '',
     optional: types.boolean,
-    conditions: types.string,
+    conditions: '',
     traitModifiers: types.array(traitModifierModel),
     bennies: 0,
     toughness: 0,

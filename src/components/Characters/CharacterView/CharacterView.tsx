@@ -9,6 +9,7 @@ import { Attributes } from './Attributes';
 import { CharacterDescription } from './CharacterDescription';
 import { Edges } from './Edges';
 import { Health } from './Health';
+import { Hindrances } from './Hindrances';
 import { Money } from './Money';
 import { Powers } from './Powers';
 import { Skills } from './Skills';
@@ -36,7 +37,7 @@ export const CharacterView: React.FC<{}> = observer(function () {
         <Attributes isEdit={isEdit} character={character} />
         <Stats character={character} isEdit={isEdit} />
         <Edges edges={character.edges} />
-        <div>hindrances</div>
+        <Hindrances hindrances={character.hindrances} />
         <div>tap</div>
       </div>
       <div className={CSS.right}>

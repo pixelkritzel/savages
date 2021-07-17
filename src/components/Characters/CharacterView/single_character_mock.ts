@@ -25,8 +25,19 @@ export const single_character_mock: SIcharacter = {
       dice: 4,
       bonus: -2,
     },
+    notice: {
+      settingSkill: 'notice',
+      dice: 4,
+      bonus: 0,
+    },
+    commonKnowledge: {
+      settingSkill: 'common_knowledge',
+      dice: 4,
+      bonus: 0,
+    },
   },
   edges: ['strong_willed', 'nerves_of_steel'],
+  hindrances: ['clueless', 'anemic'],
   runningDice: {
     name: 'Running',
     dice: 6,
