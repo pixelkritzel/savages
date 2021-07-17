@@ -19,5 +19,5 @@ export const settingsSkillModel = types
     },
   }));
 
-export interface Iskill extends Instance<typeof settingsSkillModel> {}
-export interface SIskill extends SnapshotIn<typeof settingsSkillModel> {}
+export interface IskillSetting extends Instance<typeof settingsSkillModel> {}
+export interface SIskillSetting extends SnapshotIn<typeof settingsSkillModel> {}

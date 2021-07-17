@@ -15,7 +15,18 @@ export const settingModel = types
     availableEdges: types.array(settingEdgeModel),
     availableSkills: types.array(settingsSkillModel),
     availableHindrances: types.array(settingHindranceModel),
+    rules: types.model({
+      skillSpezializations: types.array(types.string),
+    }),
   })
+  .views((self) => ({
+    get isSkillSpezializations() {
+      return !!self.rules.skillSpezializations.length;
+    },
+    isSpezializedSkill(skillName: string) {
+      return self.rules.skillSpezializations.includes(skillName);
+    },
+  }))
   .actions((self) => ({
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
       key: K,

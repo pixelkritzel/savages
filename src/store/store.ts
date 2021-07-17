@@ -11,6 +11,7 @@ const store = types.model('stores', {
   characters: types.array(characterModel),
   resources,
   settings: types.array(settingModel),
+  selectedSetting: types.reference(settingModel),
 });
 
 export interface Istore extends Instance<typeof store> {}
@@ -20,5 +21,6 @@ export function createStore() {
     characters: [single_character_mock],
     resources: resourcesScaffold,
     settings: [vanillaSetting],
+    selectedSetting: 'vanilla_setting',
   });
 }

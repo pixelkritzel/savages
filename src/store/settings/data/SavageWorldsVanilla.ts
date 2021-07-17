@@ -9,7 +9,7 @@ import { strongWilled } from './edges/strongWilled';
 import { SIsetting } from './../settingModel';
 
 export const vanillaSetting: SIsetting = {
-  id: 'vanilla-rules',
+  id: 'vanilla_setting',
   name: 'Savage Worlds Vanilla Rules',
   creation: {
     attributePoints: 5,
@@ -17,4 +17,7 @@ export const vanillaSetting: SIsetting = {
   availableEdges: [strongWilled, nervesOfSteel],
   availableHindrances: [anemic, clueless],
   availableSkills: [commonKnowledge, fighting, notice, taunt],
+  rules: {
+    skillSpezializations: ['fighting'],
+  },
 };

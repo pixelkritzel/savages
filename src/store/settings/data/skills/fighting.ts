@@ -1,6 +1,6 @@
-import { SIskill } from 'store/settings/settingSkillModel';
+import { SIskillSetting } from 'store/settings/settingSkillModel';
 
-export const fighting: SIskill = {
+export const fighting: SIskillSetting = {
   id: 'fighting',
   name: 'Fighting',
   description:
