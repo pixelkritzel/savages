@@ -2,12 +2,12 @@ import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-stat
 import { v4 as uuidv4 } from 'uuid';
 
 import { Imodifier } from 'store/modifier';
-import { meleeWeapon } from 'store/resources/meleeWeapon';
+import { settingMeleeWeaponModel } from 'store/settings/settingMeleeWeapon';
 
 import { settingEdgeModel } from 'store/settings/settingEdgeModel';
 import { settingHindranceModel } from 'store/settings/settingHindranceModel';
 import { settingModel } from 'store/settings/settingModel';
-import { rangedWeapon } from 'store/resources/rangedWespons';
+import { settingRangedWeaponModel } from 'store/settings/settingRangedWeaponModel';
 import { attributesModel } from './attributesModel';
 import { powerModel } from './power';
 import { skillModel } from './skillModel';
@@ -35,8 +35,8 @@ export const characterModel = types
     pace: 6,
     runningDice: traitModel,
     armor: 0,
-    meleeWeapons: types.array(types.reference(meleeWeapon)),
-    rangedWeapons: types.array(types.reference(rangedWeapon)),
+    meleeWeapons: types.array(types.reference(settingMeleeWeaponModel)),
+    rangedWeapons: types.array(types.reference(settingRangedWeaponModel)),
     log: types.array(
       types.model({
         date: types.number,
@@ -51,6 +51,10 @@ export const characterModel = types
     basePowerPoints: 0,
     currentPowerPoints: 0,
     hasPowers: false,
+    currentlyHoldWeapon: types.union(
+      types.reference(settingRangedWeaponModel),
+      types.reference(settingMeleeWeaponModel)
+    ),
   })
   .volatile((self) => ({
     showErrors: false,
@@ -154,10 +158,6 @@ export const characterModel = types
       key: K,
       value: T[K]
     ) {
-      if (typeof value !== typeof self[key]) {
-        console.warn('TYPE ERROR ! !!!!!  !!!');
-        return;
-      }
       self[key] = value;
     },
   }))
@@ -208,4 +208,5 @@ export const createCharacterScaffold = (): SIcharacter => ({
     dice: 6,
     bonus: 0,
   },
+  currentlyHoldWeapon: 'unarmed',
 });

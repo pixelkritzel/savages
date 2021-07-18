@@ -14,10 +14,23 @@ export const single_character_mock: SIcharacter = {
     vigor: { name: 'vigor', type: 'attribute' },
   },
   skills: {
+    athletics: {
+      type: 'skill',
+      settingSkill: 'athletics',
+      dice: 10,
+      bonus: 0,
+    },
     fighting: {
       type: 'skill',
       settingSkill: 'fighting',
       specializations: ['unarmed'],
+      dice: 10,
+      bonus: 0,
+    },
+    shooting: {
+      type: 'skill',
+      settingSkill: 'shooting',
+      specializations: ['shortarms'],
       dice: 10,
       bonus: 0,
     },
@@ -42,6 +55,7 @@ export const single_character_mock: SIcharacter = {
   },
   edges: ['strong_willed', 'nerves_of_steel'],
   hindrances: ['clueless', 'anemic', 'test_die_difference'],
+  rangedWeapons: ['ranged_weapon_tommy_gun', 'ranged_weapon_timmy_gun'],
   runningDice: {
     type: 'runningDice',
     name: 'Running',
@@ -50,6 +64,7 @@ export const single_character_mock: SIcharacter = {
   },
   basePowerPoints: 20,
   currentPowerPoints: 12,
+  currentlyHoldWeapon: 'ranged_weapon_tommy_gun',
   hasPowers: true,
   powers: {
     protection: {

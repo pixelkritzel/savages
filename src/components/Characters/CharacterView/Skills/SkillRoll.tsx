@@ -33,7 +33,6 @@ export class SkillRoll extends React.Component<SkillRollProps> {
     traitModifiers.nonOptionalModifiers.hindrances.forEach((modifier) =>
       skill.addActiveModifier(modifier)
     );
-    console.log(skill.activeModifiers.values.length);
 
     this.isRollModalOpen = true;
   };

@@ -67,21 +67,58 @@ export const traitModel = types
         return `D${self.dice} ${padWithMathOperator(self.bonus)}`;
       }
     },
-    roll(
-      modifier: { diceDifference: number; bonus: number } = { diceDifference: 0, bonus: 0 },
-      isWildCard = false
-    ) {
-      const dice =
-        self.dice + modifier.diceDifference * 2 > 3 ? self.dice + modifier.diceDifference * 2 : 4;
-      const traitDiceRoll = rollDice(dice);
+    roll({
+      bonus,
+      diceDifference,
+      numberOfDices,
+      isWildcard,
+      targetValue,
+    }: {
+      diceDifference: number;
+      bonus: number;
+      numberOfDices: number;
+      isWildcard: boolean;
+      targetValue: number;
+    }):
+      | { type: 'critical_failure' }
+      | {
+          type: 'success' | 'failure';
+          rolls: { result: number; success: boolean; raises: number }[];
+          allRolls: number[];
+        } {
+      const dice = self.dice + diceDifference * 2 > 3 ? self.dice + diceDifference * 2 : 4;
+      const traitDiceRoll = Array.from({ length: numberOfDices }, () => rollDice(dice));
       const wildDiceRoll = rollDice(6);
-      if (traitDiceRoll === 1 && wildDiceRoll === 1) {
-        return { type: 'critical_failure' };
+      if (isWildcard) {
+        traitDiceRoll.push(wildDiceRoll);
       }
+      const allRolls = [...traitDiceRoll].sort((a, b) => b - a);
+      if (isWildcard) {
+        traitDiceRoll.pop();
+      }
+      if (
+        allRolls.filter((roll) => roll === 1).length >
+        Math.floor(numberOfDices + (isWildcard ? 1 : 0) / 2)
+      ) {
+        return {
+          type: 'critical_failure',
+        };
+      }
+      if (isWildcard) {
+        allRolls.pop();
+      }
+      const result = allRolls
+        .map((roll) => roll + bonus)
+        .map((roll) => ({
+          result: roll,
+          success: roll - targetValue > -1,
+          raises: Math.max(Math.floor((roll - targetValue) / 4), 0),
+        }));
+
       return {
-        type: 'result',
-        traitRoll: traitDiceRoll + self.bonus + modifier.bonus,
-        wildDiceRolle: isWildCard && wildDiceRoll + self.bonus + modifier.bonus,
+        type: result.some(({ success }) => success) ? 'success' : 'failure',
+        rolls: result,
+        allRolls: allRolls.map((roll) => roll + bonus),
       };
     },
   }))
@@ -132,12 +169,6 @@ export const traitModel = types
       key: K,
       value: T[K]
     ) {
-      if (typeof value !== typeof self[key]) {
-        console.warn('TYPE ERROR ! !!!!!  !!!');
-        return;
-      }
-      console.log('trait model', key, value);
-
       self[key] = value;
     },
   }));
