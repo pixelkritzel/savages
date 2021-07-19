@@ -7,7 +7,7 @@ import { BsPencil } from 'react-icons/bs';
 
 import { Button } from 'ui/Button';
 import { IncDec } from 'ui/IncDec';
-import { SWFormGroup } from 'ui/SWFormGroup';
+import { DiceFormGroup } from 'components/Characters/CharacterView/Dice/DiceFormGroup';
 
 import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
@@ -72,7 +72,7 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
         </div>
         {this.isEdit && (
           <div className={CSS.form}>
-            <SWFormGroup className={CSS.formRow} label="Dice">
+            <DiceFormGroup className={CSS.formRow} label="Dice">
               <IncDec
                 disableDecrement={!trait.isDiceDecrementable}
                 disableIncrement={!trait.isDiceIncrementable}
@@ -80,8 +80,8 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
                 onIncrement={trait.incrementDice}
                 value={trait.dice.toString()}
               />
-            </SWFormGroup>
-            <SWFormGroup label="Bonus">
+            </DiceFormGroup>
+            <DiceFormGroup label="Bonus">
               <IncDec
                 disableDecrement={!trait.isBonusDecrementable}
                 disableIncrement={!trait.isBonusIncrementable}
@@ -89,7 +89,7 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
                 onIncrement={trait.incrementBonus}
                 value={trait.bonus.toString()}
               />
-            </SWFormGroup>
+            </DiceFormGroup>
           </div>
         )}
 

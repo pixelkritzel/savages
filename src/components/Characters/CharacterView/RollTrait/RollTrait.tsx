@@ -12,13 +12,14 @@ import { DICE_TYPES, Itrait } from 'store/characters/traitModel';
 import { Istore } from 'store';
 import { getModifierForCalledShot, Iskill, isShooting, isSkill } from 'store/characters/skillModel';
 
-import { capitalizeFirstLetter } from 'lib/strings';
-import { Joker } from './Joker';
-import { Actions } from './Actions';
 import { createModifierAccumulator, ModifierAccumulator } from './modifierAccumulator';
 import { Attack } from './Attack';
-import { padWithMathOperator } from 'utils/padWithMathOpertor';
+import { TurnOptions } from './TurnOptions';
+import { ActiveModifiers } from '../ActiveModifiers';
+import { OptionalModifiers } from '../OptionalModifiers';
 
+import { capitalizeFirstLetter } from 'lib/strings';
+import { padWithMathOperator } from 'utils/padWithMathOpertor';
 interface RollDiceProps {
   character: Icharacter;
   trait: Itrait | Iskill;
@@ -106,7 +107,7 @@ export class RollTrait extends React.Component<RollDiceProps> {
       }
     }
 
-    if (isSkill(trait) && trait.isSkillSpezialized && trait.selectedSkillSpezialization === null) {
+    if (isSkill(trait) && trait.isSkillSpezialized && trait.selectedSkillSpecialization === null) {
       modifierAccumulator.boni.skillSpecialization = -2;
     }
 
@@ -185,93 +186,9 @@ export class RollTrait extends React.Component<RollDiceProps> {
             Is Athletics Attack
           </label>
         )}
-        <Actions trait={trait} />
-
-        <div>
-          <Joker trait={trait} />
-        </div>
-
-        <h3>Active Modifiers:</h3>
-        <h4>Wounds: {-currentModifiers.nonOptionalModifiers.wounds}</h4>
-        <h4>Fatigue: {-currentModifiers.nonOptionalModifiers.fatigue}</h4>
-        <h4>Hindrances</h4>
-        {currentModifiers.nonOptionalModifiers.hindrances.map((modifier) => (
-          <label key={modifier.id}>
-            <input
-              type="checkbox"
-              checked={trait.activeModifiers.has(modifier.id)}
-              onChange={() => trait.toggleActiveModifier(modifier)}
-            />
-            <strong>{modifier.name}</strong> {modifier.conditions}
-          </label>
-        ))}
-        <h4>Edges</h4>
-        {currentModifiers.nonOptionalModifiers.edges.map((modifier) => (
-          <label key={modifier.id}>
-            <input
-              type="checkbox"
-              checked={trait.activeModifiers.has(modifier.id)}
-              onChange={() => trait.toggleActiveModifier(modifier)}
-            />
-            <strong>{modifier.name}</strong> {modifier.conditions}
-          </label>
-        ))}
-
-        <h3>Optional Modifiers:</h3>
-        <h4>Hindrances</h4>
-        {currentModifiers.optionalModifiers.hindrances.map((modifier) => (
-          <label key={modifier.id}>
-            <input
-              type="checkbox"
-              checked={trait.activeModifiers.has(modifier.id)}
-              onChange={() => trait.toggleActiveModifier(modifier)}
-            />
-            <strong>{modifier.name}</strong> {modifier.conditions}
-          </label>
-        ))}
-
-        <h4>Edges</h4>
-        {currentModifiers.optionalModifiers.edges.map((modifier) => (
-          <label key={modifier.id}>
-            <input
-              type="checkbox"
-              checked={trait.activeModifiers.has(modifier.id)}
-              onChange={() => trait.toggleActiveModifier(modifier)}
-            />
-            <strong>{modifier.name}</strong> {modifier.conditions}
-            <br /> Dice {modifier.getHumanFriendlyTraitModifierValueByTrait(trait.name)}
-          </label>
-        ))}
-        {isSkill(trait) && trait.isSkillSpezialized && (
-          <div>
-            <h3>Skill Spezializitions</h3>
-            <p>Select a spezialization for {trait.name}</p>
-            <label>
-              <input
-                type="radio"
-                name="selected-skill-specialization"
-                checked={trait.selectedSkillSpezialization === null}
-                value=""
-                onChange={() => trait.set('selectedSkillSpezialization', null)}
-              />{' '}
-              None
-            </label>
-            {(trait as Iskill).specializations?.map((spezialization) => (
-              <label key={spezialization}>
-                <input
-                  type="radio"
-                  name="selected-skill-specialization"
-                  checked={trait.selectedSkillSpezialization === spezialization}
-                  value={spezialization}
-                  onChange={() =>
-                    trait.set('selectedSkillSpezialization', spezialization.toString())
-                  }
-                />{' '}
-                {capitalizeFirstLetter(spezialization)}
-              </label>
-            ))}
-          </div>
-        )}
+        <TurnOptions trait={trait} />
+        <ActiveModifiers currentModifiers={currentModifiers} trait={trait} />
+        <OptionalModifiers trait={trait} currentModifiers={currentModifiers} />
         {isSkill(trait) && this.isAttack && <Attack attackSkill={trait} character={character} />}
         <fieldset>
           <legend>Custom Modifiers</legend>
@@ -298,7 +215,7 @@ export class RollTrait extends React.Component<RollDiceProps> {
           />
         </label>
         <Button onClick={this.rollDice}>
-          {`D${this.modifiedRoll.dice} ${
+          {`Roll: D${this.modifiedRoll.dice} ${
             this.modifiedRoll.bonus !== 0 ? padWithMathOperator(this.modifiedRoll.bonus) : ''
           }`}
         </Button>

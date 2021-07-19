@@ -1,20 +1,29 @@
 import React from 'react';
-import { v4 as uuidV4 } from 'uuid';
+import styled from 'styled-components';
+import { generateId } from 'utils/generateId';
 
-interface CheckboxProps extends Omit<React.HTMLProps<HTMLInputElement>, 'label'> {
+const InputCheckbox = styled.input`
+  margin-right: 8px;
+`;
+
+const Label = styled.label`
+  display: inline-block;
+`;
+
+interface CheckboxProps extends React.ComponentPropsWithoutRef<'input'> {
   id?: string;
   label: string | React.ReactNode;
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({
   className,
-  id = uuidV4(),
+  id = generateId(),
   label,
   type = 'checkbox',
   ...otherProps
 }) => (
-  <label className={className} htmlFor={id}>
-    <input type="checkbox" id={id} {...otherProps} />
+  <Label className={className} htmlFor={id}>
+    <InputCheckbox type="checkbox" id={id} {...otherProps} />
     {label}
-  </label>
+  </Label>
 );

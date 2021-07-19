@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 
-import { SWFormGroup } from 'ui/SWFormGroup/SWFormgroup';
+import { DiceFormGroup } from 'components/Characters/CharacterView/Dice/DiceFormGroup/DiceFormgroup';
 import { Isetting } from 'store/settings';
 
 interface SettingFormProps {
@@ -15,7 +15,7 @@ export const SettingForm: React.FC<SettingFormProps> = observer(({ setting }) =>
 
   return (
     <div>
-      <SWFormGroup id="name" label="Name">
+      <DiceFormGroup id="name" label="Name">
         <input
           type="text"
           id="name"
@@ -23,11 +23,11 @@ export const SettingForm: React.FC<SettingFormProps> = observer(({ setting }) =>
           value={setting.id}
           onChange={(event) => setting.set('id', event.target.value)}
         />
-      </SWFormGroup>
+      </DiceFormGroup>
 
       <hr />
       <h3>Creation Rules</h3>
-      <SWFormGroup id="attributePoints" label="Attribute points">
+      <DiceFormGroup id="attributePoints" label="Attribute points">
         <input
           type="number"
           id="attributePoints"
@@ -35,7 +35,7 @@ export const SettingForm: React.FC<SettingFormProps> = observer(({ setting }) =>
           value={setting.creation.attributePoints}
           onChange={(event) => setting.creation.set('attributePoints', Number(event.target.value))}
         />
-      </SWFormGroup>
+      </DiceFormGroup>
     </div>
   );
 });

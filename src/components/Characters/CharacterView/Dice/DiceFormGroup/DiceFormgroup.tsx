@@ -8,7 +8,7 @@ interface SWFormGroupProps<T extends keyof HTMLElementTagNameMap = 'label'>
   label: string | JSX.Element;
 }
 
-export class SWFormGroup<T extends keyof HTMLElementTagNameMap = 'label'> extends React.Component<
+export class DiceFormGroup<T extends keyof HTMLElementTagNameMap = 'label'> extends React.Component<
   SWFormGroupProps<T>
 > {
   render() {

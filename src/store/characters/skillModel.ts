@@ -42,7 +42,7 @@ export const skillModel = types
       type: types.literal('skill'),
       settingSkill: types.reference(settingsSkillModel),
       specializations: types.maybe(types.array(types.string)),
-      selectedSkillSpezialization: types.optional(types.union(types.string, types.null), null),
+      selectedSkillSpecialization: types.optional(types.union(types.string, types.null), null),
       attack: types.optional(attackModel, {}),
     })
   )
@@ -59,7 +59,7 @@ export const skillModel = types
       self.setName(self.settingSkill.id);
     },
     resetRollModifiers() {
-      self.selectedSkillSpezialization = null;
+      self.selectedSkillSpecialization = null;
     },
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
       key: K,
