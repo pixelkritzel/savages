@@ -1,6 +1,6 @@
 import React from 'react';
 import { action, computed, makeObservable, observable } from 'mobx';
-import { observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react';
 
 import { StoreContext } from 'components/StoreContext';
 
@@ -10,7 +10,13 @@ import { ShowObject } from 'ui/ShowObject';
 import { Icharacter } from 'store/characters';
 import { DICE_TYPES, Itrait } from 'store/characters/traitModel';
 import { Istore } from 'store';
-import { getModifierForCalledShot, Iskill, isShooting, isSkill } from 'store/characters/skillModel';
+import {
+  getModifierForCalledShot,
+  isAttackSkill,
+  Iskill,
+  isShooting,
+  isSkill,
+} from 'store/characters/skillModel';
 
 import { createModifierAccumulator, ModifierAccumulator } from './modifierAccumulator';
 import { Attack } from './Attack';
@@ -82,17 +88,24 @@ export class RollTrait extends React.Component<RollDiceProps> {
     modifierAccumulator.boni.joker = trait.isJoker ? 2 : 0;
     if (isSkill(trait) && this.isAttack) {
       modifierAccumulator.boni.range = Number(trait.attack.range);
-      modifierAccumulator.boni.recoil = trait.attack.recoil ? -2 : 0;
+      modifierAccumulator.boni.recoil = trait.attack.isRecoil ? -2 : 0;
       modifierAccumulator.boni.calledShot = getModifierForCalledShot(trait.attack.calledShot);
       modifierAccumulator.boni.cover = Number(trait.attack.cover);
-      modifierAccumulator.boni.theDrop = trait.attack.theDrop ? 4 : 0;
-      console.log(trait.name);
-
+      modifierAccumulator.boni.theDrop = trait.attack.isTheDrop ? 4 : 0;
       modifierAccumulator.boni.proneTarget =
-        trait.attack.proneTarget && trait.name !== 'fighting' ? -4 : 0;
-      modifierAccumulator.boni.unarmedDefender = trait.attack.unarmedDefender ? 2 : 0;
+        trait.attack.isProneTarget && trait.name !== 'fighting' ? -4 : 0;
+      modifierAccumulator.boni.unarmedDefender = trait.attack.isUnarmedDefender ? 2 : 0;
       modifierAccumulator.boni.scale = Number(trait.attack.scale);
       modifierAccumulator.boni.speed = Number(trait.attack.speed);
+      modifierAccumulator.boni.shotgun =
+        isShooting(trait) &&
+        character.currentlyHoldWeapon.weaponType.includes('shotgun') &&
+        !trait.attack.isShotgunSlugs &&
+        trait.attack.range === '0'
+          ? 2
+          : 0;
+      modifierAccumulator.boni.nonLethal = trait.attack.isNonLethal ? -1 : 0;
+      modifierAccumulator.boni.offHand = trait.attack.isOffHand ? -2 : 0;
       if (trait.attack.aim === 'ignore') {
         const sumOfPenalties =
           modifierAccumulator.boni.range +
@@ -158,6 +171,17 @@ export class RollTrait extends React.Component<RollDiceProps> {
     makeObservable(this);
   }
 
+  @computed
+  get isTraitRollable() {
+    const { character, trait } = this.props;
+
+    return (
+      isSkill(trait) &&
+      isAttackSkill(trait) &&
+      !trait.isAttackRollable(character.currentlyHoldWeapon)
+    );
+  }
+
   @action
   rollDice = () => {
     const { trait } = this.props;
@@ -204,7 +228,7 @@ export class RollTrait extends React.Component<RollDiceProps> {
             Bonus <input type="number" value={this.customBonus} onChange={this.setCustomBonus} />
           </label>
         </fieldset>
-        <ShowObject>{this.modifierSum}</ShowObject>
+        <Observer>{() => <ShowObject>{this.modifierSum}</ShowObject>}</Observer>
         <label>
           Target Value{' '}
           <input
@@ -214,11 +238,15 @@ export class RollTrait extends React.Component<RollDiceProps> {
             step={1}
           />
         </label>
-        <Button onClick={this.rollDice}>
-          {`Roll: D${this.modifiedRoll.dice} ${
-            this.modifiedRoll.bonus !== 0 ? padWithMathOperator(this.modifiedRoll.bonus) : ''
-          }`}
-        </Button>
+        <Observer>
+          {() => (
+            <Button disabled={this.isTraitRollable} onClick={this.rollDice}>
+              {`Roll: D${this.modifiedRoll.dice} ${
+                this.modifiedRoll.bonus !== 0 ? padWithMathOperator(this.modifiedRoll.bonus) : ''
+              }`}
+            </Button>
+          )}
+        </Observer>
         {this.result && <ShowObject>{this.result}</ShowObject>}
       </>
     );

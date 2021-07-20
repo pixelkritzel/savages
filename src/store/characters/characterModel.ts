@@ -2,15 +2,14 @@ import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-stat
 import { v4 as uuidv4 } from 'uuid';
 
 import { Imodifier } from 'store/modifier';
-import { settingMeleeWeaponModel } from 'store/settings/settingMeleeWeapon';
+import { weaponModel } from 'store/settings/settingWeaponModel';
 
 import { settingEdgeModel } from 'store/settings/settingEdgeModel';
 import { settingHindranceModel } from 'store/settings/settingHindranceModel';
 import { settingModel } from 'store/settings/settingModel';
-import { settingRangedWeaponModel } from 'store/settings/settingRangedWeaponModel';
 import { attributesModel } from './attributesModel';
 import { powerModel } from './power';
-import { skillModel } from './skillModel';
+import { skillModel, ATTACK_SKILLS } from './skillModel';
 import { traitModel } from './traitModel';
 
 export const characterModel = types
@@ -35,8 +34,7 @@ export const characterModel = types
     pace: 6,
     runningDice: traitModel,
     armor: 0,
-    meleeWeapons: types.array(types.reference(settingMeleeWeaponModel)),
-    rangedWeapons: types.array(types.reference(settingRangedWeaponModel)),
+    weapons: types.array(types.reference(weaponModel)),
     log: types.array(
       types.model({
         date: types.number,
@@ -51,10 +49,7 @@ export const characterModel = types
     basePowerPoints: 0,
     currentPowerPoints: 0,
     hasPowers: false,
-    currentlyHoldWeapon: types.union(
-      types.reference(settingRangedWeaponModel),
-      types.reference(settingMeleeWeaponModel)
-    ),
+    currentlyHoldWeapon: types.reference(weaponModel),
   })
   .volatile((self) => ({
     showErrors: false,
@@ -149,6 +144,10 @@ export const characterModel = types
       });
       return { nonOptionalModifiers, optionalModifiers };
     },
+
+    getWeaponsByAttackSkill(skillName: typeof ATTACK_SKILLS[number]) {
+      return self.weapons.filter((weapon) => weapon.isForSkill(skillName));
+    },
   }))
   .actions((self) => ({
     addLogEntry(message: string) {
@@ -161,7 +160,6 @@ export const characterModel = types
       self[key] = value;
     },
   }))
-
   .actions((self) => {
     let disposers: IDisposer[] = [];
     return {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
 import { useParams } from 'react-router-dom';
 
 import { StoreContext } from 'components/StoreContext';

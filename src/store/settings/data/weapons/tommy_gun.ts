@@ -1,9 +1,10 @@
-import { SIrangedWeapon } from 'store/settings/settingRangedWeaponModel';
+import { SIweapon } from 'store/settings/settingWeaponModel';
 
-export const tommyGun: SIrangedWeapon = {
+export const tommyGun: SIweapon = {
   id: 'ranged_weapon_tommy_gun',
   name: 'Tommy Gun (.45)',
   range: [12, 24, 48],
+  weaponType: ['ranged'],
   damage: {
     dices: [{ sides: 6, numberOfDices: 2 }],
   },

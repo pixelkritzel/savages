@@ -1,26 +1,25 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { Iskill, isShooting } from 'store/characters/skillModel';
-import { CalledShot } from './CalledShot';
-import { Cover } from './Cover';
+
 import { RadioGroup } from 'ui/RadioGroup';
-import { Icharacter } from 'store/characters';
-import { isRangedWeapon } from 'store/settings/settingRangedWeaponModel';
 import { Table } from 'ui/Table';
-import { Alert } from 'ui/Alert';
+
+import { Cover } from './Cover';
+import { CalledShot } from './CalledShot';
+import { WeaponOptions } from './WeaponOptions';
+import { TargetOptions } from './TargetOptions';
+
+import { ATTACK_SKILLS, isAttackSkill, Iskill, isShooting } from 'store/characters/skillModel';
+import { Icharacter } from 'store/characters';
 
 interface ShootingProps {
   attackSkill: Iskill;
   character: Icharacter;
 }
 
-function isMelee(traitName: string) {
-  return traitName !== 'shooting';
-}
-
 export const Attack: React.FC<ShootingProps> = observer(
   ({ attackSkill, character, ...otherProps }) => {
-    if (!attackSkill.attack) {
+    if (!isAttackSkill(attackSkill)) {
       throw new Error(
         `Tried to initialise Shooting component without coressponding attack field in the skill ${attackSkill.name}`
       );
@@ -36,6 +35,10 @@ export const Attack: React.FC<ShootingProps> = observer(
 
     const { currentlyHoldWeapon } = character;
 
+    const weapons = character.getWeaponsByAttackSkill(
+      attackSkill.name as typeof ATTACK_SKILLS[number]
+    );
+
     return (
       <>
         <h3>Attack options</h3>
@@ -46,95 +49,45 @@ export const Attack: React.FC<ShootingProps> = observer(
             value={currentlyHoldWeapon.id}
             onChange={(event) => character.set('currentlyHoldWeapon', event.target.value as any)}
           >
-            {character.rangedWeapons.map((weapon) => (
+            {!weapons.includes(currentlyHoldWeapon) && (
+              <option key="no_current_weapon">Please select a weapon</option>
+            )}
+            {weapons.map((weapon) => (
               <option key={weapon.id} value={weapon.id}>
                 {weapon.name}
               </option>
             ))}
           </select>
         </label>
-        {isRangedWeapon(currentlyHoldWeapon) && (
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Range</th>
-                <th>Damage</th>
-                <th>AP</th>
-                <th>RoF</th>
-                <th>Shots</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{currentlyHoldWeapon.name}</td>
-                <td>{`${currentlyHoldWeapon.range[0]} / ${currentlyHoldWeapon.range[1]} / ${currentlyHoldWeapon.range[2]}`}</td>
-                <td>{currentlyHoldWeapon.damage.humanFriendly}</td>
-                <td>{currentlyHoldWeapon.armorPiercing}</td>
-                <td>{currentlyHoldWeapon.rateOfFire}</td>
-                <td>{currentlyHoldWeapon.shots}</td>
-              </tr>
-            </tbody>
-          </Table>
+        {isShooting(attackSkill) && currentlyHoldWeapon.isRangedWeapon && (
+          <>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Range</th>
+                  <th>Damage</th>
+                  <th>AP</th>
+                  <th>RoF</th>
+                  <th>Shots</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{currentlyHoldWeapon.name}</td>
+                  <td>{`${currentlyHoldWeapon.range[0]} / ${currentlyHoldWeapon.range[1]} / ${currentlyHoldWeapon.range[2]}`}</td>
+                  <td>{currentlyHoldWeapon.damage.humanFriendly}</td>
+                  <td>{currentlyHoldWeapon.armorPiercing}</td>
+                  <td>{currentlyHoldWeapon.rateOfFire}</td>
+                  <td>{currentlyHoldWeapon.shots}</td>
+                </tr>
+              </tbody>
+            </Table>
+          </>
         )}
-        {isShooting(attackSkill) && isRangedWeapon(currentlyHoldWeapon) && (
-          <div>
-            <label>
-              Rate of Fire: {attackSkill.attack.rateOfFire}
-              <input
-                type="range"
-                min={1}
-                max={6}
-                step={1}
-                value={attackSkill.attack.rateOfFire}
-                onChange={(event) =>
-                  attackSkill.attack.set('rateOfFire', Number(event.target.value))
-                }
-              />
-            </label>
-            {attackSkill.attack.rateOfFire > currentlyHoldWeapon.rateOfFire && (
-              <Alert>The selected Rate of Fire is higher than the weapons Rate of Fire!</Alert>
-            )}
-          </div>
-        )}
-        <label>
-          <input
-            type="checkbox"
-            checked={attackSkill.attack.recoil}
-            onChange={() => attackSkill.attack.set('recoil', !attackSkill.attack.recoil)}
-          />{' '}
-          Recoil
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={attackSkill.attack.theDrop}
-            onChange={() => attackSkill.attack.set('theDrop', !attackSkill.attack.theDrop)}
-          />{' '}
-          The Drop
-        </label>
+        <WeaponOptions attackSkill={attackSkill} currentlyHoldWeapon={currentlyHoldWeapon} />
 
-        <label>
-          <input
-            type="checkbox"
-            checked={attackSkill.attack.proneTarget}
-            onChange={() => attackSkill.attack.set('proneTarget', !attackSkill.attack.proneTarget)}
-          />{' '}
-          Prone Target
-        </label>
-
-        {isMelee(attackSkill.name) && (
-          <label>
-            <input
-              type="checkbox"
-              checked={attackSkill.attack.unarmedDefender}
-              onChange={() =>
-                attackSkill.attack.set('unarmedDefender', !attackSkill.attack.unarmedDefender)
-              }
-            />{' '}
-            Unarmed Defender
-          </label>
-        )}
+        <TargetOptions attackSkill={attackSkill} />
         <fieldset>
           <legend>Range</legend>
           <label>

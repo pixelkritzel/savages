@@ -14,7 +14,7 @@ interface SkillRollProps {
 @observer
 export class SkillRoll extends React.Component<SkillRollProps> {
   @observable
-  isRollModalOpen = this.props.skill.name === 'fighting'; // TODO: just for dvelopment
+  isRollModalOpen = this.props.skill.name === 'shooting'; // TODO: just for dvelopment
 
   constructor(props: SkillRollProps) {
     super(props);
@@ -55,6 +55,7 @@ export class SkillRoll extends React.Component<SkillRollProps> {
             shouldCloseOnEsc={true}
             onRequestClose={this.closeRollModal}
             ariaHideApp={false}
+            // parentSelector={() => document.querySelector('body')!}
           >
             <RollTrait character={character} trait={skill} />
           </ReactModal>

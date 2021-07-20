@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
 
 import { Button } from 'ui/Button';

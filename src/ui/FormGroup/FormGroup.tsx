@@ -3,34 +3,40 @@ import { observer } from 'mobx-react';
 import { generateId } from 'utils/generateId';
 import styled from 'styled-components';
 
-const StyledFormGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
+const StyledFormGroup = styled.div<{ inline: boolean }>`
+  display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
+
+  justify-content: ${({ inline }) => (inline ? 'flex-start' : 'space-between')};
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ inline: boolean }>`
   font-weight: bold;
-  text-align: right;
-  width: 54%;
+  text-align: ${({ inline }) => (inline ? 'left' : 'right')};
+  width: ${({ inline }) => (inline ? 'auto' : '54%')};
+  margin-right: ${({ inline }) => (inline ? '24px' : '0')};
 `;
 
-const InputContainer = styled.div`
-  width: 40%;
+const InputContainer = styled.div<{ inline: boolean }>`
+  width: ${({ inline }) => (inline ? 'auto' : '40%')};
 `;
 
 interface FormGroupProps {
   label: JSX.Element | string;
   id?: string;
+  inline?: boolean;
   input: React.JSXElementConstructor<{ id: string }>;
 }
 
 export const FormGroup: React.FC<FormGroupProps> = observer(
-  ({ label, id = generateId(), input: Input, ...otherProps }) => {
+  ({ label, id, inline = false, input: Input, ...otherProps }) => {
+    const idRef = React.useRef(id ?? generateId());
     return (
-      <StyledFormGroup {...otherProps}>
-        <Label htmlFor={id}>{label}</Label>
-        <InputContainer>
-          <Input id={id} />
+      <StyledFormGroup inline {...otherProps}>
+        <Label htmlFor={idRef.current} inline>
+          {label}
+        </Label>
+        <InputContainer inline>
+          <Input id={idRef.current} />
         </InputContainer>
       </StyledFormGroup>
     );

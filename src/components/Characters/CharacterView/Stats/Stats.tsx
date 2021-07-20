@@ -5,7 +5,7 @@ import cx from 'classnames';
 import CSS from './Stats.module.scss';
 
 import { Icharacter } from 'store/characters';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
 
 interface StatsProps extends HTMLAttributes<HTMLDivElement> {
   character: Icharacter;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
 
 import { DiceFormGroup } from 'components/Characters/CharacterView/Dice/DiceFormGroup/DiceFormgroup';
 import { Isetting } from 'store/settings';

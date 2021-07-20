@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import { generateId } from 'utils/generateId';
@@ -15,15 +16,11 @@ interface CheckboxProps extends React.ComponentPropsWithoutRef<'input'> {
   label: string | React.ReactNode;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({
-  className,
-  id = generateId(),
-  label,
-  type = 'checkbox',
-  ...otherProps
-}) => (
-  <Label className={className} htmlFor={id}>
-    <InputCheckbox type="checkbox" id={id} {...otherProps} />
-    {label}
-  </Label>
+export const Checkbox: React.FC<CheckboxProps> = observer(
+  ({ className, id = generateId(), label, type = 'checkbox', ...otherProps }) => (
+    <Label className={className} htmlFor={id}>
+      <InputCheckbox type="checkbox" id={id} {...otherProps} />
+      {label}
+    </Label>
+  )
 );

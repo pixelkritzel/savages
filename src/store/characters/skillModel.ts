@@ -1,9 +1,12 @@
+import { Iweapon } from './../settings/settingWeaponModel';
 import { types, Instance, getRoot, IAnyStateTreeNode } from 'mobx-state-tree';
 
 import { Isetting } from 'store/settings';
 import { settingsSkillModel } from 'store/settings/settingSkillModel';
 
 import { traitModel } from './traitModel';
+
+export const ATTACK_SKILLS = ['athletics', 'fighting', 'shooting'] as const;
 
 const attackModel = types
   .model('attackModel', {
@@ -16,14 +19,17 @@ const attackModel = types
       types.union(types.null, types.enumeration(['-2', '-4', '-6', '-8'])),
       null
     ),
-    theDrop: false,
+    isTheDrop: false,
     range: types.optional(types.enumeration(['0', '-2', '-4', '-8']), '0'),
-    recoil: false,
+    isRecoil: false,
     scale: types.optional(types.enumeration(['-6', '-4', '-2', '0', '+2', '+4', '+6']), '0'),
     speed: types.optional(types.enumeration(['0', '-1', '-2', '-4', '-6', '-8', '-10']), '0'),
-    proneTarget: false,
+    isProneTarget: false,
     rateOfFire: 1,
-    unarmedDefender: false,
+    isUnarmedDefender: false,
+    isShotgunSlugs: false,
+    isNonLethal: false,
+    isOffHand: false,
   })
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
@@ -53,6 +59,12 @@ export const skillModel = types
         selectedSetting.isSkillSpezializations && selectedSetting.isSpezializedSkill(self.name)
       );
     },
+    get isAttackSkill() {
+      return ATTACK_SKILLS.includes(self.name as any);
+    },
+    isAttackRollable(weapon: Iweapon) {
+      return weapon.isForSkill(self.name as any);
+    },
   }))
   .actions((self) => ({
     afterCreate() {
@@ -77,6 +89,14 @@ export function isSkill(model: IAnyStateTreeNode): model is Iskill {
 
 export function isShooting(trait: Iskill) {
   return trait.name === 'shooting';
+}
+
+export function isMelee(skill: Iskill) {
+  return skill.name === 'fighting';
+}
+
+export function isAttackSkill(skill: Iskill) {
+  return ATTACK_SKILLS.includes(skill.name as any);
 }
 
 export function getModifierForCalledShot(calledShot: Iskill['attack']['calledShot']) {

@@ -27,11 +27,11 @@ const WoundsAndFatigue = styled.p`
   }
 `;
 
-const Hindrances = styled.p`
+const Hindrances = styled.div`
   grid-area: 2 / 1/ 2/ 1;
 `;
 
-const Edges = styled.p`
+const Edges = styled.div`
   grid-area: 2 / 2/ 2/ 2;
 `;
 

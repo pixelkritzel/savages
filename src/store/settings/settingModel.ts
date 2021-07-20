@@ -1,4 +1,3 @@
-import { settingRangedWeaponModel } from './settingRangedWeaponModel';
 import { Instance, SnapshotIn, types } from 'mobx-state-tree';
 
 import { creationRulesModel } from './creationRulesModel';
@@ -7,7 +6,7 @@ import { settingsSkillModel } from './settingSkillModel';
 import { vanillaSetting } from './data/SavageWorldsVanilla';
 import { settingEdgeModel } from './settingEdgeModel';
 import { settingHindranceModel } from './settingHindranceModel';
-import { settingMeleeWeaponModel } from './settingMeleeWeapon';
+import { weaponModel } from './settingWeaponModel';
 
 export const settingModel = types
   .model('setting', {
@@ -17,8 +16,7 @@ export const settingModel = types
     availableEdges: types.array(settingEdgeModel),
     availableSkills: types.array(settingsSkillModel),
     availableHindrances: types.array(settingHindranceModel),
-    availableRangedWeapons: types.array(settingRangedWeaponModel),
-    availableMeleeWeapons: types.array(settingMeleeWeaponModel),
+    availableWeapons: types.array(weaponModel),
     rules: types.model({
       skillSpezializations: types.array(types.string),
     }),

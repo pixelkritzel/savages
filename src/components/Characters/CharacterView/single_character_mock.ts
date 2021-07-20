@@ -55,7 +55,7 @@ export const single_character_mock: SIcharacter = {
   },
   edges: ['strong_willed', 'nerves_of_steel'],
   hindrances: ['clueless', 'anemic', 'test_die_difference'],
-  rangedWeapons: ['ranged_weapon_tommy_gun', 'ranged_weapon_timmy_gun'],
+  weapons: ['ranged_weapon_tommy_gun', 'ranged_weapon_timmy_gun', 'unarmed', 'shotgun'],
   runningDice: {
     type: 'runningDice',
     name: 'Running',
@@ -64,7 +64,7 @@ export const single_character_mock: SIcharacter = {
   },
   basePowerPoints: 20,
   currentPowerPoints: 12,
-  currentlyHoldWeapon: 'ranged_weapon_tommy_gun',
+  currentlyHoldWeapon: 'shotgun',
   hasPowers: true,
   powers: {
     protection: {
