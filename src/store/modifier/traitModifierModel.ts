@@ -7,6 +7,10 @@ export const traitModifierModel = types.model('traitModifierModel', {
   traitName: types.string,
   bonusValue: 0,
   bonusDice: 0,
+  diceMinimum: 0,
+  diceMaximum: 0,
+  bonusMinimum: 0,
+  bonusMaximum: 0,
 });
 
 export interface ItraitModifier extends Instance<typeof traitModifierModel> {}
