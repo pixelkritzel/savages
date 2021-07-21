@@ -4,6 +4,7 @@ import { v4 as uuid4 } from 'uuid';
 import { modifierModel, Imodifier } from 'store/modifier';
 
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
+import { rollDice } from 'utils/rollDice';
 
 export const DICE_TYPES: Itrait['dice'][] = [4, 6, 8, 10, 12];
 
@@ -16,13 +17,11 @@ export const diceType = types.union(
 );
 export const bonusType = types.number;
 
-export function rollDice(sides: number) {
-  let result = Math.ceil(Math.random() / (1 / sides));
-  if (result === sides) {
-    result = result + rollDice(sides);
-  }
-  return result;
-}
+export type TraitRollResult = {
+  type: 'result';
+  rolls: { diceRoll: number; success: boolean; raises: number }[];
+  allRolls: number[];
+};
 
 export const traitModel = types
   .model('traitModel', {
@@ -49,6 +48,15 @@ export const traitModel = types
     numberOfActions: 0,
     isJoker: false,
   })
+  .views((self) => ({
+    getModifiedBonus(bonusModifier: number) {
+      return self.bonus + bonusModifier;
+    },
+    getModifiedDice(diceDifference: number) {
+      const diceSidesSum = self.dice + diceDifference * 2;
+      return diceSidesSum < 3 ? 4 : diceSidesSum > 12 ? 12 : diceSidesSum;
+    },
+  }))
   .views((self) => ({
     get isBonusDecrementable(): boolean {
       return self.bonus > self.minimum.bonus;
@@ -81,14 +89,8 @@ export const traitModel = types
       numberOfDices: number;
       isWildcard: boolean;
       targetValue: number;
-    }):
-      | { type: 'critical_failure' }
-      | {
-          type: 'result';
-          rolls: { diceRoll: number; success: boolean; raises: number }[];
-          allRolls: number[];
-        } {
-      const dice = self.dice + diceDifference * 2 > 3 ? self.dice + diceDifference * 2 : 4;
+    }): { type: 'critical_failure' } | TraitRollResult {
+      const dice = self.getModifiedDice(diceDifference);
       const traitDiceRoll = Array.from({ length: numberOfDices }, () => rollDice(dice));
       const wildDiceRoll = rollDice(6);
       if (isWildcard) {
@@ -110,7 +112,7 @@ export const traitModel = types
         allRolls.pop();
       }
       const result = allRolls
-        .map((roll) => roll + bonus)
+        .map((roll) => roll + self.getModifiedBonus(bonus))
         .map((roll) => ({
           diceRoll: roll,
           success: roll - targetValue > -1,

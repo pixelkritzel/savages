@@ -14,7 +14,7 @@ interface SkillRollProps {
 @observer
 export class SkillRoll extends React.Component<SkillRollProps> {
   @observable
-  isRollModalOpen = this.props.skill.name === 'shooting'; // TODO: just for dvelopment
+  isRollModalOpen = false; // TODO: just for dvelopment
 
   constructor(props: SkillRollProps) {
     super(props);

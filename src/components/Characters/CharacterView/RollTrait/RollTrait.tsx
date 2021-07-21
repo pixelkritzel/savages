@@ -4,7 +4,6 @@ import { Observer, observer } from 'mobx-react';
 
 import { StoreContext } from 'components/StoreContext';
 
-import { Button } from 'ui/Button';
 import { ShowObject } from 'ui/ShowObject';
 
 import { Icharacter } from 'store/characters';
@@ -23,10 +22,9 @@ import { Attack } from './Attack';
 import { TurnOptions } from './TurnOptions';
 import { ActiveModifiers } from '../ActiveModifiers';
 import { OptionalModifiers } from '../OptionalModifiers';
-import { Result } from './Result';
+import { RollAndResult } from './RollAndResult';
 
 import { capitalizeFirstLetter } from 'lib/strings';
-import { padWithMathOperator } from 'utils/padWithMathOpertor';
 
 interface RollDiceProps {
   character: Icharacter;
@@ -245,25 +243,13 @@ export class RollTrait extends React.Component<RollDiceProps> {
             step={1}
           />
         </label>
-        {!this.result && (
-          <Observer>
-            {() => (
-              <Button disabled={this.isTraitRollable} onClick={this.rollDice}>
-                {`Roll: D${this.modifiedRoll.dice} ${
-                  this.modifiedRoll.bonus !== 0 ? padWithMathOperator(this.modifiedRoll.bonus) : ''
-                }`}
-              </Button>
-            )}
-          </Observer>
-        )}
-        {this.result && (
-          <Result
-            character={character}
-            trait={trait}
-            result={this.result}
-            rollConfiguration={this.rollConfiguration}
-          />
-        )}
+
+        <RollAndResult
+          character={character}
+          isTraitRollable={this.isTraitRollable}
+          trait={trait}
+          rollConfiguration={this.rollConfiguration}
+        />
       </>
     );
   }

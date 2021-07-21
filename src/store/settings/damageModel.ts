@@ -1,5 +1,6 @@
 import { Instance, types } from 'mobx-state-tree';
 import { diceType } from 'store/characters/traitModel';
+import { rollDice } from 'utils/rollDice';
 
 const damageDicesModel = types.model('damageDicesModel', {
   sides: types.optional(diceType, 4),
@@ -24,6 +25,17 @@ export const damageModel = types
         humanFriendlyString += ` + ${self.bonus}`;
       }
       return humanFriendlyString;
+    },
+  }))
+  .views((self) => ({
+    roll({ isRaise = false, bonus = 0 }) {
+      let sumDiceRoll = isRaise ? rollDice(6) : 0 + bonus;
+      for (const dice of self.dices) {
+        for (let i = 0; i <= dice.numberOfDices; i++) {
+          sumDiceRoll += rollDice(dice.sides);
+        }
+      }
+      return sumDiceRoll;
     },
   }))
   .actions((self) => ({
