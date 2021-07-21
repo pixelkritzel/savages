@@ -2,7 +2,6 @@
 @import 'src/styles/_reset-button.scss';
 @import 'src/styles/_variables.scss';
 
-
 $button-border-color-default: #000;
 $button-background-color-default: #fff;
 $button-background-color-default-hover: #f5f5f5;
@@ -18,6 +17,8 @@ $button-inner-border-box-shadow: inset 0px 0px 0px 1px white;
   border: 2px solid $button-border-color-default;
   box-shadow: $button-inner-border-box-shadow;
   transition: all 0.2s;
+  background-color: $button-background-color-default;
+  color: $button-border-color-default;
 
   &:disabled {
     border-color: #808080;

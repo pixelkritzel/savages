@@ -8,24 +8,20 @@ interface ButtonProps<T extends keyof HTMLElementTagNameMap = 'button'>
   as?: T;
   icon?: JSX.Element;
   variant?: 'default' | 'danger' | 'success' | 'link';
+  children: React.ReactNode;
 }
 
-export class Button<T extends keyof HTMLElementTagNameMap = 'button'> extends React.Component<
-  ButtonProps<T>
-> {
-  render() {
-    const {
-      as = 'button',
-      children,
-      className,
-      icon,
-      variant = 'default',
-      ...otherProps
-    } = this.props;
-    return React.createElement(
-      as,
-      { className: cx(CSS.btn, CSS[variant], className), ...otherProps },
-      [icon ? <span className={CSS.icon}>{icon}</span> : null, children]
-    );
-  }
+export function Button<T extends keyof HTMLElementTagNameMap = 'button'>({
+  as,
+  children,
+  className,
+  icon,
+  variant = 'default',
+  ...otherProps
+}: ButtonProps<T>) {
+  return React.createElement(
+    as ?? 'button',
+    { className: cx(CSS.btn, CSS[variant], className), ...otherProps },
+    [icon ? <span className={CSS.icon}>{icon}</span> : null, children]
+  );
 }

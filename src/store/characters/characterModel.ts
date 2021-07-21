@@ -90,6 +90,31 @@ export const characterModel = types
     },
   }))
   .views((self) => ({
+    get modifiers(): {
+      edges: Imodifier[];
+      hindrances: Imodifier[];
+      all: Imodifier[];
+      wounds: number;
+      fatigue: number;
+    } {
+      const { edges, hindrances } = self;
+      const modifiers: {
+        edges: Imodifier[];
+        hindrances: Imodifier[];
+        wounds: number;
+        fatigue: number;
+      } = {
+        // @ts-expect-error
+        edges: edges.map(({ modifiers }) => modifiers).flat(),
+        // @ts-expect-error
+        hindrances: hindrances.map(({ modifiers }) => modifiers).flat(),
+        wounds: self.woundsPenalty,
+        fatigue: self.fatigueAsNumber,
+      };
+      return { ...modifiers, all: [...modifiers.edges, ...modifiers.hindrances] };
+    },
+  }))
+  .views((self) => ({
     get errors() {
       const errors = [];
       if (self.name.length < 2) {
@@ -104,18 +129,25 @@ export const characterModel = types
       return errors;
     },
 
+    getModifiersByField(fieldName: keyof Imodifier) {
+      return self.modifiers.all.filter((modifier) =>
+        Array.isArray(modifier[fieldName]) ? modifier[fieldName].length > 0 : !!modifier[fieldName]
+      );
+    },
+
     getTraitModifiers(traitName: string) {
-      type CurrentModifiersType = { edges: Imodifier[]; hindrances: Imodifier[] };
-      const { edges, hindrances } = self;
-      const nonOptionalModifiers: CurrentModifiersType & { wounds: number; fatigue: number } = {
+      const nonOptionalModifiers: {
+        edges: Imodifier[];
+        hindrances: Imodifier[];
+        wounds: typeof self['woundsPenalty'];
+        fatigue: typeof self['fatigueAsNumber'];
+      } = { edges: [], hindrances: [], wounds: self.woundsPenalty, fatigue: self.fatigueAsNumber };
+      const optionalModifiers: { edges: Imodifier[]; hindrances: Imodifier[] } = {
         edges: [],
         hindrances: [],
-        wounds: self.woundsPenalty,
-        fatigue: self.fatigueAsNumber,
       };
-      const optionalModifiers: CurrentModifiersType = { edges: [], hindrances: [] };
 
-      edges.forEach((edge) => {
+      self.edges.forEach((edge) => {
         edge.modifiers.forEach((modifier) => {
           modifier.traitModifiers.forEach((traitMod) => {
             if (traitMod.traitName === traitName) {
@@ -129,7 +161,7 @@ export const characterModel = types
         });
       });
 
-      hindrances.forEach((hindrance) => {
+      self.hindrances.forEach((hindrance) => {
         hindrance.modifiers.forEach((modifier) => {
           modifier.traitModifiers.forEach((traitMod) => {
             if (traitMod.traitName === traitName) {

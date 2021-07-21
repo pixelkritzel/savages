@@ -1,10 +1,11 @@
 import { types, Instance, SnapshotIn } from 'mobx-state-tree';
+import { v4 as uuidv4 } from 'uuid';
 
 import { modifierModel } from 'store/modifier';
 
 export const settingHindranceModel = types
   .model('hindranceModel', {
-    id: types.identifier,
+    id: types.optional(types.identifier, uuidv4),
     name: types.string,
     impact: types.enumeration(['minor', 'major']),
     description: types.string,

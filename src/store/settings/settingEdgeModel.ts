@@ -1,4 +1,5 @@
 import { cast, Instance, SnapshotIn, types } from 'mobx-state-tree';
+import { v4 as uuidv4 } from 'uuid';
 
 import { modifierModel } from 'store/modifier/modifierModel';
 
@@ -12,7 +13,7 @@ const diceType = types.union(
 
 export const settingEdgeModel = types
   .model('settingEdgeModel', {
-    id: types.identifier,
+    id: types.optional(types.identifier, uuidv4),
     name: types.string,
     summary: types.string,
     description: types.string,

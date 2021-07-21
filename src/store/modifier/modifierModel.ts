@@ -18,6 +18,8 @@ export const modifierModel = types
     toughness: 0,
     size: 0,
     freeEdges: 0,
+    freeReroll: '',
+    rerollBonus: 0,
     armor: 0,
     ignoreWounds: 0,
     ignoreMultiActionPenalty: 0,

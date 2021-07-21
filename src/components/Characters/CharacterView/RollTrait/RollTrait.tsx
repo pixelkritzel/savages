@@ -23,9 +23,11 @@ import { Attack } from './Attack';
 import { TurnOptions } from './TurnOptions';
 import { ActiveModifiers } from '../ActiveModifiers';
 import { OptionalModifiers } from '../OptionalModifiers';
+import { Result } from './Result';
 
 import { capitalizeFirstLetter } from 'lib/strings';
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
+
 interface RollDiceProps {
   character: Icharacter;
   trait: Itrait | Iskill;
@@ -182,16 +184,21 @@ export class RollTrait extends React.Component<RollDiceProps> {
     );
   }
 
-  @action
-  rollDice = () => {
+  @computed
+  get rollConfiguration() {
     const { trait } = this.props;
     const numberOfDices = isSkill(trait) && isShooting(trait) ? trait.attack.rateOfFire : 1;
-    this.result = trait.roll({
+    return {
       ...this.modifierSum,
       numberOfDices,
       isWildcard: this.props.character.wildcard,
       targetValue: this.targetValue,
-    });
+    };
+  }
+
+  @action
+  rollDice = () => {
+    this.result = this.props.trait.roll(this.rollConfiguration);
   };
 
   render() {
@@ -238,16 +245,25 @@ export class RollTrait extends React.Component<RollDiceProps> {
             step={1}
           />
         </label>
-        <Observer>
-          {() => (
-            <Button disabled={this.isTraitRollable} onClick={this.rollDice}>
-              {`Roll: D${this.modifiedRoll.dice} ${
-                this.modifiedRoll.bonus !== 0 ? padWithMathOperator(this.modifiedRoll.bonus) : ''
-              }`}
-            </Button>
-          )}
-        </Observer>
-        {this.result && <ShowObject>{this.result}</ShowObject>}
+        {!this.result && (
+          <Observer>
+            {() => (
+              <Button disabled={this.isTraitRollable} onClick={this.rollDice}>
+                {`Roll: D${this.modifiedRoll.dice} ${
+                  this.modifiedRoll.bonus !== 0 ? padWithMathOperator(this.modifiedRoll.bonus) : ''
+                }`}
+              </Button>
+            )}
+          </Observer>
+        )}
+        {this.result && (
+          <Result
+            character={character}
+            trait={trait}
+            result={this.result}
+            rollConfiguration={this.rollConfiguration}
+          />
+        )}
       </>
     );
   }

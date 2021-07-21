@@ -1,4 +1,5 @@
 import { Instance, types } from 'mobx-state-tree';
+import { v4 as uuid4 } from 'uuid';
 
 import { modifierModel, Imodifier } from 'store/modifier';
 
@@ -15,7 +16,7 @@ export const diceType = types.union(
 );
 export const bonusType = types.number;
 
-function rollDice(sides: number) {
+export function rollDice(sides: number) {
   let result = Math.ceil(Math.random() / (1 / sides));
   if (result === sides) {
     result = result + rollDice(sides);
@@ -25,6 +26,7 @@ function rollDice(sides: number) {
 
 export const traitModel = types
   .model('traitModel', {
+    id: types.optional(types.identifier, uuid4),
     name: types.optional(types.string, ''),
     type: types.string,
     dice: types.optional(diceType, 4),
@@ -82,8 +84,8 @@ export const traitModel = types
     }):
       | { type: 'critical_failure' }
       | {
-          type: 'success' | 'failure';
-          rolls: { result: number; success: boolean; raises: number }[];
+          type: 'result';
+          rolls: { diceRoll: number; success: boolean; raises: number }[];
           allRolls: number[];
         } {
       const dice = self.dice + diceDifference * 2 > 3 ? self.dice + diceDifference * 2 : 4;
@@ -110,13 +112,13 @@ export const traitModel = types
       const result = allRolls
         .map((roll) => roll + bonus)
         .map((roll) => ({
-          result: roll,
+          diceRoll: roll,
           success: roll - targetValue > -1,
           raises: Math.max(Math.floor((roll - targetValue) / 4), 0),
         }));
 
       return {
-        type: result.some(({ success }) => success) ? 'success' : 'failure',
+        type: 'result',
         rolls: result,
         allRolls: allRolls.map((roll) => roll + bonus),
       };

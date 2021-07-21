@@ -1,5 +1,5 @@
 import { Iweapon } from './../settings/settingWeaponModel';
-import { types, Instance, getRoot, IAnyStateTreeNode } from 'mobx-state-tree';
+import { types, Instance, getRoot, IAnyStateTreeNode, SnapshotIn } from 'mobx-state-tree';
 
 import { Isetting } from 'store/settings';
 import { settingsSkillModel } from 'store/settings/settingSkillModel';
@@ -40,7 +40,7 @@ const attackModel = types
     },
   }));
 
-export const skillModel = types
+const _skillModel = types
   .compose(
     'skillModel',
     traitModel,
@@ -81,7 +81,17 @@ export const skillModel = types
     },
   }));
 
-export interface Iskill extends Instance<typeof skillModel> {}
+export const skillModel = types.snapshotProcessor(_skillModel, {
+  preProcessor(skill: SIskill) {
+    return { ...skill, id: skill.settingSkill as string };
+  },
+  postProcessor(skill) {
+    return skill;
+  },
+});
+
+export interface Iskill extends Instance<typeof _skillModel> {}
+export interface SIskill extends SnapshotIn<typeof _skillModel> {}
 
 export function isSkill(model: IAnyStateTreeNode): model is Iskill {
   return model.type === 'skill';
