@@ -34,8 +34,10 @@ export class WeaponOptions extends React.Component<WeaponOptionsProps> {
           id={id}
           max={6}
           step={1}
-          value={attackSkill.attack.rateOfFire}
-          onChange={(event) => attackSkill.attack.set('rateOfFire', Number(event.target.value))}
+          value={attackSkill.attackOptions.rateOfFire}
+          onChange={(event) =>
+            attackSkill.attackOptions.set('rateOfFire', Number(event.target.value))
+          }
           list={this.rateOfFireTicksId}
         />
         <datalist id={this.rateOfFireTicksId}>
@@ -60,11 +62,11 @@ export class WeaponOptions extends React.Component<WeaponOptionsProps> {
           {isShooting && (
             <div>
               <FormGroup
-                label={`Rate of Fire: ${attackSkill.attack.rateOfFire}`}
+                label={`Rate of Fire: ${attackSkill.attackOptions.rateOfFire}`}
                 input={this.inputRateOfFire}
                 inline
               />
-              {attackSkill.attack.rateOfFire > currentlyHoldWeapon.rateOfFire && (
+              {attackSkill.attackOptions.rateOfFire > currentlyHoldWeapon.rateOfFire && (
                 <Alert>The selected Rate of Fire is higher than the weapons Rate of Fire!</Alert>
               )}
             </div>
@@ -72,33 +74,40 @@ export class WeaponOptions extends React.Component<WeaponOptionsProps> {
           {isShooting && currentlyHoldWeapon.weaponType.includes('shotgun') && (
             <Checkbox
               label="Use slugs"
-              checked={attackSkill.attack.isShotgunSlugs}
+              checked={attackSkill.attackOptions.isShotgunSlugs}
               onChange={() =>
-                attackSkill.attack.set('isShotgunSlugs', !attackSkill.attack.isShotgunSlugs)
+                attackSkill.attackOptions.set(
+                  'isShotgunSlugs',
+                  !attackSkill.attackOptions.isShotgunSlugs
+                )
               }
             />
           )}
-          {isShooting && attackSkill.attack.rateOfFire !== 1 && (
+          {isShooting && attackSkill.attackOptions.rateOfFire !== 1 && (
             <Checkbox
               label="Recoil"
-              checked={attackSkill.attack.isRecoil}
-              onChange={() => attackSkill.attack.set('isRecoil', !attackSkill.attack.isRecoil)}
+              checked={attackSkill.attackOptions.isRecoil}
+              onChange={() =>
+                attackSkill.attackOptions.set('isRecoil', !attackSkill.attackOptions.isRecoil)
+              }
             />
           )}
           {isMelee(attackSkill) && (
             <Checkbox
               label="Non lethal damage with edged weapon"
-              checked={attackSkill.attack.isNonLethal}
+              checked={attackSkill.attackOptions.isNonLethal}
               onChange={() =>
-                attackSkill.attack.set('isNonLethal', !attackSkill.attack.isNonLethal)
+                attackSkill.attackOptions.set('isNonLethal', !attackSkill.attackOptions.isNonLethal)
               }
             />
           )}
 
           <Checkbox
             label="Off Hand Attack"
-            checked={attackSkill.attack.isOffHand}
-            onChange={() => attackSkill.attack.set('isOffHand', !attackSkill.attack.isOffHand)}
+            checked={attackSkill.attackOptions.isOffHand}
+            onChange={() =>
+              attackSkill.attackOptions.set('isOffHand', !attackSkill.attackOptions.isOffHand)
+            }
           />
         </GridContainer>
       </fieldset>

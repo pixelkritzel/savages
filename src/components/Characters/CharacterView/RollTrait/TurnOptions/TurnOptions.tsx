@@ -32,8 +32,8 @@ export class TurnOptions extends React.Component<TurnOptionsProps> {
           min={0}
           max={2}
           step={1}
-          value={trait.numberOfActions}
-          onChange={(event) => trait.set('numberOfActions', Number(event.target.value))}
+          value={trait.options.numberOfActions}
+          onChange={(event) => trait.options.set('numberOfActions', Number(event.target.value))}
           list={this.numberOfActionsTickmarksID}
         />
 
@@ -54,13 +54,13 @@ export class TurnOptions extends React.Component<TurnOptionsProps> {
         <GridContainer>
           <FormGroup
             inline
-            label={`Actions in Turn: ${trait.numberOfActions + 1}`}
+            label={`Actions in Turn: ${trait.options.numberOfActions + 1}`}
             input={this.inputNumberOfActions}
           ></FormGroup>
           <Checkbox
             label="Joker"
-            checked={trait.isJoker}
-            onChange={() => trait.set('isJoker', !trait.isJoker)}
+            checked={trait.options.isJoker}
+            onChange={() => trait.options.set('isJoker', !trait.options.isJoker)}
           ></Checkbox>
         </GridContainer>
       </fieldset>

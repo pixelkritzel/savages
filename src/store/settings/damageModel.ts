@@ -28,8 +28,11 @@ export const damageModel = types
     },
   }))
   .views((self) => ({
-    roll({ isRaise = false, bonus = 0 }) {
+    roll({ isRaise = false, bonus = 0, strength = { dice: 0, bonus: 0 } }) {
       let sumDiceRoll = isRaise ? rollDice(6) : 0 + bonus;
+      if (self.strength) {
+        sumDiceRoll += rollDice(strength.dice) + strength.bonus;
+      }
       for (const dice of self.dices) {
         for (let i = 0; i <= dice.numberOfDices; i++) {
           sumDiceRoll += rollDice(dice.sides);

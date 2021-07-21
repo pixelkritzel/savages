@@ -23,6 +23,21 @@ export type TraitRollResult = {
   allRolls: number[];
 };
 
+const traitOptions = types
+  .model('traitOptions', {
+    isVulnerableTarget: false,
+    isJoker: false,
+    numberOfActions: 0,
+  })
+  .actions((self) => ({
+    set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
+      key: K,
+      value: T[K]
+    ) {
+      self[key] = value;
+    },
+  }));
+
 export const traitModel = types
   .model('traitModel', {
     id: types.optional(types.identifier, uuid4),
@@ -45,8 +60,7 @@ export const traitModel = types
       { dice: 12, bonus: +4 }
     ),
     activeModifiers: types.map(types.reference(modifierModel)),
-    numberOfActions: 0,
-    isJoker: false,
+    options: types.optional(traitOptions, {}),
   })
   .views((self) => ({
     getModifiedBonus(bonusModifier: number) {

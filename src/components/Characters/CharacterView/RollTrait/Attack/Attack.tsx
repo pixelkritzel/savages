@@ -7,10 +7,10 @@ import { Table } from 'ui/Table';
 import { Cover } from './Cover';
 import { CalledShot } from './CalledShot';
 import { WeaponOptions } from './WeaponOptions';
-import { TargetOptions } from './TargetOptions';
 
 import { ATTACK_SKILLS, isAttackSkill, Iskill, isShooting } from 'store/characters/skillModel';
 import { Icharacter } from 'store/characters';
+import { Checkbox } from 'ui/Checkbox';
 
 interface ShootingProps {
   attackSkill: Iskill;
@@ -26,11 +26,17 @@ export const Attack: React.FC<ShootingProps> = observer(
     }
 
     function setIgnore() {
-      attackSkill.attack?.set('aim', attackSkill.attack.aim !== 'ignore' ? 'ignore' : null);
+      attackSkill.attackOptions?.set(
+        'aim',
+        attackSkill.attackOptions.aim !== 'ignore' ? 'ignore' : null
+      );
     }
 
     function setPlusTwo() {
-      attackSkill.attack?.set('aim', attackSkill.attack.aim !== 'plusTwo' ? 'plusTwo' : null);
+      attackSkill.attackOptions?.set(
+        'aim',
+        attackSkill.attackOptions.aim !== 'plusTwo' ? 'plusTwo' : null
+      );
     }
 
     const { currentlyHoldWeapon } = character;
@@ -86,46 +92,35 @@ export const Attack: React.FC<ShootingProps> = observer(
           </>
         )}
         <WeaponOptions attackSkill={attackSkill} currentlyHoldWeapon={currentlyHoldWeapon} />
-
-        <TargetOptions attackSkill={attackSkill} />
         <fieldset>
           <legend>Range</legend>
-          <label>
-            <input
-              type="radio"
-              name="range"
-              checked={attackSkill.attack.range === '0'}
-              onChange={() => attackSkill.attack.set('range', '0')}
-            />{' '}
-            Short (0)
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="range"
-              checked={attackSkill.attack.range === '-2'}
-              onChange={() => attackSkill.attack.set('range', '-2')}
-            />{' '}
-            Medium (-2)
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="range"
-              checked={attackSkill.attack.range === '-4'}
-              onChange={() => attackSkill.attack.set('range', '-4')}
-            />{' '}
-            Long (-4)
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="range"
-              checked={attackSkill.attack.range === '-8'}
-              onChange={() => attackSkill.attack.set('range', '-8')}
-            />{' '}
-            Extreme (-8)
-          </label>
+          {[
+            ['0', 'Short'],
+            ['-2', 'Medium'],
+            ['-4', 'Long'],
+            ['-8', 'Extreme'],
+          ].map(([rangeModifier, label], index) => (
+            <Checkbox
+              key={index}
+              label={`${label} (${
+                rangeModifier !== '-8'
+                  ? currentlyHoldWeapon.range[index]
+                  : currentlyHoldWeapon.range[2] * 4
+              })`}
+              disabled={
+                rangeModifier === '-8' &&
+                (currentlyHoldWeapon.weaponType.includes('shotgun') ||
+                  !attackSkill.attackOptions.aim)
+              }
+              checked={attackSkill.attackOptions.range === rangeModifier}
+              onChange={() =>
+                attackSkill.attackOptions.set(
+                  'range',
+                  rangeModifier as Iskill['attackOptions']['range']
+                )
+              }
+            />
+          ))}
         </fieldset>
         <CalledShot shooting={attackSkill} />
         <Cover shooting={attackSkill} />
@@ -140,9 +135,9 @@ export const Attack: React.FC<ShootingProps> = observer(
             ['+4', 'Huge (+4)'],
             ['+6', 'Gargantuan (+6)'],
           ]}
-          selectedValue={attackSkill.attack.scale}
+          selectedValue={attackSkill.attackOptions.scale}
           setSelectedValue={(value: string) =>
-            attackSkill.attack.set('scale', value as Iskill['attack']['scale'])
+            attackSkill.attackOptions.set('scale', value as Iskill['attackOptions']['scale'])
           }
         />
         <RadioGroup
@@ -156,9 +151,9 @@ export const Attack: React.FC<ShootingProps> = observer(
             ['-8', '> Mach 2 (8)'],
             ['-10', 'Near Light Speed (-10)'],
           ]}
-          selectedValue={attackSkill.attack.speed}
+          selectedValue={attackSkill.attackOptions.speed}
           setSelectedValue={(value: string) =>
-            attackSkill.attack.set('speed', value as Iskill['attack']['speed'])
+            attackSkill.attackOptions.set('speed', value as Iskill['attackOptions']['speed'])
           }
         />
         <fieldset>
@@ -167,7 +162,7 @@ export const Attack: React.FC<ShootingProps> = observer(
             <label>
               <input
                 type="checkbox"
-                checked={attackSkill.attack.aim === 'ignore'}
+                checked={attackSkill.attackOptions.aim === 'ignore'}
                 onChange={setIgnore}
               />
               Ignore up to -4 penalties
@@ -177,7 +172,7 @@ export const Attack: React.FC<ShootingProps> = observer(
             <label>
               <input
                 type="checkbox"
-                checked={attackSkill.attack.aim === 'plusTwo'}
+                checked={attackSkill.attackOptions.aim === 'plusTwo'}
                 onChange={setPlusTwo}
               />
               Add +2 bonus

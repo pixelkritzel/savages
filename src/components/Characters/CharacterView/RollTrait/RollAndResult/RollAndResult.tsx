@@ -77,7 +77,12 @@ export const RollAndResult = observer(function ResultFn({
     if (traitRollResult.type === 'result') {
       for (const roll of traitRollResult.rolls) {
         traitRollResult.damages.push(
-          roll.success ? character.currentlyHoldWeapon.damage.roll({ isRaise: roll.raises > 0 }) : 0
+          roll.success
+            ? character.currentlyHoldWeapon.damage.roll({
+                isRaise: roll.raises > 0,
+                strength: character.attributes.strength,
+              })
+            : 0
         );
       }
     }

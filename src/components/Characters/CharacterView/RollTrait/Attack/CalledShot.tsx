@@ -8,27 +8,27 @@ export const CalledShot: React.FC<{ shooting: Iskill }> = observer(({ shooting }
   const [customValue, setCustomValue] = useState(0);
 
   function onChangeIsCustom() {
-    if (typeof shooting.attack.calledShot === 'number') {
+    if (typeof shooting.attackOptions.calledShot === 'number') {
       setIsCustom(false);
-      shooting.attack.set('calledShot', null);
+      shooting.attackOptions.set('calledShot', null);
     } else {
       setIsCustom(true);
-      shooting.attack.set('calledShot', customValue);
+      shooting.attackOptions.set('calledShot', customValue);
     }
   }
 
   function onChangeCustomValue(event: React.ChangeEvent<HTMLInputElement>) {
     const value = Number(event.target.value);
     setCustomValue(value);
-    shooting.attack.set('calledShot', value);
+    shooting.attackOptions.set('calledShot', value);
   }
 
   function setCalledShot(value: string) {
-    shooting.attack.set(
+    shooting.attackOptions.set(
       'calledShot',
-      shooting.attack.calledShot === value
+      shooting.attackOptions.calledShot === value
         ? null
-        : (value as typeof shooting['attack']['calledShot'])
+        : (value as typeof shooting['attackOptions']['calledShot'])
     );
   }
 
@@ -38,7 +38,7 @@ export const CalledShot: React.FC<{ shooting: Iskill }> = observer(({ shooting }
       <label>
         <input
           type="checkbox"
-          checked={shooting.attack.calledShot === 'hand'}
+          checked={shooting.attackOptions.calledShot === 'hand'}
           onChange={() => setCalledShot('hand')}
         />{' '}
         Hand
@@ -46,7 +46,7 @@ export const CalledShot: React.FC<{ shooting: Iskill }> = observer(({ shooting }
       <label>
         <input
           type="checkbox"
-          checked={shooting.attack.calledShot === 'head'}
+          checked={shooting.attackOptions.calledShot === 'head'}
           onChange={() => setCalledShot('head')}
         />{' '}
         Head
@@ -54,7 +54,15 @@ export const CalledShot: React.FC<{ shooting: Iskill }> = observer(({ shooting }
       <label>
         <input
           type="checkbox"
-          checked={shooting.attack.calledShot === 'limbs'}
+          checked={shooting.attackOptions.calledShot === 'helmet'}
+          onChange={() => setCalledShot('helmet')}
+        />{' '}
+        Helmet
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={shooting.attackOptions.calledShot === 'limbs'}
           onChange={() => setCalledShot('limbs')}
         />{' '}
         Limb
@@ -62,7 +70,7 @@ export const CalledShot: React.FC<{ shooting: Iskill }> = observer(({ shooting }
       <label>
         <input
           type="checkbox"
-          checked={typeof shooting.attack.calledShot === 'number'}
+          checked={typeof shooting.attackOptions.calledShot === 'number'}
           onChange={onChangeIsCustom}
         />{' '}
         Custom

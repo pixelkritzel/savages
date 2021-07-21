@@ -12,7 +12,7 @@ const attackModel = types
   .model('attackModel', {
     aim: types.optional(types.union(types.null, types.enumeration(['ignore', 'plusTwo'])), null),
     calledShot: types.optional(
-      types.union(types.enumeration(['hand', 'head', 'limbs']), types.null, types.number),
+      types.union(types.enumeration(['hand', 'head', 'helmet', 'limbs']), types.null, types.number),
       null
     ),
     cover: types.optional(
@@ -49,7 +49,7 @@ const _skillModel = types
       settingSkill: types.reference(settingsSkillModel),
       specializations: types.maybe(types.array(types.string)),
       selectedSkillSpecialization: types.optional(types.union(types.string, types.null), null),
-      attack: types.optional(attackModel, {}),
+      attackOptions: types.optional(attackModel, {}),
     })
   )
   .views((self) => ({
@@ -109,11 +109,13 @@ export function isAttackSkill(skill: Iskill) {
   return ATTACK_SKILLS.includes(skill.name as any);
 }
 
-export function getModifierForCalledShot(calledShot: Iskill['attack']['calledShot']) {
+export function getModifierForCalledShot(calledShot: Iskill['attackOptions']['calledShot']) {
   if (typeof calledShot === 'number') {
     return calledShot;
   } else if (calledShot === 'head' || calledShot === 'hand') {
     return -4;
+  } else if (calledShot === 'helmet') {
+    return -5;
   } else if (calledShot === 'limbs') {
     return -2;
   }

@@ -24,20 +24,18 @@ interface FormGroupProps {
   label: JSX.Element | string;
   id?: string;
   inline?: boolean;
-  input: React.JSXElementConstructor<{ id: string }>;
+  input: (_: { id: string }) => React.ReactNode;
 }
 
 export const FormGroup: React.FC<FormGroupProps> = observer(
-  ({ label, id, inline = false, input: Input, ...otherProps }) => {
+  ({ label, id, inline = false, input, ...otherProps }) => {
     const idRef = React.useRef(id ?? generateId());
     return (
       <StyledFormGroup inline {...otherProps}>
         <Label htmlFor={idRef.current} inline>
           {label}
         </Label>
-        <InputContainer inline>
-          <Input id={idRef.current} />
-        </InputContainer>
+        <InputContainer inline>{input({ id: idRef.current })}</InputContainer>
       </StyledFormGroup>
     );
   }

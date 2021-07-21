@@ -25,6 +25,7 @@ import { OptionalModifiers } from '../OptionalModifiers';
 import { RollAndResult } from './RollAndResult';
 
 import { capitalizeFirstLetter } from 'lib/strings';
+import { TargetOptions } from './TargetOptions';
 
 interface RollDiceProps {
   character: Icharacter;
@@ -84,29 +85,33 @@ export class RollTrait extends React.Component<RollDiceProps> {
     const modifierAccumulator: ModifierAccumulator = createModifierAccumulator();
     modifierAccumulator.boni.wounds = -character.woundsPenalty;
     modifierAccumulator.boni.fatigue = -character.fatigueAsNumber;
-    modifierAccumulator.boni.numberOfActions = -(2 * trait.numberOfActions);
-    modifierAccumulator.boni.joker = trait.isJoker ? 2 : 0;
+    modifierAccumulator.boni.numberOfActions = -(2 * trait.options.numberOfActions);
+    modifierAccumulator.boni.joker = trait.options.isJoker ? 2 : 0;
     if (isSkill(trait) && this.isAttack) {
-      modifierAccumulator.boni.range = Number(trait.attack.range);
-      modifierAccumulator.boni.recoil = trait.attack.isRecoil ? -2 : 0;
-      modifierAccumulator.boni.calledShot = getModifierForCalledShot(trait.attack.calledShot);
-      modifierAccumulator.boni.cover = Number(trait.attack.cover);
-      modifierAccumulator.boni.theDrop = trait.attack.isTheDrop ? 4 : 0;
+      modifierAccumulator.boni.range = Number(trait.attackOptions.range);
+      modifierAccumulator.boni.recoil = trait.attackOptions.isRecoil ? -2 : 0;
+      modifierAccumulator.boni.calledShot = getModifierForCalledShot(
+        trait.attackOptions.calledShot
+      );
+      modifierAccumulator.boni.cover = Number(trait.attackOptions.cover);
+      modifierAccumulator.boni.theDrop = trait.attackOptions.isTheDrop ? 4 : 0;
+      modifierAccumulator.boni.vulnerable =
+        trait.options.isVulnerableTarget && !trait.attackOptions.isTheDrop ? 2 : 0;
       modifierAccumulator.boni.proneTarget =
-        trait.attack.isProneTarget && trait.name !== 'fighting' ? -4 : 0;
-      modifierAccumulator.boni.unarmedDefender = trait.attack.isUnarmedDefender ? 2 : 0;
-      modifierAccumulator.boni.scale = Number(trait.attack.scale);
-      modifierAccumulator.boni.speed = Number(trait.attack.speed);
+        trait.attackOptions.isProneTarget && trait.name !== 'fighting' ? -4 : 0;
+      modifierAccumulator.boni.unarmedDefender = trait.attackOptions.isUnarmedDefender ? 2 : 0;
+      modifierAccumulator.boni.scale = Number(trait.attackOptions.scale);
+      modifierAccumulator.boni.speed = Number(trait.attackOptions.speed);
       modifierAccumulator.boni.shotgun =
         isShooting(trait) &&
         character.currentlyHoldWeapon.weaponType.includes('shotgun') &&
-        !trait.attack.isShotgunSlugs &&
-        trait.attack.range === '0'
+        !trait.attackOptions.isShotgunSlugs &&
+        trait.attackOptions.range === '0'
           ? 2
           : 0;
-      modifierAccumulator.boni.nonLethal = trait.attack.isNonLethal ? -1 : 0;
-      modifierAccumulator.boni.offHand = trait.attack.isOffHand ? -2 : 0;
-      if (trait.attack.aim === 'ignore') {
+      modifierAccumulator.boni.nonLethal = trait.attackOptions.isNonLethal ? -1 : 0;
+      modifierAccumulator.boni.offHand = trait.attackOptions.isOffHand ? -2 : 0;
+      if (trait.attackOptions.aim === 'ignore') {
         const sumOfPenalties =
           modifierAccumulator.boni.range +
           modifierAccumulator.boni.calledShot +
@@ -115,7 +120,7 @@ export class RollTrait extends React.Component<RollDiceProps> {
           modifierAccumulator.boni.speed;
         modifierAccumulator.boni.aim = sumOfPenalties * -1 >= 4 ? 4 : sumOfPenalties * -1;
         console.warn('Needs to be implemented!');
-      } else if (trait.attack.aim === 'plusTwo') {
+      } else if (trait.attackOptions.aim === 'plusTwo') {
         modifierAccumulator.boni.aim = 2;
       }
     }
@@ -185,7 +190,7 @@ export class RollTrait extends React.Component<RollDiceProps> {
   @computed
   get rollConfiguration() {
     const { trait } = this.props;
-    const numberOfDices = isSkill(trait) && isShooting(trait) ? trait.attack.rateOfFire : 1;
+    const numberOfDices = isSkill(trait) && isShooting(trait) ? trait.attackOptions.rateOfFire : 1;
     return {
       ...this.modifierSum,
       numberOfDices,
@@ -219,6 +224,8 @@ export class RollTrait extends React.Component<RollDiceProps> {
         <ActiveModifiers currentModifiers={currentModifiers} trait={trait} />
         <OptionalModifiers trait={trait} currentModifiers={currentModifiers} />
         {isSkill(trait) && this.isAttack && <Attack attackSkill={trait} character={character} />}
+
+        <TargetOptions trait={trait} />
         <fieldset>
           <legend>Custom Modifiers</legend>
           <label>
