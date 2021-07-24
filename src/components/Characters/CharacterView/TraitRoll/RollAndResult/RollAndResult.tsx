@@ -120,7 +120,7 @@ export const RollAndResult = observer(function ResultFn({
   return (
     <div>
       {resultStore.results.length === 0 && (
-        <Button disabled={isTraitRollable} onClick={() => rollDice()}>
+        <Button disabled={!isTraitRollable} onClick={() => rollDice()}>
           {`Roll: D${trait.getModifiedDice(rollConfiguration.diceDifference)} ${
             trait.getModifiedBonus(rollConfiguration.bonus) !== 0
               ? padWithMathOperator(trait.getModifiedBonus(rollConfiguration.bonus))

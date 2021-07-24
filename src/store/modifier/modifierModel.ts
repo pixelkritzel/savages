@@ -12,10 +12,11 @@ export const modifierModel = types
     id: types.optional(types.identifier, uuidv4),
     name: '',
     reason: '',
-    optional: types.boolean,
+    isOptional: types.boolean,
     conditions: '',
     traitModifiers: types.optional(types.array(traitModifierModel), []),
     bennies: 0,
+    aimingHelp: 0,
     toughness: 0,
     size: 0,
     freeEdges: 0,
@@ -39,6 +40,7 @@ export const modifierModel = types
       []
     ),
     grantedSuperPowers: types.optional(types.array(types.reference(powerModel)), []),
+    isActive: false,
   })
   .views((self) => ({
     getHumanFriendlyTraitModifierValueByTrait(traitName: string) {
@@ -58,6 +60,10 @@ export const modifierModel = types
     },
   }))
   .actions((self) => ({
+    afterCreate() {
+      self.isActive = !self.isOptional;
+      self.reason = self.reason || self.name || self.id;
+    },
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
       key: K,
       value: T[K]

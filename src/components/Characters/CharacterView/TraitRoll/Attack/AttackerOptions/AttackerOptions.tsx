@@ -18,20 +18,20 @@ export const AttackerOptions = observer(function AttackerOptionsFn({
         {isRangedAttack(attackSkill) && (
           <Checkbox
             label="Unstable Platform"
-            checked={attackSkill.attackOptions.isUnstablePlatform}
+            checked={attackSkill.skillOptions.isUnstablePlatform}
             onChange={() =>
-              attackSkill.attackOptions.set(
+              attackSkill.skillOptions.set(
                 'isUnstablePlatform',
-                !attackSkill.attackOptions.isUnstablePlatform
+                !attackSkill.skillOptions.isUnstablePlatform
               )
             }
           />
         )}
         <Checkbox
           label="Off Hand Attack"
-          checked={attackSkill.attackOptions.isOffHand}
+          checked={attackSkill.skillOptions.isOffHand}
           onChange={() =>
-            attackSkill.attackOptions.set('isOffHand', !attackSkill.attackOptions.isOffHand)
+            attackSkill.skillOptions.set('isOffHand', !attackSkill.skillOptions.isOffHand)
           }
         />
       </TraitRollOptionsGrid>

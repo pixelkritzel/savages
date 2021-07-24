@@ -12,7 +12,7 @@ export const clueless: SIhindrance = {
   modifiers: [
     {
       reason: 'Clueless',
-      optional: false,
+      isOptional: false,
       traitModifiers: [
         { type: 'skill', traitName: 'notice', bonusValue: -1 },
         { type: 'skill', traitName: 'common_knowledge', bonusValue: -1 },

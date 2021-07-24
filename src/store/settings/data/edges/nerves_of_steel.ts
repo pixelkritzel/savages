@@ -13,7 +13,7 @@ export const nervesOfSteel: SIedgeModel = {
   },
   modifiers: [
     {
-      optional: true,
+      isOptional: true,
       conditions: 'Ignore one level of Wound penalties',
       traitModifiers: [],
       ignoreWounds: 1,

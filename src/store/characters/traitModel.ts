@@ -1,3 +1,4 @@
+import { isSkill } from 'store/characters/skillModel';
 import { characterModel, Icharacter } from 'store/characters';
 import { getParentOfType, Instance, types } from 'mobx-state-tree';
 import { v4 as uuid4 } from 'uuid';
@@ -7,11 +8,11 @@ import {
   ModifierAccumulator,
 } from 'components/Characters/CharacterView/TraitRoll/modifierAccumulator';
 
-import { modifierModel, Imodifier } from 'store/modifier';
 import { diceType, DICE_TYPES } from 'store/consts';
 
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
 import { rollDice } from 'utils/rollDice';
+import { traitOptions } from './traitOptions';
 
 export const bonusType = types.number;
 
@@ -20,23 +21,6 @@ export type TraitRollResult = {
   rolls: { diceRoll: number; success: boolean; raises: number }[];
   allRolls: number[];
 };
-
-const traitOptions = types
-  .model('traitOptions', {
-    isVulnerableTarget: false,
-    isJoker: false,
-    numberOfActions: 0,
-    customDiceDifference: 0,
-    customBonus: 0,
-  })
-  .actions((self) => ({
-    set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
-      key: K,
-      value: T[K]
-    ) {
-      self[key] = value;
-    },
-  }));
 
 export const traitModel = types
   .model('traitModel', {
@@ -59,11 +43,21 @@ export const traitModel = types
       }),
       { dice: 12, bonus: +4 }
     ),
-    activeModifiers: types.map(types.reference(modifierModel)),
     options: types.optional(traitOptions, {}),
   })
   .views((self) => ({
-    get traitModifierAccumulator() {
+    get unifiedOptions() {
+      let options: { [key: string]: any } = { ...self.options };
+      if (isSkill(self)) {
+        options = { ...options, ...self.skillOptions };
+      }
+      console.log(Object.keys(options));
+
+      return options;
+    },
+  }))
+  .views((self) => ({
+    getModifiersAccumulator() {
       const character = getParentOfType(self, characterModel) as Icharacter;
       const trait = self;
 
@@ -73,9 +67,12 @@ export const traitModel = types
       modifierAccumulator.boni.numberOfActions = -(2 * trait.options.numberOfActions);
       modifierAccumulator.boni.joker = trait.options.isJoker ? 2 : 0;
 
-      for (const [, modifier] of self.activeModifiers) {
+      for (const modifier of character.activeModifiers) {
         for (const traitModifier of modifier.traitModifiers) {
-          if (traitModifier.traitName === trait.name) {
+          if (
+            traitModifier.traitName === trait.name &&
+            traitModifier.isTechnicalConditionsFullfilled(self.unifiedOptions)
+          ) {
             modifierAccumulator.diceDifferences[modifier.reason] = traitModifier.bonusDice;
             modifierAccumulator.boni[modifier.reason] = traitModifier.bonusValue;
           }
@@ -91,6 +88,16 @@ export const traitModel = types
     getModifiedDice(diceDifference: number) {
       const diceSidesSum = self.dice + diceDifference * 2;
       return diceSidesSum < 3 ? 4 : diceSidesSum > 12 ? 12 : diceSidesSum;
+    },
+
+    get modifierSum() {
+      const modifiersAccumulator = this.getModifiersAccumulator();
+      const diceDifference = Object.values(modifiersAccumulator.diceDifferences).reduce(
+        (sum, diceDifference) => sum + diceDifference,
+        0
+      );
+      const bonus = Object.values(modifiersAccumulator.boni).reduce((sum, bonus) => sum + bonus, 0);
+      return { diceDifference, bonus };
     },
   }))
   .views((self) => ({
@@ -184,25 +191,6 @@ export const traitModel = types
     incrementDice() {
       if (self.isDiceIncrementable) {
         self.dice = DICE_TYPES[DICE_TYPES.indexOf(self.dice) + 1];
-      }
-    },
-    setName(name: string) {
-      self.name = name;
-    },
-    addActiveModifier(modifier: Imodifier) {
-      self.activeModifiers.set(modifier.id, modifier);
-    },
-    clearActiveModifiers() {
-      self.activeModifiers.clear();
-    },
-    removeActiveModifier(modifier: Imodifier) {
-      self.activeModifiers.delete(modifier.id);
-    },
-    toggleActiveModifier(modifier: Imodifier) {
-      if (self.activeModifiers.has(modifier.id)) {
-        self.activeModifiers.delete(modifier.id);
-      } else {
-        self.activeModifiers.set(modifier.id, modifier);
       }
     },
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(

@@ -39,28 +39,28 @@ const StyledInfoPopover = styled(InfoPopover)`
   margin-left: 8px;
 `;
 
-interface ActiveModifiersProps {
-  currentModifiers: ReturnType<Icharacter['getTraitModifiers']>;
+interface NonOptionalModifiersProps {
+  modifiers: ReturnType<Icharacter['getTraitModifiers']>;
   trait: Itrait;
 }
 
-export const ActiveModifiers: React.FC<ActiveModifiersProps> = observer(
-  ({ currentModifiers, trait, ...otherProps }) => {
+export const NonOptionalModifiers: React.FC<NonOptionalModifiersProps> = observer(
+  ({ modifiers, trait, ...otherProps }) => {
     return (
       <fieldset {...otherProps}>
         <legend>Active Modifiers:</legend>
         <GridContainer>
           <WoundsAndFatigue>
             <span>
-              <strong>Wounds:</strong> {-currentModifiers.nonOptionalModifiers.wounds}
+              <strong>Wounds:</strong> {-modifiers.nonOptionalModifiers.wounds}
             </span>
             <span>
-              <strong>Fatigue:</strong> {-currentModifiers.nonOptionalModifiers.fatigue}
+              <strong>Fatigue:</strong> {-modifiers.nonOptionalModifiers.fatigue}
             </span>
           </WoundsAndFatigue>
           <Hindrances>
             <h4>Hindrances</h4>
-            {currentModifiers.nonOptionalModifiers.hindrances.map((modifier) => (
+            {modifiers.nonOptionalModifiers.hindrances.map((modifier) => (
               <>
                 <Checkbox
                   label={
@@ -68,8 +68,8 @@ export const ActiveModifiers: React.FC<ActiveModifiersProps> = observer(
                       <strong>{modifier.name}</strong> {modifier.conditions}
                     </>
                   }
-                  checked={trait.activeModifiers.has(modifier.id)}
-                  onChange={() => trait.toggleActiveModifier(modifier)}
+                  checked={modifier.isActive}
+                  onChange={() => modifier.set('isActive', !modifier.isActive)}
                   key={modifier.id}
                 />
                 <StyledInfoPopover
@@ -81,7 +81,7 @@ export const ActiveModifiers: React.FC<ActiveModifiersProps> = observer(
           </Hindrances>
           <Edges>
             <h4>Edges</h4>
-            {currentModifiers.nonOptionalModifiers.edges.map((modifier) => (
+            {modifiers.nonOptionalModifiers.edges.map((modifier) => (
               <>
                 <Checkbox
                   label={
@@ -89,8 +89,8 @@ export const ActiveModifiers: React.FC<ActiveModifiersProps> = observer(
                       <strong>{modifier.name}</strong> {modifier.conditions}
                     </>
                   }
-                  checked={trait.activeModifiers.has(modifier.id)}
-                  onChange={() => trait.toggleActiveModifier(modifier)}
+                  checked={modifier.isActive}
+                  onChange={() => modifier.set('isActive', !modifier.isActive)}
                   key={modifier.id}
                 />
                 <StyledInfoPopover

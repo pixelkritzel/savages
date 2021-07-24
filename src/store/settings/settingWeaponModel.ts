@@ -1,7 +1,6 @@
 import { types, Instance, SnapshotIn } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Iskill } from 'store/characters/skillModel';
 import { modifierModel } from 'store/modifier/modifierModel';
 
 import { damageModel } from './damageModel';
@@ -36,8 +35,8 @@ export const weaponModel = types
     get isMeleeWeapon() {
       return self.weaponType.includes('melee');
     },
-    isForSkill(skill: Iskill) {
-      switch (skill.name) {
+    isForSkill(skillName: string) {
+      switch (skillName) {
         case 'athletics':
           return self.weaponType.includes('throwable');
         case 'fighting':

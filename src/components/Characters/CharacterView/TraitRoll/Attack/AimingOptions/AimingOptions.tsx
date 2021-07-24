@@ -13,16 +13,16 @@ export const AimingOptions = observer(function AimingOptionsFn({
   ...otherProps
 }: AimingOptionsProps) {
   function setIgnore() {
-    attackSkill.attackOptions?.set(
+    attackSkill.skillOptions?.set(
       'aim',
-      attackSkill.attackOptions.aim !== 'ignore' ? 'ignore' : null
+      attackSkill.skillOptions.aim !== 'ignore' ? 'ignore' : null
     );
   }
 
   function setPlusTwo() {
-    attackSkill.attackOptions?.set(
+    attackSkill.skillOptions?.set(
       'aim',
-      attackSkill.attackOptions.aim !== 'plusTwo' ? 'plusTwo' : null
+      attackSkill.skillOptions.aim !== 'plusTwo' ? 'plusTwo' : null
     );
   }
 
@@ -32,12 +32,12 @@ export const AimingOptions = observer(function AimingOptionsFn({
       <TraitRollOptionsGrid>
         <Checkbox
           label="Ignore up to -4 penalties"
-          checked={attackSkill.attackOptions.aim === 'ignore'}
+          checked={attackSkill.skillOptions.aim === 'ignore'}
           onChange={setIgnore}
         />
         <Checkbox
           label="Add +2 bonus"
-          checked={attackSkill.attackOptions.aim === 'plusTwo'}
+          checked={attackSkill.skillOptions.aim === 'plusTwo'}
           onChange={setPlusTwo}
         />
       </TraitRollOptionsGrid>

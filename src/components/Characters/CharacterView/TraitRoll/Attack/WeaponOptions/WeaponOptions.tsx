@@ -128,23 +128,24 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
             </WeaponTable>
           </>
         )}
-        {currentlyHoldWeapon.isForSkill(attackSkill) && currentlyHoldWeapon.modifiers.length > 0 && (
-          <WeaponModifiers>
-            <h4>Weapon Modifiers</h4>
-            {currentlyHoldWeapon.modifiers.map((modifier, index) => (
-              <Checkbox
-                key={index}
-                label={modifier.name}
-                checked={attackSkill.activeModifiers.has(modifier.id)}
-                onChange={() => attackSkill.toggleActiveModifier(modifier)}
-              />
-            ))}
-          </WeaponModifiers>
-        )}
+        {currentlyHoldWeapon.isForSkill(attackSkill.name) &&
+          currentlyHoldWeapon.modifiers.length > 0 && (
+            <WeaponModifiers>
+              <h4>Weapon Modifiers</h4>
+              {currentlyHoldWeapon.modifiers.map((modifier, index) => (
+                <Checkbox
+                  key={index}
+                  label={modifier.name}
+                  checked={character.activeModifiers.includes(modifier)}
+                  onChange={() => modifier.set('isActive', !modifier.isActive)}
+                />
+              ))}
+            </WeaponModifiers>
+          )}
         {isShooting && (
           <div>
             <FormGroup
-              label={`Rate of Fire: ${attackSkill.attackOptions.rateOfFire}`}
+              label={`Rate of Fire: ${attackSkill.skillOptions.rateOfFire}`}
               input={({ id }) => (
                 <>
                   <input
@@ -153,9 +154,9 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
                     id={id}
                     max={6}
                     step={1}
-                    value={attackSkill.attackOptions.rateOfFire}
+                    value={attackSkill.skillOptions.rateOfFire}
                     onChange={(event) =>
-                      attackSkill.attackOptions.set('rateOfFire', Number(event.target.value))
+                      attackSkill.skillOptions.set('rateOfFire', Number(event.target.value))
                     }
                     list={rateOfFireTicksId}
                   />
@@ -171,28 +172,28 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
               )}
               inline
             />
-            {attackSkill.attackOptions.rateOfFire > currentlyHoldWeapon.rateOfFire && (
+            {attackSkill.skillOptions.rateOfFire > currentlyHoldWeapon.rateOfFire && (
               <Alert>The selected Rate of Fire is higher than the weapons Rate of Fire!</Alert>
             )}
           </div>
         )}
-        {isShooting && attackSkill.attackOptions.rateOfFire !== 1 && (
+        {isShooting && attackSkill.skillOptions.rateOfFire !== 1 && (
           <Checkbox
-            label={`Recoil (${attackSkill.skillModifierAccumulator.boni.recoil})`}
-            checked={attackSkill.attackOptions.isRecoil}
+            label={`Recoil (${attackSkill.getModifiersAccumulator().boni.recoil})`}
+            checked={attackSkill.skillOptions.isRecoil}
             onChange={() =>
-              attackSkill.attackOptions.set('isRecoil', !attackSkill.attackOptions.isRecoil)
+              attackSkill.skillOptions.set('isRecoil', !attackSkill.skillOptions.isRecoil)
             }
           />
         )}
         {isShooting && currentlyHoldWeapon.weaponType.includes('shotgun') && (
           <Checkbox
             label="Use slugs"
-            checked={attackSkill.attackOptions.isShotgunSlugs}
+            checked={attackSkill.skillOptions.isShotgunSlugs}
             onChange={() =>
-              attackSkill.attackOptions.set(
+              attackSkill.skillOptions.set(
                 'isShotgunSlugs',
-                !attackSkill.attackOptions.isShotgunSlugs
+                !attackSkill.skillOptions.isShotgunSlugs
               )
             }
           />
@@ -201,9 +202,9 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
         {isMelee(attackSkill) && (
           <Checkbox
             label="Non lethal damage with edged weapon"
-            checked={attackSkill.attackOptions.isNonLethal}
+            checked={attackSkill.skillOptions.isNonLethal}
             onChange={() =>
-              attackSkill.attackOptions.set('isNonLethal', !attackSkill.attackOptions.isNonLethal)
+              attackSkill.skillOptions.set('isNonLethal', !attackSkill.skillOptions.isNonLethal)
             }
           />
         )}

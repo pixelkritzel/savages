@@ -23,23 +23,11 @@ export class SkillRoll extends React.Component<SkillRollProps> {
 
   @action
   openRollModal = () => {
-    const { character, skill } = this.props;
-
-    const traitModifiers = character.getTraitModifiers(skill.settingSkill.id);
-
-    traitModifiers.nonOptionalModifiers.edges.forEach((modifier) =>
-      skill.addActiveModifier(modifier)
-    );
-    traitModifiers.nonOptionalModifiers.hindrances.forEach((modifier) =>
-      skill.addActiveModifier(modifier)
-    );
-
     this.isRollModalOpen = true;
   };
 
   @action
   closeRollModal = () => {
-    this.props.skill.clearActiveModifiers();
     this.isRollModalOpen = false;
   };
 

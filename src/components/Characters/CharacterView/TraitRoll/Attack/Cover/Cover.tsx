@@ -7,11 +7,8 @@ interface CoverProps {
 }
 
 export const Cover: React.FC<CoverProps> = observer(({ attackSkill, ...otherProps }) => {
-  function setCover(value: Iskill['attackOptions']['cover']) {
-    attackSkill.attackOptions.set(
-      'cover',
-      attackSkill.attackOptions.cover === value ? null : value
-    );
+  function setCover(value: Iskill['skillOptions']['cover']) {
+    attackSkill.skillOptions.set('cover', attackSkill.skillOptions.cover === value ? null : value);
   }
 
   return (
@@ -20,7 +17,7 @@ export const Cover: React.FC<CoverProps> = observer(({ attackSkill, ...otherProp
       <label>
         <input
           type="checkbox"
-          checked={attackSkill.attackOptions.cover === '-2'}
+          checked={attackSkill.skillOptions.cover === '-2'}
           onChange={() => setCover('-2')}
         />{' '}
         Light
@@ -28,7 +25,7 @@ export const Cover: React.FC<CoverProps> = observer(({ attackSkill, ...otherProp
       <label>
         <input
           type="checkbox"
-          checked={attackSkill.attackOptions.cover === '-4'}
+          checked={attackSkill.skillOptions.cover === '-4'}
           onChange={() => setCover('-4')}
         />{' '}
         Medium
@@ -36,7 +33,7 @@ export const Cover: React.FC<CoverProps> = observer(({ attackSkill, ...otherProp
       <label>
         <input
           type="checkbox"
-          checked={attackSkill.attackOptions.cover === '-6'}
+          checked={attackSkill.skillOptions.cover === '-6'}
           onChange={() => setCover('-6')}
         />{' '}
         Heavy
@@ -44,7 +41,7 @@ export const Cover: React.FC<CoverProps> = observer(({ attackSkill, ...otherProp
       <label>
         <input
           type="checkbox"
-          checked={attackSkill.attackOptions.cover === '-8'}
+          checked={attackSkill.skillOptions.cover === '-8'}
           onChange={() => setCover('-8')}
         />{' '}
         Near Total

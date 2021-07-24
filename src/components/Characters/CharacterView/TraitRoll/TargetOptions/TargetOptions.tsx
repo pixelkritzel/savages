@@ -19,17 +19,17 @@ export const TargetOptions: React.FC<TargetOptionsProps> = observer(({ trait, ..
         {isSkill(trait) && isAttackSkill(trait) && (
           <Checkbox
             label="The Drop"
-            checked={trait.attackOptions.isTheDrop}
-            onChange={() => trait.attackOptions.set('isTheDrop', !trait.attackOptions.isTheDrop)}
+            checked={trait.skillOptions.isTheDrop}
+            onChange={() => trait.skillOptions.set('isTheDrop', !trait.skillOptions.isTheDrop)}
           />
         )}
 
         {isSkill(trait) && isAttackSkill(trait) && (
           <Checkbox
             label="Prone Target"
-            checked={trait.attackOptions.isProneTarget}
+            checked={trait.skillOptions.isProneTarget}
             onChange={() =>
-              trait.attackOptions.set('isProneTarget', !trait.attackOptions.isProneTarget)
+              trait.skillOptions.set('isProneTarget', !trait.skillOptions.isProneTarget)
             }
           />
         )}
@@ -37,9 +37,9 @@ export const TargetOptions: React.FC<TargetOptionsProps> = observer(({ trait, ..
         {isSkill(trait) && isAttackSkill(trait) && isMelee(trait) && (
           <Checkbox
             label="Unarmed Defender"
-            checked={trait.attackOptions.isUnarmedDefender}
+            checked={trait.skillOptions.isUnarmedDefender}
             onChange={() =>
-              trait.attackOptions.set('isUnarmedDefender', !trait.attackOptions.isUnarmedDefender)
+              trait.skillOptions.set('isUnarmedDefender', !trait.skillOptions.isUnarmedDefender)
             }
           />
         )}

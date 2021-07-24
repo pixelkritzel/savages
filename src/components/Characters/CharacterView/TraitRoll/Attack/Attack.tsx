@@ -1,5 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
+import styled from 'styled-components';
 
 import { RadioGroup } from 'ui/RadioGroup';
 
@@ -11,6 +12,10 @@ import { CalledShot } from './CalledShot';
 import { WeaponOptions } from './WeaponOptions';
 import { AimingOptions } from './AimingOptions';
 import { Range } from './Range';
+
+const Headline = styled.h3`
+  margin: 18px 17px 6px;
+`;
 
 interface ShootingProps {
   attackSkill: Iskill;
@@ -29,7 +34,7 @@ export const Attack: React.FC<ShootingProps> = observer(
 
     return (
       <>
-        <h3>Attack options</h3>
+        <Headline>Attack options</Headline>
 
         <WeaponOptions attackSkill={attackSkill} character={character} />
         {isRangedAttack(attackSkill) && (
@@ -49,9 +54,9 @@ export const Attack: React.FC<ShootingProps> = observer(
             ['+4', 'Huge (+4)'],
             ['+6', 'Gargantuan (+6)'],
           ]}
-          selectedValue={attackSkill.attackOptions.scale}
+          selectedValue={attackSkill.skillOptions.scale}
           setSelectedValue={(value: string) =>
-            attackSkill.attackOptions.set('scale', value as Iskill['attackOptions']['scale'])
+            attackSkill.skillOptions.set('scale', value as Iskill['skillOptions']['scale'])
           }
         />
         <RadioGroup
@@ -65,9 +70,9 @@ export const Attack: React.FC<ShootingProps> = observer(
             ['-8', '> Mach 2 (8)'],
             ['-10', 'Near Light Speed (-10)'],
           ]}
-          selectedValue={attackSkill.attackOptions.speed}
+          selectedValue={attackSkill.skillOptions.speed}
           setSelectedValue={(value: string) =>
-            attackSkill.attackOptions.set('speed', value as Iskill['attackOptions']['speed'])
+            attackSkill.skillOptions.set('speed', value as Iskill['skillOptions']['speed'])
           }
         />
         {isShooting(attackSkill) && <AimingOptions attackSkill={attackSkill}></AimingOptions>}

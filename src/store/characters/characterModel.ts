@@ -135,7 +135,7 @@ export const characterModel = types
     },
 
     getModifiersByField(fieldName: keyof Imodifier) {
-      return self.modifiers.all.filter((modifier) =>
+      return this.activeModifiers.filter((modifier) =>
         Array.isArray(modifier[fieldName]) ? modifier[fieldName].length > 0 : !!modifier[fieldName]
       );
     },
@@ -156,7 +156,7 @@ export const characterModel = types
         edge.modifiers.forEach((modifier) => {
           modifier.traitModifiers.forEach((traitMod) => {
             if (traitMod.traitName === traitName) {
-              if (modifier.optional) {
+              if (modifier.isOptional) {
                 optionalModifiers.edges.push(modifier);
               } else {
                 nonOptionalModifiers.edges.push(modifier);
@@ -170,7 +170,7 @@ export const characterModel = types
         hindrance.modifiers.forEach((modifier) => {
           modifier.traitModifiers.forEach((traitMod) => {
             if (traitMod.traitName === traitName) {
-              if (modifier.optional) {
+              if (modifier.isOptional) {
                 optionalModifiers.hindrances.push(modifier);
               } else {
                 nonOptionalModifiers.hindrances.push(modifier);
@@ -182,8 +182,12 @@ export const characterModel = types
       return { nonOptionalModifiers, optionalModifiers };
     },
 
+    get activeModifiers() {
+      return self.modifiers.all.filter(({ isActive }) => isActive);
+    },
+
     getWeaponsByAttackSkill(skill: Iskill) {
-      return self.weapons.filter((weapon) => weapon.isForSkill(skill));
+      return self.weapons.filter((weapon) => weapon.isForSkill(skill.name));
     },
   }))
   .actions((self) => ({

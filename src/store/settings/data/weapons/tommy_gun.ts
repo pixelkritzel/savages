@@ -9,6 +9,7 @@ export const tommyGun: SIweapon = {
     dices: [{ sides: 6, numberOfDices: 2 }],
   },
   armorPiercing: 1,
+  specialization: 'longarms',
   rateOfFire: 3,
   shots: 30,
   minimumStrength: 6,
@@ -16,27 +17,18 @@ export const tommyGun: SIweapon = {
   cost: 300,
   modifiers: [
     {
-      name: 'Fore Grip',
+      name: 'Foregrip',
       ignoreRecoil: 1,
-      optional: false,
+      isOptional: false,
     },
     {
       name: 'Scope',
-      optional: true,
-      traitModifiers: [
-        {
-          type: 'skill',
-          traitName: 'shooting',
-          bonusValue: 2,
-          technicalConditions: {
-            aimingOptions: 'ignore',
-          },
-        },
-      ],
+      isOptional: true,
+      aimingHelp: 2,
     },
     {
       name: 'Laser Dot',
-      optional: true,
+      isOptional: true,
       traitModifiers: [
         {
           type: 'skill',

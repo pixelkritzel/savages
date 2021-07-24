@@ -47,8 +47,8 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
                     <strong>{modifier.name}</strong> {modifier.conditions}
                   </>
                 }
-                checked={trait.activeModifiers.has(modifier.id)}
-                onChange={() => trait.toggleActiveModifier(modifier)}
+                checked={modifier.isActive}
+                onChange={() => modifier.set('isActive', !modifier.isActive)}
                 key={modifier.id}
               />
               <StyledInfoPopover
@@ -67,8 +67,8 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
                     <strong>{modifier.name}</strong> {modifier.conditions}
                   </>
                 }
-                checked={trait.activeModifiers.has(modifier.id)}
-                onChange={() => trait.toggleActiveModifier(modifier)}
+                checked={modifier.isActive}
+                onChange={() => modifier.set('isActive', !modifier.isActive)}
                 key={modifier.id}
               />
               <StyledInfoPopover

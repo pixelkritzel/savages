@@ -14,6 +14,7 @@ const Label = styled.label<{ inline: boolean }>`
   text-align: ${({ inline }) => (inline ? 'left' : 'right')};
   width: ${({ inline }) => (inline ? 'auto' : '54%')};
   margin-right: ${({ inline }) => (inline ? '24px' : '0')};
+  white-space: nowrap;
 `;
 
 const InputContainer = styled.div<{ inline: boolean }>`

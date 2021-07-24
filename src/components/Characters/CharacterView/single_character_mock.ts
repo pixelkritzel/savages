@@ -30,7 +30,7 @@ export const single_character_mock: SIcharacter = {
     shooting: {
       type: 'skill',
       settingSkill: 'shooting',
-      specializations: ['shortarms'],
+      specializations: ['shortarms', 'longarms'],
       dice: 10,
       bonus: 0,
     },

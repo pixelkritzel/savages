@@ -1,31 +1,39 @@
 import React from 'react';
 import { action, computed, makeObservable, observable } from 'mobx';
-import { Observer, observer } from 'mobx-react';
-import merge from 'lodash/merge';
+import { observer } from 'mobx-react';
+import styled from 'styled-components';
 
 import { StoreContext } from 'components/StoreContext';
-
-import { ShowObject } from 'ui/ShowObject';
+import { FormGroup } from 'ui/FormGroup';
 
 import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
 import { Istore } from 'store';
 import { isAttackSkill, Iskill, isShooting, isSkill } from 'store/characters/skillModel';
+import { DICE_TYPES } from 'store/consts';
+
+import { capitalizeFirstLetter } from 'lib/strings';
 
 import { Attack } from './Attack';
 import { TurnOptions } from './TurnOptions';
-import { ActiveModifiers } from '../ActiveModifiers';
+import { NonOptionalModifiers } from './NonOptionalModifiers';
 import { OptionalModifiers } from '../OptionalModifiers';
 import { RollAndResult } from './RollAndResult';
-
-import { capitalizeFirstLetter } from 'lib/strings';
 import { TargetOptions } from './TargetOptions';
-import { DICE_TYPES } from 'store/consts';
+import { CustomModifiers } from './CustomModifiers';
 
 interface RollDiceProps {
   character: Icharacter;
   trait: Itrait | Iskill;
 }
+
+const Indent = styled.div`
+  margin-left: 17px;
+`;
+
+const RollButtonPlacement = styled.div`
+  margin: 24px 17px;
+`;
 
 @observer
 export class TraitRoll extends React.Component<RollDiceProps> {
@@ -37,7 +45,7 @@ export class TraitRoll extends React.Component<RollDiceProps> {
   result: ReturnType<Itrait['roll']> | null = null;
 
   @observable
-  isAthleticsAttack = false;
+  isAthleticsAttack = this.props.trait.name !== 'athletics';
 
   @action
   toggleIsAthleticsAttack = () => {
@@ -50,56 +58,20 @@ export class TraitRoll extends React.Component<RollDiceProps> {
   @action
   setTargetValue = (value: this['targetValue']) => (this.targetValue = value);
 
-  @observable
-  customDiceDifference = 0;
-
-  @observable
-  customBonus = 0;
-
-  @action
-  setCustomDiceDifference = (event: React.ChangeEvent<HTMLInputElement>) =>
-    (this.customDiceDifference = Number(event.target.value));
-
-  @action
-  setCustomBonus = (event: React.ChangeEvent<HTMLInputElement>) =>
-    (this.customBonus = Number(event.target.value));
-
-  @computed
-  get modifierAccumulator() {
-    const { trait } = this.props;
-    let modifierAccumulator = trait.traitModifierAccumulator;
-    if (isSkill(trait)) {
-      modifierAccumulator = merge(modifierAccumulator, trait.skillModifierAccumulator);
-    }
-    return modifierAccumulator;
-  }
-
-  @computed
-  get modifierSum() {
-    const diceDifference = Object.values(this.modifierAccumulator.diceDifferences).reduce(
-      (sum, diceDifference) => sum + diceDifference,
-      0
-    );
-    const bonus = Object.values(this.modifierAccumulator.boni).reduce(
-      (sum, bonus) => sum + bonus,
-      0
-    );
-    return { diceDifference, bonus };
-  }
-
   @computed
   get modifiedRoll() {
+    const { trait } = this.props;
     const indexOfTraitDice = DICE_TYPES.indexOf(this.props.trait.dice);
     const indexOfModifiedDice =
-      indexOfTraitDice + this.modifierSum.diceDifference < 0
+      indexOfTraitDice + trait.modifierSum.diceDifference < 0
         ? 0
-        : indexOfTraitDice + this.modifierSum.diceDifference > DICE_TYPES.length - 1
+        : indexOfTraitDice + trait.modifierSum.diceDifference > DICE_TYPES.length - 1
         ? DICE_TYPES.length - 1
-        : indexOfTraitDice + this.modifierSum.diceDifference;
+        : indexOfTraitDice + trait.modifierSum.diceDifference;
 
     return {
       dice: DICE_TYPES[indexOfModifiedDice],
-      bonus: this.props.trait.bonus + this.modifierSum.bonus,
+      bonus: this.props.trait.bonus + trait.modifierSum.bonus,
     };
   }
 
@@ -113,18 +85,22 @@ export class TraitRoll extends React.Component<RollDiceProps> {
     const { character, trait } = this.props;
 
     return (
-      isSkill(trait) &&
-      isAttackSkill(trait) &&
-      !trait.isAttackRollable(character.currentlyHoldWeapon)
+      (isSkill(trait) &&
+        isAttackSkill(trait) &&
+        trait.isAttackRollable(character.currentlyHoldWeapon)) ||
+      (isSkill(trait) && !isAttackSkill(trait)) ||
+      !isSkill(trait)
     );
   }
 
   @computed
   get rollConfiguration() {
     const { trait } = this.props;
-    const numberOfDices = isSkill(trait) && isShooting(trait) ? trait.attackOptions.rateOfFire : 1;
+    const numberOfDices = isSkill(trait) && isShooting(trait) ? trait.skillOptions.rateOfFire : 1;
+    console.log(trait.modifierSum);
+
     return {
-      ...this.modifierSum,
+      ...trait.modifierSum,
       numberOfDices,
       isWildcard: this.props.character.wildcard,
       targetValue: this.targetValue,
@@ -141,54 +117,43 @@ export class TraitRoll extends React.Component<RollDiceProps> {
     const currentModifiers = character.getTraitModifiers(trait.name);
     return (
       <>
-        <h2>Rolling {capitalizeFirstLetter(trait.name)}</h2>
-        {trait.name === 'athletics' && (
-          <label>
-            <input
-              type="checkbox"
-              checked={this.isAthleticsAttack}
-              onChange={this.toggleIsAthleticsAttack}
-            />{' '}
-            Is Athletics Attack
-          </label>
-        )}
+        <Indent>
+          <h2>Rolling {capitalizeFirstLetter(trait.name)}</h2>
+          {trait.name === 'athletics' && (
+            <FormGroup
+              label="Is Athletics Attack"
+              input={({ id }) => (
+                <input
+                  id={id}
+                  type="checkbox"
+                  checked={this.isAthleticsAttack}
+                  onChange={this.toggleIsAthleticsAttack}
+                />
+              )}
+            />
+          )}
+        </Indent>
         <TurnOptions trait={trait} />
-        <ActiveModifiers currentModifiers={currentModifiers} trait={trait} />
+        <NonOptionalModifiers modifiers={currentModifiers} trait={trait} />
         <OptionalModifiers trait={trait} currentModifiers={currentModifiers} />
-        {isSkill(trait) && trait.isAttack && <Attack attackSkill={trait} character={character} />}
+        {isSkill(trait) && isAttackSkill(trait) && this.isAthleticsAttack && (
+          <Attack attackSkill={trait} character={character} />
+        )}
 
         <TargetOptions trait={trait} />
-        <fieldset>
-          <legend>Custom Modifiers</legend>
-          <label>
-            Dice Type{' '}
-            <input
-              type="number"
-              value={this.customDiceDifference}
-              onChange={this.setCustomDiceDifference}
-            />
-          </label>
-          <label>
-            Bonus <input type="number" value={this.customBonus} onChange={this.setCustomBonus} />
-          </label>
-        </fieldset>
-        <Observer>{() => <ShowObject>{this.modifierSum}</ShowObject>}</Observer>
-        <label>
-          Target Value{' '}
-          <input
-            type="number"
-            value={this.targetValue}
-            onChange={(event) => this.setTargetValue(Number(event.target.value))}
-            step={1}
-          />
-        </label>
-
-        <RollAndResult
-          character={character}
-          isTraitRollable={this.isTraitRollable}
+        <CustomModifiers
           trait={trait}
-          rollConfiguration={this.rollConfiguration}
+          targetValue={this.targetValue}
+          setTargetValue={this.setTargetValue}
         />
+        <RollButtonPlacement>
+          <RollAndResult
+            character={character}
+            isTraitRollable={this.isTraitRollable}
+            trait={trait}
+            rollConfiguration={this.rollConfiguration}
+          />
+        </RollButtonPlacement>
       </>
     );
   }

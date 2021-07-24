@@ -8,27 +8,27 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
   const [customValue, setCustomValue] = useState(0);
 
   function onChangeIsCustom() {
-    if (typeof attackSkill.attackOptions.calledShot === 'number') {
+    if (typeof attackSkill.skillOptions.calledShot === 'number') {
       setIsCustom(false);
-      attackSkill.attackOptions.set('calledShot', null);
+      attackSkill.skillOptions.set('calledShot', null);
     } else {
       setIsCustom(true);
-      attackSkill.attackOptions.set('calledShot', customValue);
+      attackSkill.skillOptions.set('calledShot', customValue);
     }
   }
 
   function onChangeCustomValue(event: React.ChangeEvent<HTMLInputElement>) {
     const value = Number(event.target.value);
     setCustomValue(value);
-    attackSkill.attackOptions.set('calledShot', value);
+    attackSkill.skillOptions.set('calledShot', value);
   }
 
   function setCalledShot(value: string) {
-    attackSkill.attackOptions.set(
+    attackSkill.skillOptions.set(
       'calledShot',
-      attackSkill.attackOptions.calledShot === value
+      attackSkill.skillOptions.calledShot === value
         ? null
-        : (value as typeof attackSkill['attackOptions']['calledShot'])
+        : (value as typeof attackSkill['skillOptions']['calledShot'])
     );
   }
 
@@ -38,7 +38,7 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
       <label>
         <input
           type="checkbox"
-          checked={attackSkill.attackOptions.calledShot === 'hand'}
+          checked={attackSkill.skillOptions.calledShot === 'hand'}
           onChange={() => setCalledShot('hand')}
         />{' '}
         Hand
@@ -46,7 +46,7 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
       <label>
         <input
           type="checkbox"
-          checked={attackSkill.attackOptions.calledShot === 'head'}
+          checked={attackSkill.skillOptions.calledShot === 'head'}
           onChange={() => setCalledShot('head')}
         />{' '}
         Head
@@ -54,7 +54,7 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
       <label>
         <input
           type="checkbox"
-          checked={attackSkill.attackOptions.calledShot === 'helmet'}
+          checked={attackSkill.skillOptions.calledShot === 'helmet'}
           onChange={() => setCalledShot('helmet')}
         />{' '}
         Helmet
@@ -62,7 +62,7 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
       <label>
         <input
           type="checkbox"
-          checked={attackSkill.attackOptions.calledShot === 'limbs'}
+          checked={attackSkill.skillOptions.calledShot === 'limbs'}
           onChange={() => setCalledShot('limbs')}
         />{' '}
         Limb
@@ -70,7 +70,7 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
       <label>
         <input
           type="checkbox"
-          checked={typeof attackSkill.attackOptions.calledShot === 'number'}
+          checked={typeof attackSkill.skillOptions.calledShot === 'number'}
           onChange={onChangeIsCustom}
         />{' '}
         Custom

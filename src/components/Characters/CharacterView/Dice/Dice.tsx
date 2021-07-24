@@ -39,21 +39,11 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
 
   @action
   openRollModal = () => {
-    const { character, trait } = this.props;
-    const traitModifiers = character.getTraitModifiers(trait.name);
-
-    traitModifiers.nonOptionalModifiers.edges.forEach((modifier) =>
-      trait.addActiveModifier(modifier)
-    );
-    traitModifiers.nonOptionalModifiers.hindrances.forEach((modifier) =>
-      trait.addActiveModifier(modifier)
-    );
     this.isRollModalOpen = true;
   };
 
   @action
   closeRollModal = () => {
-    this.props.trait.clearActiveModifiers();
     this.isRollModalOpen = false;
   };
 

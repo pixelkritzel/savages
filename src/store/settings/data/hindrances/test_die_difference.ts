@@ -9,7 +9,7 @@ export const test_die_difference: SIhindrance = {
   modifiers: [
     {
       reason: 'test_die_difference',
-      optional: true,
+      isOptional: true,
       traitModifiers: [
         { type: 'attribute', traitName: 'agility', bonusDice: -2 },
         { type: 'skill', traitName: 'common_knowledge', bonusDice: -1 },
