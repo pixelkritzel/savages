@@ -1,8 +1,9 @@
-import { ATTACK_SKILLS } from './../characters/skillModel';
 import { types, Instance, SnapshotIn } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
+import { Iskill } from 'store/characters/skillModel';
 import { modifierModel } from 'store/modifier/modifierModel';
+
 import { damageModel } from './damageModel';
 
 export const WEAPON_TYPES = ['melee', 'throwable', 'shotgun', 'ranged'] as const;
@@ -11,7 +12,7 @@ export const weaponModel = types
   .model('weaponModel', {
     id: types.optional(types.identifier, uuidv4),
     name: types.string,
-    damage: damageModel,
+    damage: types.late(() => damageModel),
     notes: '',
     weaponType: types.array(types.enumeration([...WEAPON_TYPES])),
     specialization: '',
@@ -26,10 +27,17 @@ export const weaponModel = types
   })
   .views((self) => ({
     get isRangedWeapon() {
-      return self.weaponType.includes('shotgun') || self.weaponType.includes('ranged');
+      return (
+        self.weaponType.includes('shotgun') ||
+        self.weaponType.includes('ranged') ||
+        self.weaponType.includes('throwable')
+      );
     },
-    isForSkill(skillName: typeof ATTACK_SKILLS[number]) {
-      switch (skillName) {
+    get isMeleeWeapon() {
+      return self.weaponType.includes('melee');
+    },
+    isForSkill(skill: Iskill) {
+      switch (skill.name) {
         case 'athletics':
           return self.weaponType.includes('throwable');
         case 'fighting':

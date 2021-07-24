@@ -14,4 +14,42 @@ export const tommyGun: SIweapon = {
   minimumStrength: 6,
   weight: 10,
   cost: 300,
+  modifiers: [
+    {
+      name: 'Fore Grip',
+      ignoreRecoil: 1,
+      optional: false,
+    },
+    {
+      name: 'Scope',
+      optional: true,
+      traitModifiers: [
+        {
+          type: 'skill',
+          traitName: 'shooting',
+          bonusValue: 2,
+          technicalConditions: {
+            aimingOptions: 'ignore',
+          },
+        },
+      ],
+    },
+    {
+      name: 'Laser Dot',
+      optional: true,
+      traitModifiers: [
+        {
+          type: 'skill',
+          traitName: 'shooting',
+          bonusValue: 1,
+          technicalConditions: [
+            {
+              range: '0',
+            },
+            { range: '-2' },
+          ],
+        },
+      ],
+    },
+  ],
 };

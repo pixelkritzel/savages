@@ -1,14 +1,11 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import styled from 'styled-components';
+
 import { Checkbox } from 'ui/Checkbox';
+import { TraitRollOptionsGrid } from '../TraitRollOptionsGrid';
+
 import { isAttackSkill, isMelee, isSkill } from 'store/characters/skillModel';
 import { Itrait } from 'store/characters/traitModel';
-
-const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-`;
 
 interface TargetOptionsProps {
   trait: Itrait;
@@ -18,7 +15,7 @@ export const TargetOptions: React.FC<TargetOptionsProps> = observer(({ trait, ..
   return (
     <fieldset {...otherProps}>
       <legend>Target Options</legend>
-      <GridContainer>
+      <TraitRollOptionsGrid>
         {isSkill(trait) && isAttackSkill(trait) && (
           <Checkbox
             label="The Drop"
@@ -53,7 +50,7 @@ export const TargetOptions: React.FC<TargetOptionsProps> = observer(({ trait, ..
             trait.options.set('isVulnerableTarget', !trait.options.isVulnerableTarget)
           }
         />
-      </GridContainer>
+      </TraitRollOptionsGrid>
     </fieldset>
   );
 });

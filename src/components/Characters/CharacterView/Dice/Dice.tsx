@@ -14,7 +14,7 @@ import { Itrait } from 'store/characters/traitModel';
 
 import { capitalizeFirstLetter } from 'lib/strings';
 
-import { RollTrait } from '../RollTrait/';
+import { TraitRoll } from '../TraitRoll';
 
 import CSS from './Dice.module.scss';
 
@@ -107,7 +107,7 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
               onRequestClose={this.closeRollModal}
               ariaHideApp={false}
             >
-              <RollTrait character={character} trait={trait} />
+              <TraitRoll character={character} trait={trait} />
             </ReactModal>
           </>
         )}

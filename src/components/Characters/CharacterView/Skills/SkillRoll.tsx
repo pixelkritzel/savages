@@ -4,7 +4,7 @@ import React from 'react';
 import ReactModal from 'react-modal';
 import { Icharacter } from 'store/characters';
 import { Iskill } from 'store/characters/skillModel';
-import { RollTrait } from '../RollTrait/RollTrait';
+import { TraitRoll } from '../TraitRoll/TraitRoll';
 
 interface SkillRollProps {
   character: Icharacter;
@@ -57,7 +57,7 @@ export class SkillRoll extends React.Component<SkillRollProps> {
             ariaHideApp={false}
             // parentSelector={() => document.querySelector('body')!}
           >
-            <RollTrait character={character} trait={skill} />
+            <TraitRoll character={character} trait={skill} />
           </ReactModal>
         )}
       </>

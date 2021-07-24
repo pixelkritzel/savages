@@ -64,7 +64,7 @@ export const single_character_mock: SIcharacter = {
   },
   basePowerPoints: 20,
   currentPowerPoints: 12,
-  currentlyHoldWeapon: 'shotgun',
+  currentlyHoldWeapon: 'ranged_weapon_tommy_gun',
   hasPowers: true,
   powers: {
     protection: {

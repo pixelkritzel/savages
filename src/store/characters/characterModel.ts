@@ -3,13 +3,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Imodifier } from 'store/modifier';
 import { weaponModel } from 'store/settings/settingWeaponModel';
-
 import { settingEdgeModel } from 'store/settings/settingEdgeModel';
 import { settingHindranceModel } from 'store/settings/settingHindranceModel';
 import { settingModel } from 'store/settings/settingModel';
+
 import { attributesModel } from './attributesModel';
 import { powerModel } from './power';
-import { skillModel, ATTACK_SKILLS } from './skillModel';
+import { Iskill, skillModel } from './skillModel';
 import { traitModel } from './traitModel';
 
 export const characterModel = types
@@ -42,7 +42,7 @@ export const characterModel = types
       })
     ),
     setting: types.reference(settingModel),
-    skills: types.map(skillModel),
+    skills: types.map(types.late(() => skillModel)),
     edges: types.array(types.reference(settingEdgeModel)),
     hindrances: types.array(types.reference(settingHindranceModel)),
     powers: types.map(powerModel),
@@ -97,10 +97,11 @@ export const characterModel = types
       wounds: number;
       fatigue: number;
     } {
-      const { edges, hindrances } = self;
+      const { edges, hindrances, currentlyHoldWeapon } = self;
       const modifiers: {
         edges: Imodifier[];
         hindrances: Imodifier[];
+        weapons: Imodifier[];
         wounds: number;
         fatigue: number;
       } = {
@@ -108,10 +109,14 @@ export const characterModel = types
         edges: edges.map(({ modifiers }) => modifiers).flat(),
         // @ts-expect-error
         hindrances: hindrances.map(({ modifiers }) => modifiers).flat(),
+        weapons: currentlyHoldWeapon.modifiers,
         wounds: self.woundsPenalty,
         fatigue: self.fatigueAsNumber,
       };
-      return { ...modifiers, all: [...modifiers.edges, ...modifiers.hindrances] };
+      return {
+        ...modifiers,
+        all: [...modifiers.edges, ...modifiers.hindrances, ...modifiers.weapons],
+      };
     },
   }))
   .views((self) => ({
@@ -177,8 +182,8 @@ export const characterModel = types
       return { nonOptionalModifiers, optionalModifiers };
     },
 
-    getWeaponsByAttackSkill(skillName: typeof ATTACK_SKILLS[number]) {
-      return self.weapons.filter((weapon) => weapon.isForSkill(skillName));
+    getWeaponsByAttackSkill(skill: Iskill) {
+      return self.weapons.filter((weapon) => weapon.isForSkill(skill));
     },
   }))
   .actions((self) => ({

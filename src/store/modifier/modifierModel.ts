@@ -1,6 +1,7 @@
-import { powerModel } from 'store/characters/power';
-import { SnapshotIn, types, Instance, cast } from 'mobx-state-tree';
+import { SnapshotIn, types, Instance, cast, getParent } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
+
+import { powerModel } from 'store/characters/power';
 
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
 
@@ -13,7 +14,7 @@ export const modifierModel = types
     reason: '',
     optional: types.boolean,
     conditions: '',
-    traitModifiers: types.array(traitModifierModel),
+    traitModifiers: types.optional(types.array(traitModifierModel), []),
     bennies: 0,
     toughness: 0,
     size: 0,
@@ -23,6 +24,7 @@ export const modifierModel = types
     armor: 0,
     ignoreWounds: 0,
     ignoreMultiActionPenalty: 0,
+    ignoreRecoil: 0,
     big: false,
     pace: 0,
     minumumStrength: 0,
@@ -49,6 +51,10 @@ export const modifierModel = types
       return `Dice: ${padWithMathOperator(traitModifier.bonusDice)} | Bonus: ${padWithMathOperator(
         traitModifier.bonusValue
       )}`;
+    },
+    get source() {
+      const source = getParent(2) as unknown;
+      return source;
     },
   }))
   .actions((self) => ({

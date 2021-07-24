@@ -1,20 +1,18 @@
-import { Instance, types } from 'mobx-state-tree';
+import { characterModel, Icharacter } from 'store/characters';
+import { getParentOfType, Instance, types } from 'mobx-state-tree';
 import { v4 as uuid4 } from 'uuid';
 
+import {
+  createModifierAccumulator,
+  ModifierAccumulator,
+} from 'components/Characters/CharacterView/TraitRoll/modifierAccumulator';
+
 import { modifierModel, Imodifier } from 'store/modifier';
+import { diceType, DICE_TYPES } from 'store/consts';
 
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
 import { rollDice } from 'utils/rollDice';
 
-export const DICE_TYPES: Itrait['dice'][] = [4, 6, 8, 10, 12];
-
-export const diceType = types.union(
-  types.literal(4),
-  types.literal(6),
-  types.literal(8),
-  types.literal(10),
-  types.literal(12)
-);
 export const bonusType = types.number;
 
 export type TraitRollResult = {
@@ -28,6 +26,8 @@ const traitOptions = types
     isVulnerableTarget: false,
     isJoker: false,
     numberOfActions: 0,
+    customDiceDifference: 0,
+    customBonus: 0,
   })
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
@@ -63,6 +63,28 @@ export const traitModel = types
     options: types.optional(traitOptions, {}),
   })
   .views((self) => ({
+    get traitModifierAccumulator() {
+      const character = getParentOfType(self, characterModel) as Icharacter;
+      const trait = self;
+
+      const modifierAccumulator: ModifierAccumulator = createModifierAccumulator();
+      modifierAccumulator.boni.wounds = -character.woundsPenalty;
+      modifierAccumulator.boni.fatigue = -character.fatigueAsNumber;
+      modifierAccumulator.boni.numberOfActions = -(2 * trait.options.numberOfActions);
+      modifierAccumulator.boni.joker = trait.options.isJoker ? 2 : 0;
+
+      for (const [, modifier] of self.activeModifiers) {
+        for (const traitModifier of modifier.traitModifiers) {
+          if (traitModifier.traitName === trait.name) {
+            modifierAccumulator.diceDifferences[modifier.reason] = traitModifier.bonusDice;
+            modifierAccumulator.boni[modifier.reason] = traitModifier.bonusValue;
+          }
+        }
+      }
+      modifierAccumulator.diceDifferences.custom = self.options.customDiceDifference;
+      modifierAccumulator.boni.custom = self.options.customBonus;
+      return modifierAccumulator;
+    },
     getModifiedBonus(bonusModifier: number) {
       return self.bonus + bonusModifier;
     },
