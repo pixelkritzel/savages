@@ -11,13 +11,7 @@ import { Itrait, TraitRollResult } from 'store/characters/traitModel';
 
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
 import { isAttackSkill, isSkill } from 'store/characters/skillModel';
-
-type ResultProps = {
-  character: Icharacter;
-  isTraitRollable: boolean;
-  rollConfiguration: Parameters<Itrait['roll']>[0];
-  trait: Itrait;
-};
+import { Idamage } from 'store/settings/damageModel';
 
 const ResultsContainer = styled.div`
   display: grid;
@@ -26,9 +20,28 @@ const ResultsContainer = styled.div`
   margin-top: 12px;
 `;
 
+const TraitRollButton = styled(Button)`
+  margin-right: 18px;
+  margin-bottom: 6px;
+`;
+
 const RollsList = styled.ul`
   list-style: 'none';
 `;
+
+const RollDisplayGrid = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-column-gap: 18px;
+  grid-row-gap: 6px;
+`;
+
+type ResultProps = {
+  character: Icharacter;
+  isTraitRollable: boolean;
+  rollConfiguration: Parameters<Itrait['roll']>[0];
+  trait: Itrait;
+};
 
 export const RollAndResult = observer(function ResultFn({
   character,
@@ -52,13 +65,16 @@ export const RollAndResult = observer(function ResultFn({
     return rerollBoni.length > 0 ? Math.max(...rerollBoni) : 0;
   }, [character]);
 
-  type ResultStoreResultType = ReturnType<Itrait['roll']> & { damages: number[] };
+  type ResultStoreResultType = ReturnType<Itrait['roll']> & {
+    damages: { damageRollConfiguration: Parameters<Idamage['roll']>[0]; rolls: number[] }[];
+  };
 
   const resultStore = useLocalStore<{
     results: ResultStoreResultType[];
     isFreeRerollUsed: boolean;
   }>(() => ({
     results: [],
+    damages: [],
     isFreeRerollUsed: false,
   }));
 
@@ -76,14 +92,16 @@ export const RollAndResult = observer(function ResultFn({
     };
     if (traitRollResult.type === 'result') {
       for (const roll of traitRollResult.rolls) {
-        traitRollResult.damages.push(
-          roll.success
-            ? character.currentlyHoldWeapon.damage.roll({
-                isRaise: roll.raises > 0,
-                strength: character.attributes.strength,
-              })
-            : 0
-        );
+        const damageRollConfiguration = {
+          isRaise: roll.raises > 0,
+          strength: character.attributes.strength,
+        };
+        traitRollResult.damages.push({
+          damageRollConfiguration,
+          rolls: [
+            roll.success ? character.currentlyHoldWeapon.damage.roll(damageRollConfiguration) : 0,
+          ],
+        });
       }
     }
     resultStore.results.push(traitRollResult);
@@ -104,39 +122,65 @@ export const RollAndResult = observer(function ResultFn({
     damage,
   }: {
     roll: TraitRollResult['rolls'][number];
-    damage: number;
+    damage: ResultStoreResultType['damages'][number];
   }) {
     return (
-      <>
-        {roll.success ? '✅ - SUCCESS' : `🚫 - FAILURE`} ({roll.diceRoll}){' '}
-        {roll.raises ? ` - Raises x ${roll.raises}` : ''}
-        {roll.success &&
-          isAttack &&
-          ` - DMG: ${damage} AP ${character.currentlyHoldWeapon.armorPiercing}`}
-      </>
+      <RollDisplayGrid>
+        <div>{roll.success ? '✅ ' : `🚫 `}</div>
+        <div>
+          <div>
+            {roll.success ? 'SUCCESS' : `FAILURE`} {roll.diceRoll}{' '}
+            {roll.raises ? ` - Raises x ${roll.raises}` : ''}
+          </div>
+          {roll.success &&
+            isAttack &&
+            damage.rolls.map((damageRollResult) => (
+              <div>
+                {`DMG: ${damageRollResult} AP ${character.currentlyHoldWeapon.armorPiercing}`}{' '}
+              </div>
+            ))}
+        </div>
+
+        <div>
+          {roll.success && (
+            <Button
+              disabled={character.bennies < 1}
+              onClick={() => {
+                character.set('bennies', character.bennies - 1);
+                damage.rolls.push(
+                  character.currentlyHoldWeapon.damage.roll(damage.damageRollConfiguration)
+                );
+              }}
+            >
+              Reroll Damage
+            </Button>
+          )}
+        </div>
+      </RollDisplayGrid>
     );
   }
 
   return (
     <div>
       {resultStore.results.length === 0 && (
-        <Button disabled={!isTraitRollable} onClick={() => rollDice()}>
+        <TraitRollButton disabled={!isTraitRollable} onClick={() => rollDice()}>
           {`Roll: D${trait.getModifiedDice(rollConfiguration.diceDifference)} ${
             trait.getModifiedBonus(rollConfiguration.bonus) !== 0
               ? padWithMathOperator(trait.getModifiedBonus(rollConfiguration.bonus))
               : ''
           }`}
-        </Button>
+        </TraitRollButton>
       )}
       {resultStore.results.length > 0 && (
         <>
-          <Button disabled={!isRerollPossible} onClick={rerollDice}>
+          <TraitRollButton disabled={!isRerollPossible} onClick={rerollDice}>
             {isRerollPossible
               ? isFreeRerollPossible && !resultStore.isFreeRerollUsed
                 ? 'Use your free reroll'
                 : `Spend a benny to reroll ${rerollBonus > 0 ? `(Bonus: +${rerollBonus})` : ''}`
               : 'Sorry, no reroll is possible'}
-          </Button>
+          </TraitRollButton>
+          Remaining Bennies: {character.bennies}
           <ResultsContainer>
             {resultStore.results.map((result, index) => {
               if (result.type === 'critical_failure') {

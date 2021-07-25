@@ -52,3 +52,5 @@ export const damageModel = types
       self[key] = value;
     },
   }));
+
+export interface Idamage extends Instance<typeof damageModel> {}

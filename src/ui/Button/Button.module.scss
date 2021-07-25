@@ -90,9 +90,24 @@ $button-inner-border-box-shadow: inset 0px 0px 0px 1px white;
       color: $link-color-hover;
     }
   }
+
+  &.icon {
+    display: inline-flex;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $button-border-color-default;
+    background-color: transparent;
+
+    & .inner {
+      display: inline-block;
+    }
+  }
 }
 
-.icon {
+.innerIcon {
   display: inline-block;
   margin-right: 6px;
   transform: translate(0, 1px);
