@@ -86,6 +86,40 @@ const _skillModel = traitModel
           modifierAccumulator.boni.skillSpecialization = -2;
         }
 
+        const modifiersForSkillSpecialization = character
+          .getTraitModifiers(skill)
+          .all.filter(
+            ({ isActive, traitModifiers }) =>
+              isActive && traitModifiers.some(({ specialization }) => Boolean(specialization))
+          );
+
+        modifierAccumulator.boni.skillSpecialization += modifiersForSkillSpecialization.reduce(
+          (specializationBonusSum, { traitModifiers }) =>
+            specializationBonusSum +
+            traitModifiers.reduce(
+              (specializationBonusSum, { specialization }) =>
+                specialization.specializationName === skill.selectedSkillSpecialization
+                  ? specialization.specializationBonus + specializationBonusSum
+                  : specializationBonusSum,
+              0
+            ),
+          0
+        );
+
+        modifierAccumulator.diceDifferences.skillSpecialization =
+          modifiersForSkillSpecialization.reduce(
+            (specializationBonusSum, { traitModifiers }) =>
+              specializationBonusSum +
+              traitModifiers.reduce(
+                (specializationDiceDifferenceSum, { specialization }) =>
+                  specialization.specializationName === skill.selectedSkillSpecialization
+                    ? specialization.specializationDiceDifference + specializationDiceDifferenceSum
+                    : specializationDiceDifferenceSum,
+                0
+              ),
+            0
+          );
+
         if (self.isAttack) {
           modifierAccumulator.boni.isUnstablePlatform = skill.skillOptions.isUnstablePlatform
             ? -2

@@ -19,6 +19,7 @@ import { SIsetting } from './../settingModel';
 import { athletics } from './skills/athletics';
 import { tommyGun } from './weapons/tommy_gun';
 import { doubleTap } from './edges/double_tap';
+import { hardToKill } from './edges/hard_to_kill';
 
 export const vanillaSetting: SIsetting = {
   id: 'vanilla_setting',
@@ -26,7 +27,7 @@ export const vanillaSetting: SIsetting = {
   creation: {
     attributePoints: 5,
   },
-  availableEdges: [strongWilled, nervesOfSteel, doubleTap, giantKiller],
+  availableEdges: [strongWilled, nervesOfSteel, doubleTap, giantKiller, hardToKill],
   availableHindrances: [anemic, clueless, test_die_difference],
   availableSkills: [commonKnowledge, fighting, notice, taunt, shooting, athletics],
   availableWeapons: [

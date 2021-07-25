@@ -12,6 +12,14 @@ export const traitModifierModel = types
     diceMaximum: 0,
     bonusMinimum: 0,
     bonusMaximum: 0,
+    specialization: types.optional(
+      types.model({
+        specializationName: '',
+        specializationBonus: 0,
+        specializationDiceDifference: 0,
+      }),
+      {}
+    ),
   })
   .views((self) => ({
     get source() {

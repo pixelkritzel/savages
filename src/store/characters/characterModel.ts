@@ -80,44 +80,50 @@ export const characterModel = types
     },
   }))
   .views((self) => ({
-    get woundsPenalty() {
-      const ignoreWoundLevels = self.edges.reduce(
-        (prev, edge) =>
-          prev + edge.modifiers.reduce((prev, modifier) => prev + modifier.ignoreWounds, 0),
-        0
-      );
-
-      return Math.max(self.woundsAsNumber - ignoreWoundLevels, 0);
-    },
-  }))
-  .views((self) => ({
     get modifiers(): {
       edges: Imodifier[];
       hindrances: Imodifier[];
       all: Imodifier[];
-      wounds: number;
-      fatigue: number;
     } {
       const { edges, hindrances, currentlyHoldWeapon } = self;
       const modifiers: {
         edges: Imodifier[];
         hindrances: Imodifier[];
         weapons: Imodifier[];
-        wounds: number;
-        fatigue: number;
       } = {
         // @ts-expect-error
         edges: edges.map(({ modifiers }) => modifiers).flat(),
         // @ts-expect-error
         hindrances: hindrances.map(({ modifiers }) => modifiers).flat(),
         weapons: currentlyHoldWeapon.modifiers,
-        wounds: self.woundsPenalty,
-        fatigue: self.fatigueAsNumber,
       };
       return {
         ...modifiers,
         all: [...modifiers.edges, ...modifiers.hindrances, ...modifiers.weapons],
       };
+    },
+
+    get activeModifiers() {
+      return this.modifiers.all.filter(({ isActive }) => isActive);
+    },
+
+    getModifiersByField(fieldName: keyof Imodifier) {
+      return this.activeModifiers.filter((modifier) =>
+        Array.isArray(modifier[fieldName])
+          ? modifier[fieldName].length > 0
+          : Boolean(modifier[fieldName])
+      );
+    },
+    get woundsPenalty() {
+      const ignoreWoundSum = Math.min(
+        this.getModifiersByField('ignoreWounds').reduce(
+          (prev, modifier) => prev + modifier.ignoreWounds,
+          0
+        ),
+        self.woundsAsNumber
+      );
+
+      return self.woundsAsNumber - ignoreWoundSum;
     },
   }))
   .views((self) => ({
@@ -135,29 +141,35 @@ export const characterModel = types
       return errors;
     },
 
-    getModifiersByField(fieldName: keyof Imodifier) {
-      return this.activeModifiers.filter((modifier) =>
-        Array.isArray(modifier[fieldName])
-          ? modifier[fieldName].length > 0
-          : Boolean(modifier[fieldName])
-      );
-    },
-
     getTraitModifiers(trait: Itrait) {
-      const nonOptionalModifiers: {
+      type TraitModifiers = {
         edges: Imodifier[];
         hindrances: Imodifier[];
+        weapons: Imodifier[];
+        all: Imodifier[];
+      };
+
+      const nonOptionalModifiers: TraitModifiers & {
         wounds: typeof self['woundsPenalty'];
         fatigue: typeof self['fatigueAsNumber'];
-      } = { edges: [], hindrances: [], wounds: self.woundsPenalty, fatigue: self.fatigueAsNumber };
-      const optionalModifiers: { edges: Imodifier[]; hindrances: Imodifier[] } = {
+      } = {
         edges: [],
         hindrances: [],
+        weapons: [],
+        all: [],
+        wounds: self.woundsPenalty,
+        fatigue: self.fatigueAsNumber,
+      };
+      const optionalModifiers: TraitModifiers = {
+        edges: [],
+        hindrances: [],
+        weapons: [],
+        all: [],
       };
 
       self.modifiers.edges.forEach((modifier) => {
         if (
-          modifier.traitNames.includes(trait.name) &&
+          (modifier.traitNames.includes(trait.name) || modifier.traitNames.includes('all')) &&
           modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
         ) {
           if (modifier.isOptional) {
@@ -170,7 +182,7 @@ export const characterModel = types
 
       self.modifiers.hindrances.forEach((modifier) => {
         if (
-          modifier.traitNames.includes(trait.name) &&
+          (modifier.traitNames.includes(trait.name) || modifier.traitNames.includes('all')) &&
           modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
         ) {
           if (modifier.isOptional) {
@@ -181,11 +193,36 @@ export const characterModel = types
         }
       });
 
-      return { nonOptionalModifiers, optionalModifiers };
-    },
+      self.currentlyHoldWeapon.modifiers.forEach((modifier) => {
+        if (
+          (modifier.traitNames.includes(trait.name) || modifier.traitNames.includes('all')) &&
+          modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
+        ) {
+          if (modifier.isOptional) {
+            optionalModifiers.hindrances.push(modifier);
+          } else {
+            nonOptionalModifiers.hindrances.push(modifier);
+          }
+        }
+      });
 
-    get activeModifiers() {
-      return self.modifiers.all.filter(({ isActive }) => isActive);
+      nonOptionalModifiers.all = [
+        ...nonOptionalModifiers.edges,
+        ...nonOptionalModifiers.weapons,
+        ...nonOptionalModifiers.hindrances,
+      ];
+
+      optionalModifiers.all = [
+        ...optionalModifiers.edges,
+        ...optionalModifiers.weapons,
+        ...optionalModifiers.hindrances,
+      ];
+
+      return {
+        nonOptionalModifiers,
+        optionalModifiers,
+        all: [...nonOptionalModifiers.all, ...optionalModifiers.all],
+      };
     },
 
     getWeaponsByAttackSkill(skill: Iskill) {

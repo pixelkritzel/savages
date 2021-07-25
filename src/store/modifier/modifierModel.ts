@@ -29,6 +29,7 @@ export const modifierModel = types
     bonusDamage: 0,
     bonusDamageDices: types.optional(types.array(diceType), []),
     rerollBonus: 0,
+    rerollDamageBonus: 0,
     armor: 0,
     ignoreWounds: 0,
     ignoreMultiActionPenalty: 0,
@@ -40,6 +41,7 @@ export const modifierModel = types
     forbiddenEdges: types.optional(types.array(types.string), []),
     grantedEdges: types.optional(types.array(types.string), []),
     addedHindrances: types.optional(types.array(types.string), []),
+    grantedWeapons: types.optional(types.array(types.string), []),
     hardy: false, // TODO: Race ability - second shaken doesn't cause a wound - interesting, when implementing fight
     reach: 0,
     grantedPowers: types.optional(types.array(types.reference(powerModel)), []),

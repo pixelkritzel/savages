@@ -53,7 +53,7 @@ export const single_character_mock: SIcharacter = {
       bonus: 0,
     },
   },
-  edges: ['strong_willed', 'nerves_of_steel', 'double_tap', 'giant_killer'],
+  edges: ['strong_willed', 'nerves_of_steel', 'double_tap', 'giant_killer', 'hard_to_kill'],
   hindrances: ['clueless', 'anemic', 'test_die_difference'],
   weapons: [
     'ranged_weapon_tommy_gun',

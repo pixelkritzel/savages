@@ -31,9 +31,14 @@ const RollsList = styled.ul`
 
 const RollDisplayGrid = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   grid-column-gap: 18px;
   grid-row-gap: 6px;
+`;
+
+const DamageAndReroll = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 type ResultProps = {
@@ -50,13 +55,10 @@ export const RollAndResult = observer(function ResultFn({
   trait,
   ...otherProps
 }: ResultProps) {
-  const isFreeRerollPossible = useMemo(
-    () =>
-      character
-        .getModifiersByField('freeReroll')
-        .filter(({ freeReroll }) => freeReroll === trait.id).length > 0,
-    [character, trait]
-  );
+  const isFreeRerollPossible =
+    character
+      .getModifiersByField('freeReroll')
+      .filter(({ freeReroll }) => freeReroll === trait.id || freeReroll === 'all').length > 0;
 
   const rerollBonus = useMemo(() => {
     const rerollBoni = character
@@ -65,8 +67,15 @@ export const RollAndResult = observer(function ResultFn({
     return rerollBoni.length > 0 ? Math.max(...rerollBoni) : 0;
   }, [character]);
 
+  const rerollDamageBonus = useMemo(() => {
+    const rerollBoni = character
+      .getModifiersByField('rerollDamageBonus')
+      .map(({ rerollBonus }) => rerollBonus);
+    return rerollBoni.length > 0 ? Math.max(...rerollBoni) : 0;
+  }, [character]);
+
   type ResultStoreResultType = ReturnType<Itrait['roll']> & {
-    damages: { damageRollConfiguration: Parameters<Idamage['roll']>[0]; rolls: number[] }[];
+    damages: { damageRollConfiguration: Parameters<Idamage['roll']>[0]; rolls: number[][] }[];
   };
 
   const resultStore = useLocalStore<{
@@ -102,7 +111,7 @@ export const RollAndResult = observer(function ResultFn({
         traitRollResult.damages.push({
           damageRollConfiguration,
           rolls: [
-            roll.success ? character.currentlyHoldWeapon.damage.roll(damageRollConfiguration) : 0,
+            [roll.success ? character.currentlyHoldWeapon.damage.roll(damageRollConfiguration) : 0],
           ],
         });
       }
@@ -137,27 +146,27 @@ export const RollAndResult = observer(function ResultFn({
           </div>
           {roll.success &&
             isAttack &&
-            damage.rolls.map((damageRollResult, index) => (
-              <div key={index}>
-                {`DMG: ${damageRollResult} AP ${character.currentlyHoldWeapon.armorPiercing}`}{' '}
-              </div>
+            damage.rolls.map((rolls, index) => (
+              <DamageAndReroll key={index}>
+                {`DMG: ${rolls.join(' | ')} AP ${character.currentlyHoldWeapon.armorPiercing}`}{' '}
+                {roll.success && (
+                  <Button
+                    disabled={character.bennies < 1}
+                    onClick={() => {
+                      character.set('bennies', character.bennies - 1);
+                      damage.rolls[index].push(
+                        character.currentlyHoldWeapon.damage.roll({
+                          ...damage.damageRollConfiguration,
+                          bonus: (damage.damageRollConfiguration.bonus ?? 0) + rerollDamageBonus,
+                        })
+                      );
+                    }}
+                  >
+                    Reroll Damage
+                  </Button>
+                )}
+              </DamageAndReroll>
             ))}
-        </div>
-
-        <div>
-          {roll.success && (
-            <Button
-              disabled={character.bennies < 1}
-              onClick={() => {
-                character.set('bennies', character.bennies - 1);
-                damage.rolls.push(
-                  character.currentlyHoldWeapon.damage.roll(damage.damageRollConfiguration)
-                );
-              }}
-            >
-              Reroll Damage
-            </Button>
-          )}
         </div>
       </RollDisplayGrid>
     );
