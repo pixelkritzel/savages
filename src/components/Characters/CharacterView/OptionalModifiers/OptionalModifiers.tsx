@@ -23,6 +23,13 @@ const GridContainer = styled.div`
   grid-row-gap: 8px;
 `;
 
+export const TwoColumns = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-column-gap: 18px;
+  grid-row-gap: 6px;
+`;
+
 const StyledInfoPopover = styled(InfoPopover)`
   margin-left: 8px;
 `;
@@ -38,45 +45,51 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
       <fieldset {...otherProps}>
         <legend>Optional Modifiers</legend>
         <GridContainer>
-          <h4>Hindrances</h4>
-          {currentModifiers.optionalModifiers.hindrances.map((modifier) => (
-            <>
-              <Checkbox
-                label={
-                  <>
-                    <strong>{modifier.name}</strong> {modifier.conditions}
-                  </>
-                }
-                checked={modifier.isActive}
-                onChange={() => modifier.set('isActive', !modifier.isActive)}
-                key={modifier.id}
-              />
-              <StyledInfoPopover
-                content={(getParent(modifier, 2) as Ihindrance).description}
-                title="Hindrance description"
-              />
-            </>
-          ))}
+          <div>
+            <h4>Hindrances</h4>
+            <TwoColumns>
+              {currentModifiers.optionalModifiers.hindrances.map((modifier) => (
+                <React.Fragment key={modifier.id}>
+                  <Checkbox
+                    label={
+                      <>
+                        <strong>{modifier.name}</strong> {modifier.conditions}
+                      </>
+                    }
+                    checked={modifier.isActive}
+                    onChange={() => modifier.set('isActive', !modifier.isActive)}
+                  />
+                  <StyledInfoPopover
+                    content={(getParent(modifier, 2) as Ihindrance).description}
+                    title="Hindrance description"
+                  />
+                </React.Fragment>
+              ))}
+            </TwoColumns>
+          </div>
 
-          <h4>Edges</h4>
-          {currentModifiers.optionalModifiers.edges.map((modifier) => (
-            <>
-              <Checkbox
-                label={
-                  <>
-                    <strong>{modifier.name}</strong> {modifier.conditions}
-                  </>
-                }
-                checked={modifier.isActive}
-                onChange={() => modifier.set('isActive', !modifier.isActive)}
-                key={modifier.id}
-              />
-              <StyledInfoPopover
-                content={(getParent(modifier, 2) as IedgeModel).description}
-                title="Edge description"
-              />
-            </>
-          ))}
+          <div>
+            <h4>Edges</h4>
+            <TwoColumns>
+              {currentModifiers.optionalModifiers.edges.map((modifier) => (
+                <React.Fragment key={modifier.id}>
+                  <Checkbox
+                    label={
+                      <>
+                        <strong>{modifier.name}</strong> {modifier.conditions}
+                      </>
+                    }
+                    checked={modifier.isActive}
+                    onChange={() => modifier.set('isActive', !modifier.isActive)}
+                  />
+                  <StyledInfoPopover
+                    content={(getParent(modifier, 2) as IedgeModel).description}
+                    title="Edge description"
+                  />
+                </React.Fragment>
+              ))}
+            </TwoColumns>
+          </div>
           {isSkill(trait) && trait.isSkillSpezialized && (
             <div>
               <strong>Skill specialization</strong>

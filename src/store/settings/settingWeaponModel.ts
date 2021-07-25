@@ -16,6 +16,7 @@ export const weaponModel = types
     weaponType: types.array(types.enumeration([...WEAPON_TYPES])),
     specialization: '',
     range: types.optional(types.array(types.number), []),
+    isImprovisedWeapon: false,
     armorPiercing: 0,
     rateOfFire: 1,
     shots: 1,

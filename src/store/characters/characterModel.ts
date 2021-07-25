@@ -1,3 +1,4 @@
+import { Itrait } from 'store/characters/traitModel';
 import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -136,11 +137,13 @@ export const characterModel = types
 
     getModifiersByField(fieldName: keyof Imodifier) {
       return this.activeModifiers.filter((modifier) =>
-        Array.isArray(modifier[fieldName]) ? modifier[fieldName].length > 0 : !!modifier[fieldName]
+        Array.isArray(modifier[fieldName])
+          ? modifier[fieldName].length > 0
+          : Boolean(modifier[fieldName])
       );
     },
 
-    getTraitModifiers(traitName: string) {
+    getTraitModifiers(trait: Itrait) {
       const nonOptionalModifiers: {
         edges: Imodifier[];
         hindrances: Imodifier[];
@@ -152,33 +155,32 @@ export const characterModel = types
         hindrances: [],
       };
 
-      self.edges.forEach((edge) => {
-        edge.modifiers.forEach((modifier) => {
-          modifier.traitModifiers.forEach((traitMod) => {
-            if (traitMod.traitName === traitName) {
-              if (modifier.isOptional) {
-                optionalModifiers.edges.push(modifier);
-              } else {
-                nonOptionalModifiers.edges.push(modifier);
-              }
-            }
-          });
-        });
+      self.modifiers.edges.forEach((modifier) => {
+        if (
+          modifier.traitNames.includes(trait.name) &&
+          modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
+        ) {
+          if (modifier.isOptional) {
+            optionalModifiers.edges.push(modifier);
+          } else {
+            nonOptionalModifiers.edges.push(modifier);
+          }
+        }
       });
 
-      self.hindrances.forEach((hindrance) => {
-        hindrance.modifiers.forEach((modifier) => {
-          modifier.traitModifiers.forEach((traitMod) => {
-            if (traitMod.traitName === traitName) {
-              if (modifier.isOptional) {
-                optionalModifiers.hindrances.push(modifier);
-              } else {
-                nonOptionalModifiers.hindrances.push(modifier);
-              }
-            }
-          });
-        });
+      self.modifiers.hindrances.forEach((modifier) => {
+        if (
+          modifier.traitNames.includes(trait.name) &&
+          modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
+        ) {
+          if (modifier.isOptional) {
+            optionalModifiers.hindrances.push(modifier);
+          } else {
+            nonOptionalModifiers.hindrances.push(modifier);
+          }
+        }
       });
+
       return { nonOptionalModifiers, optionalModifiers };
     },
 

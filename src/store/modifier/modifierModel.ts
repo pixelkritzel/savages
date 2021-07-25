@@ -1,4 +1,4 @@
-import { SnapshotIn, types, Instance, cast, getParent } from 'mobx-state-tree';
+import { types, Instance, getParent } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { powerModel } from 'store/characters/power';
@@ -7,6 +7,10 @@ import { padWithMathOperator } from 'utils/padWithMathOpertor';
 
 import { traitModifierModel } from './traitModifierModel';
 
+import { Itrait } from 'store/characters/traitModel';
+import { diceType } from 'store/consts';
+import { objectType } from 'lib/mst-types/object';
+
 export const modifierModel = types
   .model('modifier', {
     id: types.optional(types.identifier, uuidv4),
@@ -14,6 +18,7 @@ export const modifierModel = types
     reason: '',
     isOptional: types.boolean,
     conditions: '',
+    traitNames: types.optional(types.array(types.string), []),
     traitModifiers: types.optional(types.array(traitModifierModel), []),
     bennies: 0,
     aimingHelp: 0,
@@ -21,11 +26,14 @@ export const modifierModel = types
     size: 0,
     freeEdges: 0,
     freeReroll: '',
+    bonusDamage: 0,
+    bonusDamageDices: types.optional(types.array(diceType), []),
     rerollBonus: 0,
     armor: 0,
     ignoreWounds: 0,
     ignoreMultiActionPenalty: 0,
     ignoreRecoil: 0,
+    ignoreImprovisedWeapon: false,
     big: false,
     pace: 0,
     minumumStrength: 0,
@@ -41,6 +49,7 @@ export const modifierModel = types
     ),
     grantedSuperPowers: types.optional(types.array(types.reference(powerModel)), []),
     isActive: false,
+    technicalConditions: types.optional(types.array(objectType), []),
   })
   .views((self) => ({
     getHumanFriendlyTraitModifierValueByTrait(traitName: string) {
@@ -54,6 +63,18 @@ export const modifierModel = types
         traitModifier.bonusValue
       )}`;
     },
+    isTechnicalConditionsFullfilled(options: Itrait['unifiedOptions']) {
+      return self.technicalConditions.length === 0
+        ? true
+        : self.technicalConditions
+            .map((condition) => {
+              return Object.entries({ ...condition }).every(([key, value]) => {
+                return options[key] === value;
+              });
+            })
+            .some((isFullfilled) => isFullfilled);
+    },
+
     get source() {
       const source = getParent(2) as unknown;
       return source;
@@ -64,11 +85,11 @@ export const modifierModel = types
       self.isActive = !self.isOptional;
       self.reason = self.reason || self.name || self.id;
     },
-    set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(
+    set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
       key: K,
       value: T[K]
     ) {
-      self[key] = cast(value);
+      self[key] = value;
     },
   }));
 

@@ -1,4 +1,4 @@
-import { IDisposer, Instance, types, addMiddleware } from 'mobx-state-tree';
+import { IDisposer, Instance, types, addMiddleware, SnapshotOut } from 'mobx-state-tree';
 
 export const skillOptions = types
   .model('attackModel', {
@@ -24,6 +24,7 @@ export const skillOptions = types
     rateOfFire: 1,
     scale: types.optional(types.enumeration(['-6', '-4', '-2', '0', '+2', '+4', '+6']), '0'),
     speed: types.optional(types.enumeration(['0', '-1', '-2', '-4', '-6', '-8', '-10']), '0'),
+    gangUp: 0,
   })
   .actions((self) => {
     const disposers: IDisposer[] = [];
@@ -52,3 +53,5 @@ export const skillOptions = types
 
     return { afterCreate, beforeDestroy, set };
   });
+
+export interface SOskillOptions extends SnapshotOut<typeof skillOptions> {}

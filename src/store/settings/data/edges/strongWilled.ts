@@ -14,6 +14,8 @@ export const strongWilled: SIedgeModel = {
     {
       isOptional: true,
       conditions: 'Resisting Smarts or Spirit-based Tests',
+      traitNames: ['spirit', 'smarts'],
+
       traitModifiers: [
         {
           type: 'attribute',

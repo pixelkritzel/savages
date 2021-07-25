@@ -12,7 +12,8 @@ import { diceType, DICE_TYPES } from 'store/consts';
 
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
 import { rollDice } from 'utils/rollDice';
-import { traitOptions } from './traitOptions';
+import { SOtraitOptions, traitOptions } from './traitOptions';
+import { SOskillOptions } from './skillOptions';
 
 export const bonusType = types.number;
 
@@ -47,12 +48,12 @@ export const traitModel = types
   })
   .views((self) => ({
     get unifiedOptions() {
-      let options: { [key: string]: any } = { ...self.options };
+      let options: SOtraitOptions & Partial<SOskillOptions> & { [key: string]: any } = {
+        ...self.options,
+      };
       if (isSkill(self)) {
         options = { ...options, ...self.skillOptions };
       }
-      console.log(Object.keys(options));
-
       return options;
     },
   }))
@@ -66,12 +67,13 @@ export const traitModel = types
       modifierAccumulator.boni.fatigue = -character.fatigueAsNumber;
       modifierAccumulator.boni.numberOfActions = -(2 * trait.options.numberOfActions);
       modifierAccumulator.boni.joker = trait.options.isJoker ? 2 : 0;
+      modifierAccumulator.boni.illumination = Number(trait.options.illumination);
 
       for (const modifier of character.activeModifiers) {
         for (const traitModifier of modifier.traitModifiers) {
           if (
             traitModifier.traitName === trait.name &&
-            traitModifier.isTechnicalConditionsFullfilled(self.unifiedOptions)
+            modifier.isTechnicalConditionsFullfilled(self.unifiedOptions)
           ) {
             modifierAccumulator.diceDifferences[modifier.reason] = traitModifier.bonusDice;
             modifierAccumulator.boni[modifier.reason] = traitModifier.bonusValue;

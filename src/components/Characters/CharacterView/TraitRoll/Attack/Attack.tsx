@@ -12,6 +12,7 @@ import { CalledShot } from './CalledShot';
 import { WeaponOptions } from './WeaponOptions';
 import { AimingOptions } from './AimingOptions';
 import { Range } from './Range';
+import { AttackerOptions } from './AttackerOptions';
 
 const Headline = styled.h3`
   margin: 18px 17px 6px;
@@ -35,7 +36,7 @@ export const Attack: React.FC<ShootingProps> = observer(
     return (
       <>
         <Headline>Attack options</Headline>
-
+        <AttackerOptions attackSkill={attackSkill} />
         <WeaponOptions attackSkill={attackSkill} character={character} />
         {isRangedAttack(attackSkill) && (
           <Range attackSkill={attackSkill} currentlyHoldWeapon={currentlyHoldWeapon} />

@@ -21,6 +21,7 @@ import { OptionalModifiers } from '../OptionalModifiers';
 import { RollAndResult } from './RollAndResult';
 import { TargetOptions } from './TargetOptions';
 import { CustomModifiers } from './CustomModifiers';
+import { Illumination } from './Illumination';
 
 interface RollDiceProps {
   character: Icharacter;
@@ -107,14 +108,14 @@ export class TraitRoll extends React.Component<RollDiceProps> {
     };
   }
 
-  @action
-  rollDice = () => {
-    this.result = this.props.trait.roll(this.rollConfiguration);
-  };
+  @computed
+  get currentModifiers() {
+    return this.props.character.getTraitModifiers(this.props.trait);
+  }
 
   render() {
     const { character, trait } = this.props;
-    const currentModifiers = character.getTraitModifiers(trait.name);
+
     return (
       <>
         <Indent>
@@ -134,8 +135,9 @@ export class TraitRoll extends React.Component<RollDiceProps> {
           )}
         </Indent>
         <TurnOptions trait={trait} />
-        <NonOptionalModifiers modifiers={currentModifiers} trait={trait} />
-        <OptionalModifiers trait={trait} currentModifiers={currentModifiers} />
+        <NonOptionalModifiers modifiers={this.currentModifiers} trait={trait} />
+        <OptionalModifiers trait={trait} currentModifiers={this.currentModifiers} />
+        <Illumination trait={trait} />
         {isSkill(trait) && isAttackSkill(trait) && this.isAthleticsAttack && (
           <Attack attackSkill={trait} character={character} />
         )}

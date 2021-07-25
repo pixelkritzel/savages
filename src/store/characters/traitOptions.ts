@@ -1,4 +1,4 @@
-import { Instance, types } from 'mobx-state-tree';
+import { Instance, SnapshotOut, types } from 'mobx-state-tree';
 
 export const traitOptions = types
   .model('traitOptions', {
@@ -7,6 +7,7 @@ export const traitOptions = types
     numberOfActions: 0,
     customDiceDifference: 0,
     customBonus: 0,
+    illumination: types.optional(types.enumeration(['0', '-2', '-4', '-6']), '0'),
   })
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
@@ -16,3 +17,5 @@ export const traitOptions = types
       self[key] = value;
     },
   }));
+
+export interface SOtraitOptions extends SnapshotOut<typeof traitOptions> {}

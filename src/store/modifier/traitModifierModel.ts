@@ -1,7 +1,5 @@
 import { v4 as uuid4 } from 'uuid';
 import { types, Instance, getParent } from 'mobx-state-tree';
-import { traitRollOptions } from 'store/characters/traitRollOptions';
-import { Itrait } from 'store/characters/traitModel';
 
 export const traitModifierModel = types
   .model('traitModifierModel', {
@@ -14,22 +12,18 @@ export const traitModifierModel = types
     diceMaximum: 0,
     bonusMinimum: 0,
     bonusMaximum: 0,
-    technicalConditions: types.optional(types.array(traitRollOptions), []),
   })
   .views((self) => ({
-    isTechnicalConditionsFullfilled(options: Itrait['unifiedOptions']) {
-      return self.technicalConditions.length === 0
-        ? true
-        : self.technicalConditions
-            .map((condition) =>
-              Object.entries(condition).every(([key, value]) => {
-                return options[key] === value;
-              })
-            )
-            .some((isFullfilled) => isFullfilled);
-    },
     get source() {
       return getParent(self, 2);
+    },
+  }))
+  .actions((self) => ({
+    set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
+      key: K,
+      value: T[K]
+    ) {
+      self[key] = value;
     },
   }));
 

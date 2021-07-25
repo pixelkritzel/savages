@@ -45,6 +45,29 @@ const _skillModel = traitModel
     isAttackRollable(weapon: Iweapon) {
       return weapon.isForSkill(self.name as any);
     },
+    get bonusDamage(): number {
+      const character = getParentOfType(self, characterModel) as Icharacter;
+      const bonusDamageSum = character
+        .getModifiersByField('bonusDamage')
+        .filter(
+          ({ isTechnicalConditionsFullfilled, traitNames }) =>
+            isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.includes(self.name)
+        )
+        .reduce((bonusDamageSum, { bonusDamage }) => bonusDamageSum + bonusDamage, 0);
+      return bonusDamageSum;
+    },
+    get bonusDamageDices(): number[] {
+      const character = getParentOfType(self, characterModel) as Icharacter;
+      let damageDices: number[] = [];
+      character
+        .getModifiersByField('bonusDamageDices')
+        .filter(
+          ({ isTechnicalConditionsFullfilled, traitNames }) =>
+            isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.includes(self.name)
+        )
+        .forEach(({ bonusDamageDices }) => (damageDices = [...damageDices, ...bonusDamageDices]));
+      return damageDices;
+    },
   }))
   .views((self) => {
     const getTraitModifiersAccumulator = self.getModifiersAccumulator;
@@ -73,6 +96,12 @@ const _skillModel = traitModel
             .filter((modifier) => character.activeModifiers.includes(modifier))
             .reduce((recoilSum, { ignoreRecoil }) => ignoreRecoil + recoilSum, 0);
 
+          modifierAccumulator.boni.improvisedWeapon =
+            character.currentlyHoldWeapon.isImprovisedWeapon &&
+            character.getModifiersByField('ignoreImprovisedWeapon').length === 0
+              ? -2
+              : 0;
+
           modifierAccumulator.boni.recoil = skill.skillOptions.isRecoil
             ? -2 + (recoilModifiers > 2 ? 2 : recoilModifiers)
             : 0;
@@ -97,6 +126,7 @@ const _skillModel = traitModel
               : 0;
           modifierAccumulator.boni.nonLethal = skill.skillOptions.isNonLethal ? -1 : 0;
           modifierAccumulator.boni.offHand = skill.skillOptions.isOffHand ? -2 : 0;
+          modifierAccumulator.boni.gangUp = skill.skillOptions.gangUp;
           if (skill.skillOptions.aim === 'ignore') {
             const sumOfPenalties =
               modifierAccumulator.boni.range +

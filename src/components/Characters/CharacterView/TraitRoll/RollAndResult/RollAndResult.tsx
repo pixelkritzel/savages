@@ -92,9 +92,12 @@ export const RollAndResult = observer(function ResultFn({
     };
     if (traitRollResult.type === 'result') {
       for (const roll of traitRollResult.rolls) {
-        const damageRollConfiguration = {
+        const damageRollConfiguration: Parameters<Idamage['roll']>[0] = {
           isRaise: roll.raises > 0,
           strength: character.attributes.strength,
+          bonus: isSkill(trait) ? trait.bonusDamage : 0,
+          bonusDices: isSkill(trait) ? trait.bonusDamageDices : [],
+          isJoker: trait.options.isJoker,
         };
         traitRollResult.damages.push({
           damageRollConfiguration,
@@ -134,8 +137,8 @@ export const RollAndResult = observer(function ResultFn({
           </div>
           {roll.success &&
             isAttack &&
-            damage.rolls.map((damageRollResult) => (
-              <div>
+            damage.rolls.map((damageRollResult, index) => (
+              <div key={index}>
                 {`DMG: ${damageRollResult} AP ${character.currentlyHoldWeapon.armorPiercing}`}{' '}
               </div>
             ))}

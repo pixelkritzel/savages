@@ -17,29 +17,38 @@ export const tommyGun: SIweapon = {
   cost: 300,
   modifiers: [
     {
+      name: 'Hollow Munition',
+      bonusDamage: 2,
+      isOptional: false,
+      traitNames: ['shooting'],
+    },
+    {
       name: 'Foregrip',
       ignoreRecoil: 1,
       isOptional: false,
+      traitNames: ['shooting'],
     },
     {
       name: 'Scope',
       isOptional: true,
       aimingHelp: 2,
+      traitNames: ['shooting'],
     },
     {
       name: 'Laser Dot',
       isOptional: true,
+      traitNames: ['shooting'],
+      technicalConditions: [
+        {
+          range: '0',
+        },
+        { range: '-2' },
+      ],
       traitModifiers: [
         {
           type: 'skill',
           traitName: 'shooting',
           bonusValue: 1,
-          technicalConditions: [
-            {
-              range: '0',
-            },
-            { range: '-2' },
-          ],
         },
       ],
     },

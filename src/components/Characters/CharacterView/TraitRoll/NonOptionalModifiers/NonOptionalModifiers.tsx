@@ -10,6 +10,7 @@ import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
 import { Ihindrance } from 'store/settings/settingHindranceModel';
 import { IedgeModel } from 'store/settings/settingEdgeModel';
+import { TwoColumns } from '../../OptionalModifiers';
 
 const GridContainer = styled.div`
   display: grid;
@@ -60,45 +61,47 @@ export const NonOptionalModifiers: React.FC<NonOptionalModifiersProps> = observe
           </WoundsAndFatigue>
           <Hindrances>
             <h4>Hindrances</h4>
-            {modifiers.nonOptionalModifiers.hindrances.map((modifier) => (
-              <>
-                <Checkbox
-                  label={
-                    <>
-                      <strong>{modifier.name}</strong> {modifier.conditions}
-                    </>
-                  }
-                  checked={modifier.isActive}
-                  onChange={() => modifier.set('isActive', !modifier.isActive)}
-                  key={modifier.id}
-                />
-                <StyledInfoPopover
-                  content={(getParent(modifier, 2) as Ihindrance).description}
-                  title="Hindrance description"
-                />
-              </>
-            ))}
+            <TwoColumns>
+              {modifiers.nonOptionalModifiers.hindrances.map((modifier) => (
+                <React.Fragment key={modifier.id}>
+                  <Checkbox
+                    label={
+                      <>
+                        <strong>{modifier.name}</strong> {modifier.conditions}
+                      </>
+                    }
+                    checked={modifier.isActive}
+                    onChange={() => modifier.set('isActive', !modifier.isActive)}
+                  />
+                  <StyledInfoPopover
+                    content={(getParent(modifier, 2) as Ihindrance).description}
+                    title="Hindrance description"
+                  />
+                </React.Fragment>
+              ))}
+            </TwoColumns>
           </Hindrances>
           <Edges>
             <h4>Edges</h4>
-            {modifiers.nonOptionalModifiers.edges.map((modifier) => (
-              <>
-                <Checkbox
-                  label={
-                    <>
-                      <strong>{modifier.name}</strong> {modifier.conditions}
-                    </>
-                  }
-                  checked={modifier.isActive}
-                  onChange={() => modifier.set('isActive', !modifier.isActive)}
-                  key={modifier.id}
-                />
-                <StyledInfoPopover
-                  content={(getParent(modifier, 2) as IedgeModel).description}
-                  title="Edge description"
-                />
-              </>
-            ))}
+            <TwoColumns>
+              {modifiers.nonOptionalModifiers.edges.map((modifier) => (
+                <React.Fragment key={modifier.id}>
+                  <Checkbox
+                    label={
+                      <>
+                        <strong>{modifier.name}</strong> {modifier.conditions}
+                      </>
+                    }
+                    checked={modifier.isActive}
+                    onChange={() => modifier.set('isActive', !modifier.isActive)}
+                  />
+                  <StyledInfoPopover
+                    content={(getParent(modifier, 2) as IedgeModel).description}
+                    title="Edge description"
+                  />
+                </React.Fragment>
+              ))}
+            </TwoColumns>
           </Edges>
         </GridContainer>
       </fieldset>
