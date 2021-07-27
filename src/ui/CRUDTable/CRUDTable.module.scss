@@ -1,13 +1,15 @@
+@use 'sass:math';
+
 @import 'styles/_variables.scss';
 
 .header {
-  margin-bottom: $vertical-rhythm/2;
+  margin-bottom: math.div($vertical-rhythm, 2);
   border-bottom: 1px solid lightslategray;
 }
 
 .tableRow {
-  margin-bottom: $vertical-rhythm/2;
-  padding: $vertical-rhythm/2 0;
+  margin-bottom: math.div($vertical-rhythm, 2);
+  padding: math.div($vertical-rhythm, 2) 0;
   border-bottom: 1px solid lightgray;
 }
 
