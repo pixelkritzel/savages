@@ -145,7 +145,7 @@ export const characterModel = types
       type TraitModifiers = {
         edges: Imodifier[];
         hindrances: Imodifier[];
-        weapons: Imodifier[];
+        weapon: Imodifier[];
         all: Imodifier[];
       };
 
@@ -155,7 +155,7 @@ export const characterModel = types
       } = {
         edges: [],
         hindrances: [],
-        weapons: [],
+        weapon: [],
         all: [],
         wounds: self.woundsPenalty,
         fatigue: self.fatigueAsNumber,
@@ -163,7 +163,7 @@ export const characterModel = types
       const optionalModifiers: TraitModifiers = {
         edges: [],
         hindrances: [],
-        weapons: [],
+        weapon: [],
         all: [],
       };
 
@@ -199,22 +199,22 @@ export const characterModel = types
           modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
         ) {
           if (modifier.isOptional) {
-            optionalModifiers.hindrances.push(modifier);
+            optionalModifiers.weapon.push(modifier);
           } else {
-            nonOptionalModifiers.hindrances.push(modifier);
+            nonOptionalModifiers.weapon.push(modifier);
           }
         }
       });
 
       nonOptionalModifiers.all = [
         ...nonOptionalModifiers.edges,
-        ...nonOptionalModifiers.weapons,
+        ...nonOptionalModifiers.weapon,
         ...nonOptionalModifiers.hindrances,
       ];
 
       optionalModifiers.all = [
         ...optionalModifiers.edges,
-        ...optionalModifiers.weapons,
+        ...optionalModifiers.weapon,
         ...optionalModifiers.hindrances,
       ];
 
