@@ -125,6 +125,10 @@ const _skillModel = traitModel
             ? -2
             : 0;
           modifierAccumulator.boni.range = Number(skill.skillOptions.range);
+          modifierAccumulator.boni.isOneHandedAttack =
+            character.currentlyHoldWeapon.isTwoHanded && skill.skillOptions.isOneHandedAttack
+              ? -4
+              : 0;
           const recoilModifiers = character
             .getModifiersByField('ignoreRecoil')
             .filter((modifier) => character.activeModifiers.includes(modifier))

@@ -17,6 +17,7 @@ export const weaponModel = types
     specialization: '',
     range: types.optional(types.array(types.number), []),
     isImprovisedWeapon: false,
+    isTwoHanded: false,
     armorPiercing: 0,
     rateOfFire: 1,
     shots: 1,

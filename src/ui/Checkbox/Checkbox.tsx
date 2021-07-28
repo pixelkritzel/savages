@@ -5,10 +5,15 @@ import { generateId } from 'utils/generateId';
 
 const InputCheckbox = styled.input`
   margin-right: 8px;
+  margin-top: 5px;
 `;
 
 const Label = styled.label`
   display: inline-block;
+`;
+
+const CheckboxContainer = styled.div`
+  display: inline-flex;
 `;
 
 interface CheckboxProps extends React.ComponentPropsWithoutRef<'input'> {
@@ -18,9 +23,9 @@ interface CheckboxProps extends React.ComponentPropsWithoutRef<'input'> {
 
 export const Checkbox: React.FC<CheckboxProps> = observer(
   ({ className, id = generateId(), label, type = 'checkbox', ...otherProps }) => (
-    <Label className={className} htmlFor={id}>
+    <CheckboxContainer className={className}>
       <InputCheckbox type="checkbox" id={id} {...otherProps} />
-      {label}
-    </Label>
+      <Label htmlFor={id}>{label}</Label>
+    </CheckboxContainer>
   )
 );

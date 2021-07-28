@@ -14,6 +14,7 @@ export const tommyGun: SIweapon = {
   shots: 30,
   minimumStrength: 6,
   weight: 10,
+  isTwoHanded: true,
   cost: 300,
   modifiers: [
     {

@@ -50,7 +50,7 @@ export const damageModel = types
       }
       for (const dice of self.dices) {
         for (let i = 0; i <= dice.numberOfDices; i++) {
-          sumDiceRoll += rollDice(dice.sides);
+          sumDiceRoll += rollDice(Math.min(dice.sides, strength.dice));
         }
       }
       for (const dice of bonusDices) {

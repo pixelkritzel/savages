@@ -1,4 +1,4 @@
-import { types, Instance, getParent } from 'mobx-state-tree';
+import { types, Instance, getParent, SnapshotOut } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { powerModel } from 'store/characters/power';
@@ -96,3 +96,4 @@ export const modifierModel = types
   }));
 
 export interface Imodifier extends Instance<typeof modifierModel> {}
+export interface SOmodifier extends SnapshotOut<typeof modifierModel> {}

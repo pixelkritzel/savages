@@ -186,6 +186,7 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
             }
           />
         )}
+
         {isShooting && currentlyHoldWeapon.weaponType.includes('shotgun') && (
           <Checkbox
             label="Use slugs"
@@ -198,13 +199,24 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
             }
           />
         )}
-
         {isMelee(attackSkill) && (
           <Checkbox
             label="Non lethal damage with edged weapon"
             checked={attackSkill.skillOptions.isNonLethal}
             onChange={() =>
               attackSkill.skillOptions.set('isNonLethal', !attackSkill.skillOptions.isNonLethal)
+            }
+          />
+        )}
+        {currentlyHoldWeapon.isTwoHanded && (
+          <Checkbox
+            label="One handed use of two hand weapon"
+            checked={attackSkill.skillOptions.isOneHandedAttack}
+            onChange={() =>
+              attackSkill.skillOptions.set(
+                'isOneHandedAttack',
+                !attackSkill.skillOptions.isOneHandedAttack
+              )
             }
           />
         )}

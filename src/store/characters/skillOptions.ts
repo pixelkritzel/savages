@@ -14,6 +14,7 @@ export const skillOptions = types
     isAthleticsAttack: true,
     isNonLethal: false,
     isOffHand: false,
+    isOneHandedAttack: false,
     isProneTarget: false,
     isRecoil: false,
     isShotgunSlugs: false,
