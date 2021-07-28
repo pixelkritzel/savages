@@ -4,8 +4,28 @@ import { v4 as uuidv4 } from 'uuid';
 import { modifierModel } from 'store/modifier/modifierModel';
 
 import { damageModel } from './damageModel';
+import { diceType } from 'store/consts';
 
 export const WEAPON_TYPES = ['melee', 'throwable', 'shotgun', 'ranged'] as const;
+
+const SPENT_AMMUNITION_BY_RATE_FIRE = {
+  1: 1,
+  2: 5,
+  3: 10,
+  4: 20,
+  5: 40,
+  6: 50,
+} as const;
+
+export function getSpentAmmunitionByRateOfFire({
+  rateOfFire,
+  isThreeRoundBurst,
+}: {
+  rateOfFire: keyof typeof SPENT_AMMUNITION_BY_RATE_FIRE;
+  isThreeRoundBurst: boolean;
+}) {
+  return rateOfFire === 1 && isThreeRoundBurst ? 3 : SPENT_AMMUNITION_BY_RATE_FIRE[rateOfFire];
+}
 
 export const weaponModel = types
   .model('weaponModel', {
@@ -18,10 +38,12 @@ export const weaponModel = types
     range: types.optional(types.array(types.number), []),
     isImprovisedWeapon: false,
     isTwoHanded: false,
+    isThreeRoundBurstSelectable: false,
     armorPiercing: 0,
     rateOfFire: 1,
     shots: 1,
-    minimumStrength: 4,
+    spentAmmunition: 0,
+    minimumStrength: types.optional(diceType, 4),
     weight: 1,
     cost: 100,
     modifiers: types.array(modifierModel),
@@ -49,6 +71,14 @@ export const weaponModel = types
           return false;
       }
     },
+    get remainingAmmunition() {
+      return self.shots - self.spentAmmunition;
+    },
+    get maxRateOfFire() {
+      return Object.values(SPENT_AMMUNITION_BY_RATE_FIRE)
+        .sort((a, b) => a - b)
+        .filter((bullets) => bullets <= self.shots).length;
+    },
   }))
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
@@ -56,6 +86,13 @@ export const weaponModel = types
       value: T[K]
     ) {
       self[key] = value;
+    },
+    shoot({ rateOfFire, isThreeRoundBurst }: Parameters<typeof getSpentAmmunitionByRateOfFire>[0]) {
+      self.spentAmmunition =
+        self.spentAmmunition + getSpentAmmunitionByRateOfFire({ rateOfFire, isThreeRoundBurst });
+    },
+    reload() {
+      self.spentAmmunition = 0;
     },
   }));
 

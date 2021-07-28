@@ -1,3 +1,4 @@
+import { getSpentAmmunitionByRateOfFire } from 'store/settings/settingWeaponModel';
 import { Iweapon } from './../settings/settingWeaponModel';
 import {
   types,
@@ -13,7 +14,7 @@ import { Isetting } from 'store/settings';
 import { settingsSkillModel } from 'store/settings/settingSkillModel';
 
 import { Itrait, traitModel } from './traitModel';
-import { ATTACK_SKILLS } from 'store/consts';
+import { ATTACK_SKILLS, DICE_TYPES } from 'store/consts';
 import { skillOptions } from './skillOptions';
 
 const _skillModel = traitModel
@@ -43,17 +44,26 @@ const _skillModel = traitModel
       );
     },
     isAttackRollable(weapon: Iweapon) {
-      return weapon.isForSkill(self.name as any);
+      return (
+        weapon.isForSkill(self.name) &&
+        weapon.remainingAmmunition >=
+          getSpentAmmunitionByRateOfFire({
+            rateOfFire: self.skillOptions.rateOfFire,
+            isThreeRoundBurst: self.skillOptions.isThreeRoundBurst,
+          })
+      );
     },
     get bonusDamage(): number {
       const character = getParentOfType(self, characterModel) as Icharacter;
-      const bonusDamageSum = character
-        .getModifiersByField('bonusDamage')
-        .filter(
-          ({ isTechnicalConditionsFullfilled, traitNames }) =>
-            isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.includes(self.name)
-        )
-        .reduce((bonusDamageSum, { bonusDamage }) => bonusDamageSum + bonusDamage, 0);
+      const bonusDamageSum =
+        (self.skillOptions.isThreeRoundBurst && self.skillOptions.rateOfFire === 1 ? 1 : 0) +
+        character
+          .getModifiersByField('bonusDamage')
+          .filter(
+            ({ isTechnicalConditionsFullfilled, traitNames }) =>
+              isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.includes(self.name)
+          )
+          .reduce((bonusDamageSum, { bonusDamage }) => bonusDamageSum + bonusDamage, 0);
       return bonusDamageSum;
     },
     get bonusDamageDices(): number[] {
@@ -129,6 +139,15 @@ const _skillModel = traitModel
             character.currentlyHoldWeapon.isTwoHanded && skill.skillOptions.isOneHandedAttack
               ? -4
               : 0;
+          if (
+            isShooting(skill) &&
+            character.currentlyHoldWeapon.minimumStrength > character.attributes.strength.dice &&
+            character.getModifiersByField('ignoreMinimumStrength').length === 0
+          ) {
+            modifierAccumulator.boni.minimumStrength =
+              DICE_TYPES.indexOf(character.attributes.strength.dice) -
+              DICE_TYPES.indexOf(character.currentlyHoldWeapon.minimumStrength);
+          }
           const recoilModifiers = character
             .getModifiersByField('ignoreRecoil')
             .filter((modifier) => character.activeModifiers.includes(modifier))
@@ -143,6 +162,8 @@ const _skillModel = traitModel
           modifierAccumulator.boni.recoil = skill.skillOptions.isRecoil
             ? -2 + (recoilModifiers > 2 ? 2 : recoilModifiers)
             : 0;
+          modifierAccumulator.boni.threeRoundBurst =
+            skill.skillOptions.isThreeRoundBurst && skill.skillOptions.rateOfFire === 1 ? 1 : 0;
           modifierAccumulator.boni.calledShot = getModifierForCalledShot(
             skill.skillOptions.calledShot
           );

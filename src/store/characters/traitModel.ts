@@ -67,7 +67,12 @@ export const traitModel = types
       modifierAccumulator.boni.fatigue = -character.fatigueAsNumber;
       modifierAccumulator.boni.numberOfActions = -(2 * trait.options.numberOfActions);
       modifierAccumulator.boni.joker = trait.options.isJoker ? 2 : 0;
-      modifierAccumulator.boni.illumination = Number(trait.options.illumination);
+      modifierAccumulator.boni.illumination =
+        Number(trait.options.illumination) +
+          character
+            .getModifiersByField('ignoreVision')
+            .map(({ ignoreVision }) => ignoreVision)
+            .sort((a, b) => b - a)[0] || 0;
 
       for (const modifier of character.activeModifiers) {
         for (const traitModifier of modifier.traitModifiers) {
@@ -98,7 +103,9 @@ export const traitModel = types
         (sum, diceDifference) => sum + diceDifference,
         0
       );
+
       const bonus = Object.values(modifiersAccumulator.boni).reduce((sum, bonus) => sum + bonus, 0);
+
       return { diceDifference, bonus };
     },
   }))

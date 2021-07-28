@@ -1,5 +1,17 @@
 import { IDisposer, Instance, types, addMiddleware, SnapshotOut } from 'mobx-state-tree';
 
+const rateOfFire = types.optional(
+  types.union(
+    types.literal(1),
+    types.literal(2),
+    types.literal(3),
+    types.literal(4),
+    types.literal(5),
+    types.literal(6)
+  ),
+  1
+);
+
 export const skillOptions = types
   .model('attackModel', {
     aim: types.optional(types.union(types.null, types.enumeration(['ignore', 'plusTwo'])), null),
@@ -11,7 +23,7 @@ export const skillOptions = types
       types.union(types.null, types.enumeration(['-2', '-4', '-6', '-8'])),
       null
     ),
-    isAthleticsAttack: true,
+    isAthleticsAttack: false,
     isNonLethal: false,
     isOffHand: false,
     isOneHandedAttack: false,
@@ -19,10 +31,11 @@ export const skillOptions = types
     isRecoil: false,
     isShotgunSlugs: false,
     isTheDrop: false,
+    isThreeRoundBurst: false,
     isUnarmedDefender: false,
     isUnstablePlatform: false,
     range: types.optional(types.enumeration(['0', '-2', '-4', '-8']), '0'),
-    rateOfFire: 1,
+    rateOfFire: rateOfFire,
     scale: types.optional(types.enumeration(['-6', '-4', '-2', '0', '+2', '+4', '+6']), '0'),
     speed: types.optional(types.enumeration(['0', '-1', '-2', '-4', '-6', '-8', '-10']), '0'),
     gangUp: 0,
@@ -55,4 +68,5 @@ export const skillOptions = types
     return { afterCreate, beforeDestroy, set };
   });
 
+export interface IskillOptions extends Instance<typeof skillOptions> {}
 export interface SOskillOptions extends SnapshotOut<typeof skillOptions> {}

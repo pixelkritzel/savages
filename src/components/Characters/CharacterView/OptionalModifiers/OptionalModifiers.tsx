@@ -17,8 +17,8 @@ import { capitalizeFirstLetter } from 'lib/strings';
 
 const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr auto;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto;
   grid-column-gap: 24px;
   grid-row-gap: 8px;
 `;
@@ -32,6 +32,14 @@ export const TwoColumns = styled.div`
 
 const StyledInfoPopover = styled(InfoPopover)`
   margin-left: 8px;
+`;
+
+const SkillSpecialization = styled.div`
+  grid-area: 2 / 1 / 2 / 3;
+
+  & input[type='radio'] {
+    margin-left: 18px;
+  }
 `;
 
 interface OptionalModifiersProps {
@@ -91,7 +99,7 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
             </TwoColumns>
           </div>
           {isSkill(trait) && trait.isSkillSpezialized && (
-            <div>
+            <SkillSpecialization>
               <strong>Skill specialization</strong>
               <label>
                 <input
@@ -117,7 +125,7 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
                   {capitalizeFirstLetter(spezialization)}
                 </label>
               ))}
-            </div>
+            </SkillSpecialization>
           )}
         </GridContainer>
       </fieldset>

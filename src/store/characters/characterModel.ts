@@ -193,18 +193,22 @@ export const characterModel = types
         }
       });
 
-      self.currentlyHoldWeapon.modifiers.forEach((modifier) => {
-        if (
-          (modifier.traitNames.includes(trait.name) || modifier.traitNames.includes('all')) &&
-          modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
-        ) {
+      (self.currentlyHoldWeapon.minimumStrength > self.attributes.strength.dice
+        ? self.currentlyHoldWeapon.modifiers.filter((modifier) => !modifier.isBenefit)
+        : self.currentlyHoldWeapon.modifiers
+      )
+        .filter(
+          (modifier) =>
+            (modifier.traitNames.includes(trait.name) || modifier.traitNames.includes('all')) &&
+            modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
+        )
+        .forEach((modifier) => {
           if (modifier.isOptional) {
             optionalModifiers.weapon.push(modifier);
           } else {
             nonOptionalModifiers.weapon.push(modifier);
           }
-        }
-      });
+        });
 
       nonOptionalModifiers.all = [
         ...nonOptionalModifiers.edges,

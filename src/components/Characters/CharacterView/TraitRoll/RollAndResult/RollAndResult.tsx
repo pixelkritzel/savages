@@ -10,7 +10,7 @@ import { Icharacter } from 'store/characters';
 import { Itrait, TraitRollResult } from 'store/characters/traitModel';
 
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
-import { isAttackSkill, isSkill } from 'store/characters/skillModel';
+import { isAttackSkill, isShooting, isSkill } from 'store/characters/skillModel';
 import { Idamage } from 'store/settings/damageModel';
 
 const ResultsContainer = styled.div`
@@ -99,6 +99,12 @@ export const RollAndResult = observer(function ResultFn({
       ...trait.roll({ ...rollConfiguration, bonus: rollConfiguration.bonus + additionalBonus }),
       damages: [],
     };
+    if (isSkill(trait) && isShooting(trait) && resultStore.results.length === 0) {
+      character.currentlyHoldWeapon.shoot({
+        rateOfFire: trait.skillOptions.rateOfFire,
+        isThreeRoundBurst: trait.skillOptions.isThreeRoundBurst,
+      });
+    }
     if (traitRollResult.type === 'result') {
       for (const roll of traitRollResult.rolls) {
         const damageRollConfiguration: Parameters<Idamage['roll']>[0] = {

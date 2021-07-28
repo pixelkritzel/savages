@@ -10,7 +10,7 @@ export const timmyGun: SIweapon = {
   },
   armorPiercing: 1,
   rateOfFire: 3,
-  shots: 30,
+  shots: 1,
   minimumStrength: 6,
   weight: 10,
   cost: 300,

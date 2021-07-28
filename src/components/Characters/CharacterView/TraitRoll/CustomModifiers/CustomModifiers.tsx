@@ -9,6 +9,11 @@ const Container = styled.div`
   grid-template-columns: repeat(3, 1fr);
 `;
 
+const Input = styled.input`
+  min-width: 60px;
+  max-width: 60px;
+`;
+
 interface CustomModifiersProps {
   trait: Itrait;
   targetValue: number;
@@ -28,7 +33,7 @@ export const CustomModifiers = observer(function CustomModifiersFn({
         <FormGroup
           label="Dice Type"
           input={({ id }) => (
-            <input
+            <Input
               id={id}
               type="number"
               value={trait.options.customDiceDifference}
@@ -41,7 +46,7 @@ export const CustomModifiers = observer(function CustomModifiersFn({
         <FormGroup
           label="Bonus"
           input={({ id }) => (
-            <input
+            <Input
               type="number"
               id={id}
               value={trait.options.customBonus}
@@ -53,7 +58,7 @@ export const CustomModifiers = observer(function CustomModifiersFn({
           inline
           label="Target Number"
           input={({ id }) => (
-            <input
+            <Input
               type="number"
               id={id}
               value={targetValue}

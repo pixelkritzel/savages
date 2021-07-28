@@ -8,7 +8,6 @@ import { CRUDTable } from 'ui/CRUDTable';
 export const SettingsCollection: React.FC = observer(() => {
   const store = React.useContext(StoreContext);
   const match = useRouteMatch();
-  console.log(match.url);
   return (
     <CRUDTable
       collection={store.settings}

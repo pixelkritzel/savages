@@ -5,8 +5,8 @@ import styled from 'styled-components';
 
 const StyledFormGroup = styled.div<{ inline: boolean }>`
   display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
-
   justify-content: ${({ inline }) => (inline ? 'flex-start' : 'space-between')};
+  flex-wrap: wrap;
 `;
 
 const Label = styled.label<{ inline: boolean }>`
@@ -19,6 +19,7 @@ const Label = styled.label<{ inline: boolean }>`
 
 const InputContainer = styled.div<{ inline: boolean }>`
   width: ${({ inline }) => (inline ? 'auto' : '40%')};
+  flex-shrink: 2;
 `;
 
 interface FormGroupProps {

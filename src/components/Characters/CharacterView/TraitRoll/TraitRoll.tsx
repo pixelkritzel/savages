@@ -84,14 +84,16 @@ export class TraitRoll extends React.Component<RollDiceProps> {
   @computed
   get isTraitRollable() {
     const { character, trait } = this.props;
-
-    return (
-      (isSkill(trait) &&
-        isAttackSkill(trait) &&
-        trait.isAttackRollable(character.currentlyHoldWeapon)) ||
+    const isAttack =
+      isSkill(trait) &&
+      isAttackSkill(trait) &&
+      trait.isAttackRollable(character.currentlyHoldWeapon);
+    const isSkillNotAttack =
       (isSkill(trait) && !isAttackSkill(trait)) ||
-      !isSkill(trait)
-    );
+      (isSkill(trait) && trait.name === 'athletics' && !trait.skillOptions.isAthleticsAttack);
+    const isNotSkill = !isSkill(trait);
+
+    return isAttack || isSkillNotAttack || isNotSkill;
   }
 
   @computed

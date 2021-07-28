@@ -10,6 +10,7 @@ export const anemic: SIhindrance = {
     {
       id: '',
       reason: 'Anemic',
+      traitNames: ['vigor'],
       isOptional: true,
       conditions: '–2 Vigor when resisting Fatigue.',
       traitModifiers: [{ type: 'attribute', traitName: 'vigor', bonusValue: -2 }],

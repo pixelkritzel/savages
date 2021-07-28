@@ -1,16 +1,13 @@
-import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { Iskill, isMelee, isShooting as isShootingFn } from 'store/characters/skillModel';
-import { Alert } from 'ui/Alert';
 import { FormGroup } from 'ui/FormGroup';
 import { Checkbox } from 'ui/Checkbox';
-import { generateId } from 'utils/generateId';
-import { useRef } from 'react';
 import { useMemo } from 'react';
 import { Icharacter } from 'store/characters';
 import { Table } from 'ui/Table';
+import { RateOfFireAndReload } from './RateOfFireAndReload';
 
 const GridContainer = styled.div`
   display: grid;
@@ -28,7 +25,14 @@ const WeaponTable = styled(Table)`
 `;
 
 const WeaponModifiers = styled.div`
-  grid-area: 3 / 1 / 3 / 4;
+  grid-area: 4 / 1 / 4 / 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 18px;
+
+  & > h4 {
+    grid-area: 1 / 1 / 1 / 4;
+  }
 `;
 
 interface WeaponOptionsProps {
@@ -42,7 +46,6 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
 
   ...otherProps
 }: WeaponOptionsProps) {
-  const { current: rateOfFireTicksId } = useRef(generateId());
   const isShooting = useMemo(() => isShootingFn(attackSkill), [attackSkill]);
   const weapons = useMemo(
     () => character.getWeaponsByAttackSkill(attackSkill),
@@ -95,7 +98,7 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
                   <td>{currentlyHoldWeapon.damage.humanFriendly}</td>
                   <td>{currentlyHoldWeapon.armorPiercing}</td>
                   <td>{currentlyHoldWeapon.rateOfFire}</td>
-                  <td>{currentlyHoldWeapon.shots}</td>
+                  <td>{`${currentlyHoldWeapon.remainingAmmunition} / ${currentlyHoldWeapon.shots}`}</td>
                 </tr>
               </tbody>
             </WeaponTable>
@@ -128,97 +131,86 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
             </WeaponTable>
           </>
         )}
-        {currentlyHoldWeapon.isForSkill(attackSkill.name) &&
-          currentlyHoldWeapon.modifiers.length > 0 && (
+        {currentlyHoldWeapon.isForSkill(attackSkill.name) && (
+          <>
+            {isShooting && (
+              <RateOfFireAndReload attackSkill={attackSkill} weapon={currentlyHoldWeapon} />
+            )}
             <WeaponModifiers>
               <h4>Weapon Modifiers</h4>
-              {currentlyHoldWeapon.modifiers.map((modifier, index) => (
-                <Checkbox
-                  key={index}
-                  label={modifier.name}
-                  checked={character.activeModifiers.includes(modifier)}
-                  onChange={() => modifier.set('isActive', !modifier.isActive)}
-                />
-              ))}
-            </WeaponModifiers>
-          )}
-        {isShooting && (
-          <div>
-            <FormGroup
-              label={`Rate of Fire: ${attackSkill.skillOptions.rateOfFire}`}
-              input={({ id }) => (
+              {currentlyHoldWeapon.modifiers.length > 0 && (
                 <>
-                  <input
-                    type="range"
-                    min={1}
-                    id={id}
-                    max={6}
-                    step={1}
-                    value={attackSkill.skillOptions.rateOfFire}
-                    onChange={(event) =>
-                      attackSkill.skillOptions.set('rateOfFire', Number(event.target.value))
-                    }
-                    list={rateOfFireTicksId}
-                  />
-                  <datalist id={rateOfFireTicksId}>
-                    <option value="0" label="1"></option>
-                    <option value="1" label="2"></option>
-                    <option value="2" label="3"></option>
-                    <option value="3" label="4"></option>
-                    <option value="4" label="5"></option>
-                    <option value="5" label="6"></option>
-                  </datalist>
+                  {currentlyHoldWeapon.modifiers.map((modifier, index) => (
+                    <Checkbox
+                      key={index}
+                      label={modifier.name}
+                      checked={character.activeModifiers.includes(modifier)}
+                      onChange={() => modifier.set('isActive', !modifier.isActive)}
+                    />
+                  ))}
                 </>
               )}
-              inline
-            />
-            {attackSkill.skillOptions.rateOfFire > currentlyHoldWeapon.rateOfFire && (
-              <Alert>The selected Rate of Fire is higher than the weapons Rate of Fire!</Alert>
-            )}
-          </div>
-        )}
-        {isShooting && attackSkill.skillOptions.rateOfFire !== 1 && (
-          <Checkbox
-            label={`Recoil (${attackSkill.getModifiersAccumulator().boni.recoil})`}
-            checked={attackSkill.skillOptions.isRecoil}
-            onChange={() =>
-              attackSkill.skillOptions.set('isRecoil', !attackSkill.skillOptions.isRecoil)
-            }
-          />
-        )}
 
-        {isShooting && currentlyHoldWeapon.weaponType.includes('shotgun') && (
-          <Checkbox
-            label="Use slugs"
-            checked={attackSkill.skillOptions.isShotgunSlugs}
-            onChange={() =>
-              attackSkill.skillOptions.set(
-                'isShotgunSlugs',
-                !attackSkill.skillOptions.isShotgunSlugs
-              )
-            }
-          />
-        )}
-        {isMelee(attackSkill) && (
-          <Checkbox
-            label="Non lethal damage with edged weapon"
-            checked={attackSkill.skillOptions.isNonLethal}
-            onChange={() =>
-              attackSkill.skillOptions.set('isNonLethal', !attackSkill.skillOptions.isNonLethal)
-            }
-          />
-        )}
-        {currentlyHoldWeapon.isTwoHanded && (
-          <Checkbox
-            label="One handed use of two hand weapon"
-            checked={attackSkill.skillOptions.isOneHandedAttack}
-            onChange={() =>
-              attackSkill.skillOptions.set(
-                'isOneHandedAttack',
-                !attackSkill.skillOptions.isOneHandedAttack
-              )
-            }
-          />
+              {isShooting && attackSkill.skillOptions.rateOfFire !== 1 && (
+                <Checkbox
+                  label={`Recoil (${attackSkill.getModifiersAccumulator().boni.recoil})`}
+                  checked={attackSkill.skillOptions.isRecoil}
+                  onChange={() =>
+                    attackSkill.skillOptions.set('isRecoil', !attackSkill.skillOptions.isRecoil)
+                  }
+                />
+              )}
+
+              {isShooting && currentlyHoldWeapon.weaponType.includes('shotgun') && (
+                <Checkbox
+                  label="Use slugs"
+                  checked={attackSkill.skillOptions.isShotgunSlugs}
+                  onChange={() =>
+                    attackSkill.skillOptions.set(
+                      'isShotgunSlugs',
+                      !attackSkill.skillOptions.isShotgunSlugs
+                    )
+                  }
+                />
+              )}
+              {isShooting && currentlyHoldWeapon.isThreeRoundBurstSelectable && (
+                <Checkbox
+                  label="Three Round Burst"
+                  checked={attackSkill.skillOptions.isThreeRoundBurst}
+                  onChange={() =>
+                    attackSkill.skillOptions.set(
+                      'isThreeRoundBurst',
+                      !attackSkill.skillOptions.isThreeRoundBurst
+                    )
+                  }
+                />
+              )}
+              {isMelee(attackSkill) && (
+                <Checkbox
+                  label="Non lethal damage with edged weapon"
+                  checked={attackSkill.skillOptions.isNonLethal}
+                  onChange={() =>
+                    attackSkill.skillOptions.set(
+                      'isNonLethal',
+                      !attackSkill.skillOptions.isNonLethal
+                    )
+                  }
+                />
+              )}
+              {currentlyHoldWeapon.isTwoHanded && (
+                <Checkbox
+                  label="One handed use of two hand weapon"
+                  checked={attackSkill.skillOptions.isOneHandedAttack}
+                  onChange={() =>
+                    attackSkill.skillOptions.set(
+                      'isOneHandedAttack',
+                      !attackSkill.skillOptions.isOneHandedAttack
+                    )
+                  }
+                />
+              )}
+            </WeaponModifiers>
+          </>
         )}
       </GridContainer>
     </fieldset>
