@@ -1,10 +1,29 @@
 import React from 'react';
-import cx from 'classnames';
+import styled from 'styled-components';
 
-import CSS from './IncDec.module.scss';
 import { Button } from 'ui/Button';
 
-interface IncDecProps extends Omit<React.HTMLProps<HTMLDivElement>, 'value'> {
+const IncDecInnner = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 200px;
+`;
+
+const StyledButton = styled(Button)`
+  text-align: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+`;
+
+const Value = styled.span`
+  display: inline-block;
+  width: 60px;
+  text-align: center;
+`;
+
+interface IncDecProps {
   disableDecrement?: boolean;
   disableIncrement?: boolean;
   onDecrement: () => void;
@@ -18,17 +37,17 @@ export const IncDec: React.FC<IncDecProps> = ({
   onDecrement,
   onIncrement,
   value,
-  className,
+  ...otherProps
 }) => {
   return (
-    <div className={cx(CSS.incDec, className)}>
-      <Button className={CSS.button} disabled={disableDecrement} onClick={onDecrement}>
+    <IncDecInnner {...otherProps}>
+      <StyledButton disabled={disableDecrement} onClick={onDecrement}>
         -
-      </Button>
-      <span className={CSS.value}>{value}</span>
-      <Button className={CSS.button} disabled={disableIncrement} onClick={onIncrement}>
+      </StyledButton>
+      <Value>{value}</Value>
+      <StyledButton disabled={disableIncrement} onClick={onIncrement}>
         +
-      </Button>
-    </div>
+      </StyledButton>
+    </IncDecInnner>
   );
 };
