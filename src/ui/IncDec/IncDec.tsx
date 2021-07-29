@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 
 import CSS from './IncDec.module.scss';
 import { Button } from 'ui/Button';
@@ -17,9 +18,10 @@ export const IncDec: React.FC<IncDecProps> = ({
   onDecrement,
   onIncrement,
   value,
+  className,
 }) => {
   return (
-    <div className={CSS.incDec}>
+    <div className={cx(CSS.incDec, className)}>
       <Button className={CSS.button} disabled={disableDecrement} onClick={onDecrement}>
         -
       </Button>

@@ -3,17 +3,20 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { Iskill } from 'store/characters/skillModel';
+import { IncDec } from 'ui/IncDec';
 
 const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: auto;
-  row-gap: ${({ theme }) => theme.rhythms.vertical};
-  column-gap: ${({ theme }) => theme.rhythms.hoizontal};
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  column-gap: ${({ theme }) => theme.rhythms.hoizontal}; ;
 `;
 
-const Custom = styled.div`
-  white-space: nowrap;
+const Custom = styled.div``;
+
+const StyledIncDec = styled(IncDec)`
+  margin-left: ${({ theme }) => theme.rhythms.hoizontal};
+  display: inline-block;
 `;
 
 const CustomInput = styled.input`
@@ -31,14 +34,14 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
     if (typeof attackSkill.skillOptions.calledShot === 'number') {
       setIsCustom(false);
       attackSkill.skillOptions.set('calledShot', null);
+      setCustomValue(0);
     } else {
       setIsCustom(true);
       attackSkill.skillOptions.set('calledShot', customValue);
     }
   }
 
-  function onChangeCustomValue(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = Number(event.target.value);
+  function onChangeCustomValue(value: number) {
     if (value <= 0) {
       setCustomValue(value);
       attackSkill.skillOptions.set('calledShot', value);
@@ -52,6 +55,9 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
         ? null
         : (value as typeof attackSkill['skillOptions']['calledShot'])
     );
+    if (value !== 'custom') {
+      setCustomValue(0);
+    }
   }
 
   return (
@@ -99,13 +105,20 @@ export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackS
             />{' '}
             Custom
           </label>
-          <CustomInput
+          <StyledIncDec
+            value={customValue}
+            onIncrement={() => onChangeCustomValue(customValue + 1)}
+            onDecrement={() => onChangeCustomValue(customValue - 1)}
+            disableIncrement={!isCustom || customValue > -1}
+            disableDecrement={!isCustom}
+          />
+          {/* <CustomInput
             type="number"
             disabled={!isCustom}
             value={customValue}
             max={0}
             onChange={onChangeCustomValue}
-          />
+          /> */}
         </Custom>
       </GridContainer>
     </fieldset>
