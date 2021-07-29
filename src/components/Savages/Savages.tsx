@@ -6,6 +6,7 @@ import { Layout } from 'components/Layout';
 import { StoreContext } from 'components/StoreContext';
 
 import { createStore } from 'store';
+import { ThemeProvider } from 'components/ThemeProvider';
 
 export class Savages extends React.Component {
   store = createStore();
@@ -16,7 +17,9 @@ export class Savages extends React.Component {
       <ErrorBoundary>
         <StoreContext.Provider value={this.store}>
           <BrowserRouter>
-            <Layout />
+            <ThemeProvider>
+              <Layout />
+            </ThemeProvider>
           </BrowserRouter>
         </StoreContext.Provider>
       </ErrorBoundary>

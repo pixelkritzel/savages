@@ -28,7 +28,8 @@ const WeaponModifiers = styled.div`
   grid-area: 4 / 1 / 4 / 4;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 18px;
+  row-gap: ${({ theme }) => theme.rhythms.vertical};
+  column-gap: ${({ theme }) => theme.rhythms.hoizontal};
 
   & > h4 {
     grid-area: 1 / 1 / 1 / 4;
