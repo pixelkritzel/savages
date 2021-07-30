@@ -1,11 +1,9 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
-import cx from 'classnames';
-
-import CSS from './Stats.module.scss';
 
 import { Icharacter } from 'store/characters';
 import { observer } from 'mobx-react';
+import { CharacterViewBox } from '../CharacterViewBox';
 
 interface StatsProps extends HTMLAttributes<HTMLDivElement> {
   character: Icharacter;
@@ -27,19 +25,19 @@ const DL = styled.dl`
 `;
 
 export const Stats: React.FC<StatsProps> = observer(
-  ({ character, className, isEdit = false, ...otherProps }) => {
+  ({ character, isEdit = false, ...otherProps }) => {
     return (
-      <div className={cx(CSS.stats, className)}>
-        <DL>
-          <dt>Toughness</dt>
-          <dd>{character.toughness}</dd>
-
-          <dt>Parry</dt>
-          <dd>{character.parry}</dd>
-
-          <dt>Pace</dt>
-          <dd>{character.pace}</dd>
-        </DL>
+      <div {...otherProps}>
+        <CharacterViewBox headline="Stats">
+          <DL>
+            <dt>Toughness</dt>
+            <dd>{character.toughness}</dd>
+            <dt>Parry</dt>
+            <dd>{character.parry}</dd>
+            <dt>Pace</dt>
+            <dd>{character.pace}</dd>
+          </DL>
+        </CharacterViewBox>
       </div>
     );
   }

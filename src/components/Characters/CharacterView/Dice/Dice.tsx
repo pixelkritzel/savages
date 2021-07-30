@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import { observable, makeObservable, action } from 'mobx';
 import { observer } from 'mobx-react';
-import cx from 'classnames';
+import styled from 'styled-components';
 import ReactModal from 'react-modal';
 import { BsPencil } from 'react-icons/bs';
 
@@ -16,7 +16,30 @@ import { capitalizeFirstLetter } from 'lib/strings';
 
 import { TraitRoll } from '../TraitRoll';
 
-import CSS from './Dice.module.scss';
+const Top = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+`;
+
+const Form = styled.form`
+  width: 100%;
+`;
+
+const ValueButton = styled(Button)`
+  font-family: 'Courier New', Courier, monospace;
+`;
+
+const DiceContainer = styled.div<{ isOneLine: boolean }>`
+  ${({ isOneLine }) =>
+    isOneLine
+      ? `
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  `
+      : ''}
+`;
 
 interface DiceProps extends HTMLAttributes<HTMLDivElement> {
   character: Icharacter;
@@ -47,22 +70,27 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
     this.isRollModalOpen = false;
   };
 
+  @action
+  toggleIsEdit = () => {
+    this.isEdit = !this.isEdit;
+  };
+
   render() {
     const { character, trait } = this.props;
 
     return (
-      <div className={cx({ [CSS.oneLine]: !this.isEdit })}>
-        <div className={CSS.top}>
+      <DiceContainer isOneLine={!this.isEdit}>
+        <Top>
           <span>{capitalizeFirstLetter(trait.name)}</span>
           {this.isEdit && (
-            <Button variant="success" onClick={() => (this.isEdit = false)}>
+            <Button variant="success" onClick={this.toggleIsEdit}>
               Save
             </Button>
           )}
-        </div>
+        </Top>
         {this.isEdit && (
-          <div className={CSS.form}>
-            <DiceFormGroup className={CSS.formRow} label="Dice">
+          <Form>
+            <DiceFormGroup label="Dice">
               <IncDec
                 disableDecrement={!trait.isDiceDecrementable}
                 disableIncrement={!trait.isDiceIncrementable}
@@ -80,14 +108,12 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
                 value={trait.bonus.toString()}
               />
             </DiceFormGroup>
-          </div>
+          </Form>
         )}
 
         {!this.isEdit && (
           <>
-            <button className={CSS.value} onClick={this.openRollModal}>
-              {trait.value}
-            </button>
+            <ValueButton onClick={this.openRollModal}>{trait.value}</ValueButton>
             <Button variant="link" className="btn-inline-link" onClick={() => (this.isEdit = true)}>
               <BsPencil />
             </Button>
@@ -101,7 +127,7 @@ export class Dice extends React.Component<DiceProps, { isEdit: boolean }> {
             </ReactModal>
           </>
         )}
-      </div>
+      </DiceContainer>
     );
   }
 }

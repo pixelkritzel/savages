@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { StoreContext } from 'components/StoreContext';
 import { Istore } from 'store';
@@ -15,7 +16,26 @@ import { Powers } from './Powers';
 import { Skills } from './Skills';
 import { Stats } from './Stats';
 
-import CSS from './CharacterView.module.scss';
+const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  grid-template-rows: auto;
+  gap: ${({ theme }) => theme.rhythms.outside.vertical};
+`;
+
+const StyledCharacterDescription = styled(CharacterDescription)`
+  grid-area: 1 / 1 / 2 / 12;
+`;
+
+const LeftColumn = styled.div`
+  grid-area: 2 / 1 / 3 / 4;
+  display: grid;
+  row-gap: ${({ theme }) => theme.rhythms.outside.vertical};
+`;
+
+const RightColumn = styled.div`
+  grid-area: 2 / 4 / 3 / 12;
+`;
 
 export const CharacterView: React.FC<{}> = observer(function () {
   const { characterId } = useParams<{ characterId: string }>();
@@ -29,9 +49,9 @@ export const CharacterView: React.FC<{}> = observer(function () {
   const isEdit = false;
 
   return (
-    <div className={CSS.characterView}>
-      <CharacterDescription className={CSS.description} character={character} isEdit={isEdit} />
-      <div className={CSS.left}>
+    <GridContainer>
+      <StyledCharacterDescription character={character} isEdit={isEdit} />
+      <LeftColumn>
         <Money isEdit={isEdit} character={character} />
         <Health character={character} />
         <Attributes isEdit={isEdit} character={character} />
@@ -39,8 +59,8 @@ export const CharacterView: React.FC<{}> = observer(function () {
         <Edges edges={character.edges} />
         <Hindrances hindrances={character.hindrances} />
         <div>tap</div>
-      </div>
-      <div className={CSS.right}>
+      </LeftColumn>
+      <RightColumn>
         <Skills character={character} />
         <Powers />
         <div>weapons</div>
@@ -48,9 +68,9 @@ export const CharacterView: React.FC<{}> = observer(function () {
         <div>gear</div>
         <div>drone</div>
         <div>vehicle</div>
-      </div>
-      <div className={CSS.contacts}>contacts</div>
-      <div className={CSS.notes}>notes</div>
-    </div>
+      </RightColumn>
+      <div>contacts</div>
+      <div>notes</div>
+    </GridContainer>
   );
 });

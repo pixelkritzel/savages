@@ -6,8 +6,8 @@ const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: auto;
-  row-gap: ${({ theme }) => theme.rhythms.vertical};
-  column-gap: ${({ theme }) => theme.rhythms.hoizontal};
+  row-gap: ${({ theme }) => theme.rhythms.outside.vertical};
+  column-gap: ${({ theme }) => theme.rhythms.outside.horizontal};
 `;
 
 const Input = styled.input`

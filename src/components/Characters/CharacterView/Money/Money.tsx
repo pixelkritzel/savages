@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 
 import { Icharacter } from 'store/characters';
-import { TextLine } from '../TextLine';
+import { TextLine } from '../../../../ui/TextLine';
 
 interface MoneyProps extends React.HTMLProps<HTMLDivElement> {
   character: Icharacter;

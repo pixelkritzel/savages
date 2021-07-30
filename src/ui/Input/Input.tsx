@@ -1,12 +1,26 @@
 import React from 'react';
-import cx from 'classnames';
+import styled from 'styled-components';
+import { focusStyles } from 'utils/focus-styles';
 
-import CSS from './Input.module.scss';
+const StyledInput = styled.input<{ hasError?: boolean; variant?: 'default' | 'inline' }>`
+  border: 1px solid
+    ${({ theme, hasError }) =>
+      hasError ? theme.input.borderColor.error : theme.input.borderColor.normal};
+  border-radius: 4px;
+  background-color: inherit;
+  padding: ${({ variant }) => variant === 'inline' && '0 6px'};
 
-interface InputProps extends React.HTMLProps<HTMLInputElement> {
-  hasError?: boolean;
+  &:focus {
+    outline: none;
+  }
+`;
+
+const InputContainer = styled.div<{ hasFocus: boolean }>`
+  ${({ hasFocus }) => hasFocus && focusStyles}
+`;
+
+interface InputProps extends React.ComponentProps<typeof StyledInput> {
   onValueChange?: (value: string) => void;
-  variant?: 'default' | 'inline';
 }
 
 export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
@@ -31,20 +45,15 @@ export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
     const { className, hasError, variant = 'default', ...otherProps } = this.props;
 
     return (
-      <span
-        className={cx({ [CSS.focus]: this.state.hasFocus, [CSS.inline]: variant === 'inline' })}
-      >
-        <input
-          className={cx(CSS.input, className, {
-            [CSS.hasError]: hasError,
-            [CSS.inlineInput]: variant === 'inline',
-          })}
+      <InputContainer hasFocus={this.state.hasFocus}>
+        <StyledInput
           onBlur={this.onBlur}
           onChange={this.onChange}
           onFocus={this.onFocus}
+          variant={variant}
           {...otherProps}
         />
-      </span>
+      </InputContainer>
     );
   }
 }

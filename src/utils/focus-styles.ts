@@ -1,4 +1,6 @@
-@mixin focus-styles {
+import { css } from 'styled-components';
+
+export const focusStyles = css`
   & {
     position: relative;
 
@@ -12,4 +14,4 @@
       border: 2px dotted #62778a;
     }
   }
-}
+`;

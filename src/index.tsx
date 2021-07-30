@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 
 import { Savages } from 'components/Savages';
 
-import 'styles/styles.scss';
-
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(

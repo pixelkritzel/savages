@@ -28,8 +28,8 @@ const WeaponModifiers = styled.div`
   grid-area: 4 / 1 / 4 / 4;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: ${({ theme }) => theme.rhythms.vertical};
-  column-gap: ${({ theme }) => theme.rhythms.hoizontal};
+  row-gap: ${({ theme }) => theme.rhythms.outside.vertical};
+  column-gap: ${({ theme }) => theme.rhythms.outside.horizontal};
 
   & > h4 {
     grid-area: 1 / 1 / 1 / 4;
@@ -48,10 +48,10 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
   ...otherProps
 }: WeaponOptionsProps) {
   const isShooting = useMemo(() => isShootingFn(attackSkill), [attackSkill]);
-  const weapons = useMemo(
-    () => character.getWeaponsByAttackSkill(attackSkill),
-    [character, attackSkill]
-  );
+  const weapons = useMemo(() => character.getWeaponsByAttackSkill(attackSkill), [
+    character,
+    attackSkill,
+  ]);
 
   const { currentlyHoldWeapon } = character;
 
@@ -61,7 +61,7 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
       <GridContainer>
         <WeaponSelect
           label="Weapon"
-          input={({ id }) => (
+          input={({ id }: { id: string }) => (
             <select
               id={id}
               name="currentWeapon"

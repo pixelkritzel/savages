@@ -7,6 +7,7 @@ import { StoreContext } from 'components/StoreContext';
 
 import { createStore } from 'store';
 import { ThemeProvider } from 'components/ThemeProvider';
+import { GlobalStyles } from 'components/GlobalStyles';
 
 export class Savages extends React.Component {
   store = createStore();
@@ -18,6 +19,7 @@ export class Savages extends React.Component {
         <StoreContext.Provider value={this.store}>
           <BrowserRouter>
             <ThemeProvider>
+              <GlobalStyles />
               <Layout />
             </ThemeProvider>
           </BrowserRouter>

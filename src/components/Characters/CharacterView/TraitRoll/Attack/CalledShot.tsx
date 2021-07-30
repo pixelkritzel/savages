@@ -9,21 +9,14 @@ const GridContainer = styled.div`
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
-  column-gap: ${({ theme }) => theme.rhythms.hoizontal}; ;
+  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}; ;
 `;
 
 const Custom = styled.div``;
 
 const StyledIncDec = styled(IncDec)`
-  margin-left: ${({ theme }) => theme.rhythms.hoizontal};
+  margin-left: ${({ theme }) => theme.rhythms.inside.horizontal};
   display: inline-block;
-`;
-
-const CustomInput = styled.input`
-  margin-left: 8px;
-  min-width: 48px;
-  max-width: 48px;
-  text-align: right;
 `;
 
 export const CalledShot: React.FC<{ attackSkill: Iskill }> = observer(({ attackSkill }) => {

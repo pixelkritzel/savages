@@ -77,5 +77,8 @@
     "@types/lodash": "^4.14.171",
     "@types/react-modal": "^3.12.1",
     "@types/styled-components": "^5.1.9"
+  },
+  "resolutions": {
+    "babel-loader": "8.1.0"
   }
 }

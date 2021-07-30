@@ -4,40 +4,44 @@ import { generateId } from 'utils/generateId';
 import styled from 'styled-components';
 
 const StyledFormGroup = styled.div<{ inline: boolean }>`
-  display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
-  justify-content: ${({ inline }) => (inline ? 'flex-start' : 'space-between')};
-  flex-wrap: wrap;
+  display: ${({ inline }) => (inline ? 'inline-grid' : 'grid')};
+  grid-template-columns: 1fr 1fr;
+  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal};
 `;
 
 const Label = styled.label<{ inline: boolean }>`
   font-weight: bold;
   text-align: ${({ inline }) => (inline ? 'left' : 'right')};
-  width: ${({ inline }) => (inline ? 'auto' : '54%')};
-  margin-right: ${({ inline }) => (inline ? '24px' : '0')};
-  white-space: nowrap;
 `;
 
 const InputContainer = styled.div<{ inline: boolean }>`
-  width: ${({ inline }) => (inline ? 'auto' : '40%')};
-  flex-shrink: 2;
+  width: ${({ inline }) => (inline ? 'auto' : '100%')};
+  min-width: ${({ inline }) => (inline ? '0px' : '100%')};
+  max-width: 100%;
+
+  input {
+    width: ${({ inline }) => (inline ? 'auto' : '100%')};
+    min-width: ${({ inline }) => (inline ? '120px' : '100%')};
+    max-width: 100%;
+  }
 `;
 
-interface FormGroupProps {
+interface FormGroupProps extends React.ComponentProps<typeof StyledFormGroup> {
   label: JSX.Element | string;
   id?: string;
   inline?: boolean;
-  input: (_: { id: string }) => React.ReactNode;
+  input: (id: { id: string }) => React.ReactNode;
 }
 
 export const FormGroup: React.FC<FormGroupProps> = observer(
   ({ label, id, inline = false, input, ...otherProps }) => {
     const idRef = React.useRef(id ?? generateId());
     return (
-      <StyledFormGroup inline {...otherProps}>
-        <Label htmlFor={idRef.current} inline>
+      <StyledFormGroup inline={inline} {...otherProps}>
+        <Label htmlFor={idRef.current} inline={inline}>
           {label}
         </Label>
-        <InputContainer inline>{input({ id: idRef.current })}</InputContainer>
+        <InputContainer inline={inline}>{input({ id: idRef.current })}</InputContainer>
       </StyledFormGroup>
     );
   }

@@ -1,3 +1,6 @@
+import { createGlobalStyle } from 'styled-components';
+
+export const GlobalStyles = createGlobalStyle`
 /* Box sizing rules */
 *,
 *::before,
@@ -35,6 +38,7 @@ body {
   scroll-behavior: smooth;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
+  font-family: ${({ theme }) => theme.fonts.default};
 }
 
 /* Remove list styles on ul, ol elements with a class attribute */
@@ -76,3 +80,5 @@ select {
     scroll-behavior: auto !important;
   }
 }
+
+`;

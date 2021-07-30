@@ -5,8 +5,12 @@ import { Navbar } from 'components/Navbar';
 import { Router } from 'components/Router';
 import { StoreContext } from 'components/StoreContext';
 
-import CSS from './Layout.module.scss';
 import { Container } from 'ui/Container';
+import styled from 'styled-components';
+
+const StyledLayout = styled.div`
+  padding-top: ${({ theme }) => theme.rhythms.outside.vertical};
+`;
 
 @observer
 export class Layout extends React.Component {
@@ -19,9 +23,9 @@ export class Layout extends React.Component {
       <>
         <Navbar />
         <Container>
-          <div className={CSS.contentPadding}>
+          <StyledLayout>
             <Router />
-          </div>
+          </StyledLayout>
         </Container>
       </>
     );
