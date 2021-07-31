@@ -5,8 +5,8 @@ import styled from 'styled-components';
 
 const StyledFormGroup = styled.div<{ inline: boolean }>`
   display: ${({ inline }) => (inline ? 'inline-grid' : 'grid')};
-  grid-template-columns: 1fr 1fr;
-  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal};
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
 `;
 
 const Label = styled.label<{ inline: boolean }>`
@@ -21,7 +21,7 @@ const InputContainer = styled.div<{ inline: boolean }>`
 
   input {
     width: ${({ inline }) => (inline ? 'auto' : '100%')};
-    min-width: ${({ inline }) => (inline ? '120px' : '100%')};
+    min-width: ${({ inline }) => (inline ? '0' : '100%')};
     max-width: 100%;
   }
 `;

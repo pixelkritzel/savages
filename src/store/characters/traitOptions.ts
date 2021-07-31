@@ -8,6 +8,7 @@ export const traitOptions = types
     customDiceDifference: 0,
     customBonus: 0,
     illumination: types.optional(types.enumeration(['0', '-2', '-4', '-6']), '0'),
+    isOffHand: false,
   })
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(

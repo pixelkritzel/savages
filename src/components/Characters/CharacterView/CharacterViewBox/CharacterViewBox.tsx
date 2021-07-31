@@ -11,7 +11,7 @@ interface CharacterViewBoxProps {
 
 const Headline = styled.h3`
   text-align: center;
-  margin-bottom: ${({ theme }) => theme.rhythms.inside.vertical};
+  margin-bottom: ${({ theme }) => theme.rhythms.inside.vertical}px;
 `;
 
 export const CharacterViewBox = observer(function BoxFn({

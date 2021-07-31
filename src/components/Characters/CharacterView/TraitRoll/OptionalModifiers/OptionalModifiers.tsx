@@ -127,6 +127,11 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
               ))}
             </SkillSpecialization>
           )}
+          <Checkbox
+            label="Off Hand Action"
+            checked={trait.options.isOffHand}
+            onChange={() => trait.options.set('isOffHand', !trait.options.isOffHand)}
+          />
         </GridContainer>
       </fieldset>
     );

@@ -1,3 +1,4 @@
+import { statesModel } from './statesModel';
 import { Itrait } from 'store/characters/traitModel';
 import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +13,7 @@ import { attributesModel } from './attributesModel';
 import { powerModel } from './power';
 import { Iskill, skillModel } from './skillModel';
 import { traitModel } from './traitModel';
+import { sizeType } from 'store/consts';
 
 export const characterModel = types
   .model('character', {
@@ -30,7 +32,7 @@ export const characterModel = types
     spendAttributesPoints: 0,
     attributes: attributesModel,
     bennies: 3,
-    size: 3,
+    size: sizeType,
     freeEdges: 0,
     pace: 6,
     runningDice: traitModel,
@@ -51,6 +53,7 @@ export const characterModel = types
     currentPowerPoints: 0,
     hasPowers: false,
     currentlyHoldWeapon: types.reference(weaponModel),
+    states: statesModel,
   })
   .volatile((self) => ({
     showErrors: false,
@@ -71,6 +74,9 @@ export const characterModel = types
       return (
         Math.round(self.attributes.vigor.dice / 2) + Math.floor(self.attributes.vigor.bonus / 2) + 2
       );
+    },
+    get sizeBonus() {
+      return Number(self.size) * -1;
     },
     get woundsAsNumber() {
       return self.wounds.reduce((prev, current) => (current ? prev + 1 : prev), 0);
@@ -291,4 +297,5 @@ export const createCharacterScaffold = (): SIcharacter => ({
     bonus: 0,
   },
   currentlyHoldWeapon: 'unarmed',
+  states: {},
 });

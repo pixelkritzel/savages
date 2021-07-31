@@ -17,7 +17,7 @@ export const settingEdgeModel = types
     name: types.string,
     summary: types.string,
     description: types.string,
-    modifiers: types.array(modifierModel),
+    modifiers: types.array(types.reference(modifierModel)),
     requirements: types.model('edgeRequirementsModel', {
       rank: types.enumeration(['novice', 'seasoned', 'hardened', 'veteran', 'heroic', 'legendary']),
       attributes: types.array(

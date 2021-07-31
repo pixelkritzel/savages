@@ -17,7 +17,7 @@ import { capitalizeFirstLetter } from 'lib/strings';
 import { Attack } from './Attack';
 import { TurnOptions } from './TurnOptions';
 import { NonOptionalModifiers } from './NonOptionalModifiers';
-import { OptionalModifiers } from '../OptionalModifiers';
+import { OptionalModifiers } from './OptionalModifiers';
 import { RollAndResult } from './RollAndResult';
 import { TargetOptions } from './TargetOptions';
 import { CustomModifiers } from './CustomModifiers';

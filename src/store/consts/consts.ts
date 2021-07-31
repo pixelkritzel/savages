@@ -13,3 +13,10 @@ export const diceType = types.union(
   types.literal(10),
   types.literal(12)
 );
+
+export const sizeType = types.optional(
+  types.enumeration(['-6', '-4', '-2', '0', '+2', '+4', '+6']),
+  '0'
+);
+
+export const attributeNames = ['agility', 'smarts', 'spirit', 'strength', 'vigor'];

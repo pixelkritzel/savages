@@ -9,5 +9,3 @@ export const attributesModel = types.model({
   strength: types.late(() => traitModel),
   vigor: types.late(() => traitModel),
 });
-
-export const attributeNames = ['agility', 'smarts', 'spirit', 'strength', 'vigor'];

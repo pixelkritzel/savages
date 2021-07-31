@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'components/StoreContext';
-import { CRUDTable } from 'ui/CRUDTable';
+import { CRUDTable } from 'components/CRUDTable';
 
 export const CharacterCollection: React.FC = observer(() => {
   const store = React.useContext(StoreContext);

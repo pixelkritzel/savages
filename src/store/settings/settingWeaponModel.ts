@@ -40,13 +40,23 @@ export const weaponModel = types
     isTwoHanded: false,
     isThreeRoundBurstSelectable: false,
     armorPiercing: 0,
-    rateOfFire: 1,
+    rateOfFire: types.optional(
+      types.union(
+        types.literal(1),
+        types.literal(2),
+        types.literal(3),
+        types.literal(4),
+        types.literal(5),
+        types.literal(6)
+      ),
+      1
+    ),
     shots: 1,
     spentAmmunition: 0,
     minimumStrength: types.optional(diceType, 4),
     weight: 1,
     cost: 100,
-    modifiers: types.array(modifierModel),
+    modifiers: types.array(types.reference(modifierModel)),
   })
   .views((self) => ({
     get isRangedWeapon() {

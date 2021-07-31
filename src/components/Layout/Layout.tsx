@@ -9,7 +9,7 @@ import { Container } from 'ui/Container';
 import styled from 'styled-components';
 
 const StyledLayout = styled.div`
-  padding-top: ${({ theme }) => theme.rhythms.outside.vertical};
+  padding-top: ${({ theme }) => theme.rhythms.outside.vertical}px;
 `;
 
 @observer

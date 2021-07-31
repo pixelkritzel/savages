@@ -7,8 +7,8 @@ const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: auto;
-  row-gap: ${({ theme }) => theme.rhythms.inside.vertical};
-  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal};
+  row-gap: ${({ theme }) => theme.rhythms.inside.vertical}px;
+  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
 `;
 
 interface CoverProps {

@@ -16,7 +16,7 @@ const CheckboxContainer = styled.div`
   display: inline-flex;
 `;
 
-interface CheckboxProps extends React.ComponentPropsWithoutRef<'input'> {
+interface CheckboxProps extends React.ComponentProps<typeof InputCheckbox> {
   id?: string;
   label: string | React.ReactNode;
 }

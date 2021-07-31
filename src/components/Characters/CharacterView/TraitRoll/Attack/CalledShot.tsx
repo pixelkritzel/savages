@@ -9,13 +9,13 @@ const GridContainer = styled.div`
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
-  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}; ;
+  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px; ;
 `;
 
 const Custom = styled.div``;
 
 const StyledIncDec = styled(IncDec)`
-  margin-left: ${({ theme }) => theme.rhythms.inside.horizontal};
+  margin-left: ${({ theme }) => theme.rhythms.inside.horizontal}px;
   display: inline-block;
 `;
 

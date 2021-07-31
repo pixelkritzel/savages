@@ -5,6 +5,10 @@ const colors = {
     lighter: '#FEDDE4',
     dark: '#7B0218',
   },
+  warning: {
+    default: 'hsla(20, 100%, 50%, 1)',
+  },
+
   text: {
     default: 'black',
   },
@@ -27,6 +31,7 @@ const colors = {
 };
 
 export const theme = {
+  colors,
   fonts: {
     default: [
       '-apple-system',
@@ -43,12 +48,12 @@ export const theme = {
   },
   rhythms: {
     inside: {
-      vertical: '8px',
-      horizontal: '12px',
+      vertical: 8,
+      horizontal: 12,
     },
     outside: {
-      vertical: '24px',
-      horizontal: '24px',
+      vertical: 24,
+      horizontal: 24,
     },
   },
   button: {
@@ -112,6 +117,20 @@ export const theme = {
     borderColor: {
       normal: colors.grays[800],
       error: colors.danger.default,
+    },
+  },
+  box: {
+    borderColors: {
+      info: colors.text.default,
+      success: colors.success.default,
+      warning: colors.warning.default,
+      danger: colors.danger.default,
+    },
+    titleBackgroundColor: {
+      info: 'white',
+      success: colors.success.default,
+      warning: colors.warning.default,
+      danger: colors.danger.default,
     },
   },
 } as const;

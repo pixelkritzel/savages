@@ -9,18 +9,17 @@ import { Istore } from 'store';
 import { Attributes } from './Attributes';
 import { CharacterDescription } from './CharacterDescription';
 import { Edges } from './Edges';
-import { Health } from './Health';
 import { Hindrances } from './Hindrances';
-import { Money } from './Money';
 import { Powers } from './Powers';
 import { Skills } from './Skills';
 import { Stats } from './Stats';
+import { States } from './States';
 
 const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(11, 1fr);
+  grid-template-columns: repeat(11, minmax(0, 1fr));
   grid-template-rows: auto;
-  gap: ${({ theme }) => theme.rhythms.outside.vertical};
+  gap: ${({ theme }) => theme.rhythms.outside.vertical}px;
 `;
 
 const StyledCharacterDescription = styled(CharacterDescription)`
@@ -28,13 +27,22 @@ const StyledCharacterDescription = styled(CharacterDescription)`
 `;
 
 const LeftColumn = styled.div`
-  grid-area: 2 / 1 / 3 / 4;
+  grid-area: 3 / 1 / 4 / 5;
   display: grid;
-  row-gap: ${({ theme }) => theme.rhythms.outside.vertical};
+  row-gap: ${({ theme }) => theme.rhythms.outside.vertical}px;
 `;
 
 const RightColumn = styled.div`
-  grid-area: 2 / 4 / 3 / 12;
+  grid-area: 3 / 5 / 4 / 12;
+  margin-top: 12px;
+`;
+
+const Bottom = styled.div`
+  grid-area: 4 / 1 / 5 / 12;
+`;
+
+const StyledStates = styled(States)`
+  grid-area: 2 / 1 / 3 / 12;
 `;
 
 export const CharacterView: React.FC<{}> = observer(function () {
@@ -51,9 +59,8 @@ export const CharacterView: React.FC<{}> = observer(function () {
   return (
     <GridContainer>
       <StyledCharacterDescription character={character} isEdit={isEdit} />
+      <StyledStates character={character} />
       <LeftColumn>
-        <Money isEdit={isEdit} character={character} />
-        <Health character={character} />
         <Attributes isEdit={isEdit} character={character} />
         <Stats character={character} isEdit={isEdit} />
         <Edges edges={character.edges} />
@@ -69,8 +76,10 @@ export const CharacterView: React.FC<{}> = observer(function () {
         <div>drone</div>
         <div>vehicle</div>
       </RightColumn>
-      <div>contacts</div>
-      <div>notes</div>
+      <Bottom>
+        <div>contacts</div>
+        <div>notes</div>
+      </Bottom>
     </GridContainer>
   );
 });

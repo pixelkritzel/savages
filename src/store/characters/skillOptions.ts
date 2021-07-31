@@ -1,4 +1,5 @@
 import { IDisposer, Instance, types, addMiddleware, SnapshotOut } from 'mobx-state-tree';
+import { sizeType } from 'store/consts';
 
 const rateOfFire = types.optional(
   types.union(
@@ -25,7 +26,6 @@ export const skillOptions = types
     ),
     isAthleticsAttack: false,
     isNonLethal: false,
-    isOffHand: false,
     isOneHandedAttack: false,
     isProneTarget: false,
     isRecoil: false,
@@ -34,9 +34,10 @@ export const skillOptions = types
     isThreeRoundBurst: false,
     isUnarmedDefender: false,
     isUnstablePlatform: false,
+    isSupressiveFire: false,
     range: types.optional(types.enumeration(['0', '-2', '-4', '-8']), '0'),
     rateOfFire: rateOfFire,
-    scale: types.optional(types.enumeration(['-6', '-4', '-2', '0', '+2', '+4', '+6']), '0'),
+    scale: sizeType,
     speed: types.optional(types.enumeration(['0', '-1', '-2', '-4', '-6', '-8', '-10']), '0'),
     gangUp: 0,
   })

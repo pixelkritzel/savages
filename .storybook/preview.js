@@ -2,6 +2,13 @@ import React from 'react';
 
 import { addDecorator } from '@storybook/react';
 
-import '../src/styles/styles.scss';
+import { ThemeProvider } from '../src/components/ThemeProvider';
+import { GlobalStyles } from '../src/components/GlobalStyles';
 
-addDecorator((storyFn) => <div style={{ margin: '16px 32px' }}>{storyFn()}</div>);
+addDecorator((storyFn) => (
+  <div style={{ margin: '16px 32px' }}>
+    <ThemeProvider>
+      <GlobalStyles /> {storyFn()}
+    </ThemeProvider>
+  </div>
+));

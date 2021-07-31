@@ -6,20 +6,17 @@ import { shotgun } from './weapons/shotgun';
 import { timmyGun } from './weapons/timmy_gun';
 import { unarmed } from './weapons/unarmed';
 import { shooting } from './skills/shooting';
-import { test_die_difference } from './hindrances/test_die_difference';
 import { anemic } from './hindrances/anemic';
 import { notice } from './skills/notice';
 import { commonKnowledge } from './skills/common_knowledge';
 import { taunt } from './skills/taunt';
 import { fighting } from './skills/fighting';
 import { clueless } from './hindrances/clueless';
-import { nervesOfSteel } from './edges/nerves_of_steel';
-import { strongWilled } from './edges/strongWilled';
+
 import { SIsetting } from './../settingModel';
 import { athletics } from './skills/athletics';
 import { tommyGun } from './weapons/tommy_gun';
 import { doubleTap } from './edges/double_tap';
-import { hardToKill } from './edges/hard_to_kill';
 
 export const vanillaSetting: SIsetting = {
   id: 'vanilla_setting',
@@ -27,8 +24,8 @@ export const vanillaSetting: SIsetting = {
   creation: {
     attributePoints: 5,
   },
-  availableEdges: [strongWilled, nervesOfSteel, doubleTap, giantKiller, hardToKill],
-  availableHindrances: [anemic, clueless, test_die_difference],
+  availableEdges: [doubleTap, giantKiller],
+  availableHindrances: [anemic, clueless],
   availableSkills: [commonKnowledge, fighting, notice, taunt, shooting, athletics],
   availableWeapons: [
     unarmed,

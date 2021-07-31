@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const StyledAlert = styled.div`
   padding: 18px;
-  border: 2px red solid;
+  border: 2px ${({ theme }) => theme.colors.danger.default} solid;
 `;
 
 interface AlertProps {}

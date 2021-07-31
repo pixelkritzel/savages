@@ -28,8 +28,8 @@ const WeaponModifiers = styled.div`
   grid-area: 4 / 1 / 4 / 4;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: ${({ theme }) => theme.rhythms.outside.vertical};
-  column-gap: ${({ theme }) => theme.rhythms.outside.horizontal};
+  row-gap: ${({ theme }) => theme.rhythms.outside.vertical}px;
+  column-gap: ${({ theme }) => theme.rhythms.outside.horizontal}px;
 
   & > h4 {
     grid-area: 1 / 1 / 1 / 4;
@@ -206,6 +206,18 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
                     attackSkill.skillOptions.set(
                       'isOneHandedAttack',
                       !attackSkill.skillOptions.isOneHandedAttack
+                    )
+                  }
+                />
+              )}
+              {isShooting && (
+                <Checkbox
+                  label="Suppressive Fire"
+                  checked={attackSkill.skillOptions.isSupressiveFire}
+                  onChange={() =>
+                    attackSkill.skillOptions.set(
+                      'isSupressiveFire',
+                      !attackSkill.skillOptions.isSupressiveFire
                     )
                   }
                 />

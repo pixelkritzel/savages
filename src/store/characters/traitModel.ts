@@ -1,4 +1,3 @@
-import { isSkill } from 'store/characters/skillModel';
 import { characterModel, Icharacter } from 'store/characters';
 import { getParentOfType, Instance, types } from 'mobx-state-tree';
 import { v4 as uuid4 } from 'uuid';
@@ -45,15 +44,16 @@ export const traitModel = types
       { dice: 12, bonus: +4 }
     ),
     options: types.optional(traitOptions, {}),
+    skillOptions: types.optional(traitOptions, {}),
   })
   .views((self) => ({
     get unifiedOptions() {
       let options: SOtraitOptions & Partial<SOskillOptions> & { [key: string]: any } = {
         ...self.options,
       };
-      if (isSkill(self)) {
-        options = { ...options, ...self.skillOptions };
-      }
+
+      options = { ...options, ...self.skillOptions };
+
       return options;
     },
   }))
@@ -65,8 +65,13 @@ export const traitModel = types
       const modifierAccumulator: ModifierAccumulator = createModifierAccumulator();
       modifierAccumulator.boni.wounds = -character.woundsPenalty;
       modifierAccumulator.boni.fatigue = -character.fatigueAsNumber;
+      modifierAccumulator.boni.distracted = character.states.isDistracted ? -2 : 0;
       modifierAccumulator.boni.numberOfActions = -(2 * trait.options.numberOfActions);
       modifierAccumulator.boni.joker = trait.options.isJoker ? 2 : 0;
+      modifierAccumulator.boni.offHand =
+        trait.options.isOffHand && character.getModifiersByField('ignoreOffhand').length === 0
+          ? -2
+          : 0;
       modifierAccumulator.boni.illumination =
         Number(trait.options.illumination) +
           character

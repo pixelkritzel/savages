@@ -16,20 +16,5 @@ export const doubleTap: SIedgeModel = {
     attributes: [],
     skills: [{ skillName: 'shooting', value: 6 }],
   },
-  modifiers: [
-    {
-      isOptional: true,
-      conditions: '+1 to hit and damage when firing no more than RoF 1 per action.',
-      traitNames: ['shooting'],
-      traitModifiers: [
-        {
-          type: 'skill',
-          traitName: 'shooting',
-          bonusValue: 1,
-        },
-      ],
-      bonusDamage: 1,
-      technicalConditions: [{ rateOfFire: 1 }],
-    },
-  ],
+  modifiers: ['double_tap_mod_1'],
 };

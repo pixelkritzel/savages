@@ -16,6 +16,7 @@ import { settingsSkillModel } from 'store/settings/settingSkillModel';
 import { Itrait, traitModel } from './traitModel';
 import { ATTACK_SKILLS, DICE_TYPES } from 'store/consts';
 import { skillOptions } from './skillOptions';
+import { sum } from 'lodash';
 
 const _skillModel = traitModel
   .named('skillModel')
@@ -116,19 +117,18 @@ const _skillModel = traitModel
           0
         );
 
-        modifierAccumulator.diceDifferences.skillSpecialization =
-          modifiersForSkillSpecialization.reduce(
-            (specializationBonusSum, { traitModifiers }) =>
-              specializationBonusSum +
-              traitModifiers.reduce(
-                (specializationDiceDifferenceSum, { specialization }) =>
-                  specialization.specializationName === skill.selectedSkillSpecialization
-                    ? specialization.specializationDiceDifference + specializationDiceDifferenceSum
-                    : specializationDiceDifferenceSum,
-                0
-              ),
-            0
-          );
+        modifierAccumulator.diceDifferences.skillSpecialization = modifiersForSkillSpecialization.reduce(
+          (specializationBonusSum, { traitModifiers }) =>
+            specializationBonusSum +
+            traitModifiers.reduce(
+              (specializationDiceDifferenceSum, { specialization }) =>
+                specialization.specializationName === skill.selectedSkillSpecialization
+                  ? specialization.specializationDiceDifference + specializationDiceDifferenceSum
+                  : specializationDiceDifferenceSum,
+              0
+            ),
+          0
+        );
 
         if (self.isAttack) {
           modifierAccumulator.boni.isUnstablePlatform = skill.skillOptions.isUnstablePlatform
@@ -141,7 +141,9 @@ const _skillModel = traitModel
               : 0;
           if (
             isShooting(skill) &&
-            character.currentlyHoldWeapon.minimumStrength > character.attributes.strength.dice &&
+            character.currentlyHoldWeapon.minimumStrength +
+              sum(character.getModifiersByField('minumumStrength')) >
+              character.attributes.strength.dice &&
             character.getModifiersByField('ignoreMinimumStrength').length === 0
           ) {
             modifierAccumulator.boni.minimumStrength =
@@ -159,9 +161,10 @@ const _skillModel = traitModel
               ? -2
               : 0;
 
-          modifierAccumulator.boni.recoil = skill.skillOptions.isRecoil
-            ? -2 + (recoilModifiers > 2 ? 2 : recoilModifiers)
-            : 0;
+          modifierAccumulator.boni.recoil =
+            skill.skillOptions.isRecoil || skill.skillOptions.isSupressiveFire
+              ? -2 + (recoilModifiers > 2 ? 2 : recoilModifiers)
+              : 0;
           modifierAccumulator.boni.threeRoundBurst =
             skill.skillOptions.isThreeRoundBurst && skill.skillOptions.rateOfFire === 1 ? 1 : 0;
           modifierAccumulator.boni.calledShot = getModifierForCalledShot(
@@ -174,7 +177,7 @@ const _skillModel = traitModel
           modifierAccumulator.boni.proneTarget =
             skill.skillOptions.isProneTarget && skill.name !== 'fighting' ? -4 : 0;
           modifierAccumulator.boni.unarmedDefender = skill.skillOptions.isUnarmedDefender ? 2 : 0;
-          modifierAccumulator.boni.scale = Number(skill.skillOptions.scale);
+          modifierAccumulator.boni.scale = Number(skill.skillOptions.scale) + character.sizeBonus;
           modifierAccumulator.boni.speed = Number(skill.skillOptions.speed);
           modifierAccumulator.boni.shotgun =
             isShooting(skill) &&
@@ -184,7 +187,6 @@ const _skillModel = traitModel
               ? 2
               : 0;
           modifierAccumulator.boni.nonLethal = skill.skillOptions.isNonLethal ? -1 : 0;
-          modifierAccumulator.boni.offHand = skill.skillOptions.isOffHand ? -2 : 0;
           modifierAccumulator.boni.gangUp = skill.skillOptions.gangUp;
           if (skill.skillOptions.aim === 'ignore') {
             const sumOfPenalties =

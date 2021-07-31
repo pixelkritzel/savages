@@ -3,12 +3,16 @@ import styled, { css } from 'styled-components';
 
 import { focusStyles } from 'utils/focus-styles';
 
+type buttonVariants = 'default' | 'danger' | 'success' | 'link' | 'icon' | undefined;
+
+type StyledButtonProps = {
+  icon?: JSX.Element;
+  variant?: buttonVariants;
+};
+
 const buttonInnerBorderBoxShadow = 'inset 0px 0px 0px 1px white';
 
-const StyledButton = styled.button<{
-  icon?: JSX.Element;
-  variant?: 'default' | 'danger' | 'success' | 'link' | 'icon';
-}>`
+export const buttonStyles = css<StyledButtonProps>`
   /** Button reset */
 
   border: none;
@@ -35,7 +39,7 @@ const StyledButton = styled.button<{
     variant === 'link' || variant === 'icon' ? '0' : '2px 6px'};
   text-decoration: ${({ variant = 'default' }) =>
     variant === 'link' ? 'underline' : 'none !important'};
-  cursor: ${({ variant = 'default' }) => (variant === 'link' ? 'pointer' : 'auto')};
+  cursor: ${({ variant = 'default' }) => (variant === 'link' ? 'pointer' : 'default')};
   border: ${({ theme, variant = 'default' }) =>
     variant === 'link' ? 'none' : `2px solid ${theme.button.colors.border[variant]}`};
   box-shadow: ${buttonInnerBorderBoxShadow};
@@ -70,33 +74,41 @@ const StyledButton = styled.button<{
     ${focusStyles}
   }
   ${({ variant }) =>
-    variant === 'icon'
-      ? css`
-          width: 28px;
-          height: 28px;
-          align-items: center;
-          justify-content: center;
-          border-width: 1px;
-        `
-      : ''}
+    variant === 'icon' &&
+    css`
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      border-width: 1px;
+    `}
+`;
+
+const StyledButton = styled.button<StyledButtonProps>`
+  ${buttonStyles}
 `;
 
 const Inner = styled.span`
   display: inline-block;
 `;
 
-const InnerIcon = styled.span`
-  display: inline-block;
-  margin-right: 6px;
-  transform: translate(0, 1px);
+const InnerIcon = styled.span<{ variant: buttonVariants }>`
+  ${({ variant }) =>
+    variant !== 'icon' &&
+    css`
+      display: inline-block;
+      margin-right: 6px;
+      transform: translate(0, 1px);
+    `}
 `;
-interface ButtonProps extends React.ComponentProps<typeof StyledButton> {}
 
-export function Button({ icon, children, ...otherProps }: ButtonProps) {
+export type ButtonProps = React.ComponentProps<typeof StyledButton>;
+
+export function Button({ icon, children, variant, ...otherProps }: ButtonProps) {
   return (
-    <StyledButton {...otherProps}>
+    <StyledButton variant={variant} {...otherProps}>
       <Inner>
-        {icon && <InnerIcon>{icon}</InnerIcon>}
+        {icon && <InnerIcon variant={variant}>{icon}</InnerIcon>}
         {children}
       </Inner>
     </StyledButton>

@@ -10,7 +10,7 @@ export const settingHindranceModel = types
     impact: types.enumeration(['minor', 'major']),
     description: types.string,
     summary: types.string,
-    modifiers: types.array(modifierModel),
+    modifiers: types.array(types.reference(modifierModel)),
   })
   .actions((self) => ({
     afterCreate() {

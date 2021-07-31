@@ -203,7 +203,7 @@ export const RollAndResult = observer(function ResultFn({
             {resultStore.results.map((result, index) => {
               if (result.type === 'critical_failure') {
                 return (
-                  <Box key={index} title="Result" type={result.type} {...otherProps}>
+                  <Box key={index} title="Result" type="danger" {...otherProps}>
                     ☠️ ☠️ ☠️ CRITICAL FAILURE ☠️ ☠️ ☠️
                   </Box>
                 );
@@ -212,7 +212,7 @@ export const RollAndResult = observer(function ResultFn({
                   <Box
                     key={index}
                     title="Result"
-                    type={result.rolls[0].success ? 'success' : 'failure'}
+                    type={result.rolls[0].success ? 'success' : 'warning'}
                     {...otherProps}
                   >
                     <RollDisplay roll={result.rolls[0]} damage={result.damages[0]} />
@@ -223,7 +223,7 @@ export const RollAndResult = observer(function ResultFn({
                   <Box
                     key={index}
                     title="Result"
-                    type={result.rolls.some(({ success }) => success) ? 'success' : 'failure'}
+                    type={result.rolls.some(({ success }) => success) ? 'success' : 'warning'}
                     {...otherProps}
                   >
                     Rolls:

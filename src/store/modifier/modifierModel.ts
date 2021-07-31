@@ -1,4 +1,4 @@
-import { types, Instance, getParent, SnapshotOut } from 'mobx-state-tree';
+import { types, Instance, getParent, SnapshotOut, SnapshotIn } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { powerModel } from 'store/characters/power';
@@ -6,6 +6,7 @@ import { powerModel } from 'store/characters/power';
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
 
 import { traitModifierModel } from './traitModifierModel';
+import { settingsSkillModel } from './../settings/settingSkillModel';
 
 import { Itrait } from 'store/characters/traitModel';
 import { diceType } from 'store/consts';
@@ -38,6 +39,7 @@ export const modifierModel = types
     ignoreImprovisedWeapon: false,
     ignoreMinimumStrength: false,
     ignoreVision: 0,
+    ignoreOffhand: false,
     big: false,
     pace: 0,
     minumumStrength: 0,
@@ -55,6 +57,16 @@ export const modifierModel = types
     grantedSuperPowers: types.optional(types.array(types.reference(powerModel)), []),
     isActive: false,
     technicalConditions: types.optional(types.array(objectType), []),
+    replaceSettingSkill: types.optional(types.array(settingsSkillModel), []),
+    rangeModifiers: types.optional(
+      types.array(
+        types.model('rangeModifierModel', {
+          skill: types.string,
+          range: types.optional(types.array(types.number), []),
+        })
+      ),
+      []
+    ),
   })
   .views((self) => ({
     getHumanFriendlyTraitModifierValueByTrait(traitName: string) {
@@ -100,3 +112,4 @@ export const modifierModel = types
 
 export interface Imodifier extends Instance<typeof modifierModel> {}
 export interface SOmodifier extends SnapshotOut<typeof modifierModel> {}
+export interface SImodifier extends SnapshotIn<typeof modifierModel> {}

@@ -41,11 +41,11 @@ export const IncDec: React.FC<IncDecProps> = ({
 }) => {
   return (
     <IncDecInnner {...otherProps}>
-      <StyledButton disabled={disableDecrement} onClick={onDecrement}>
+      <StyledButton variant="icon" disabled={disableDecrement} onClick={onDecrement}>
         -
       </StyledButton>
       <Value>{value}</Value>
-      <StyledButton disabled={disableIncrement} onClick={onIncrement}>
+      <StyledButton variant="icon" disabled={disableIncrement} onClick={onIncrement}>
         +
       </StyledButton>
     </IncDecInnner>

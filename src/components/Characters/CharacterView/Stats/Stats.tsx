@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Icharacter } from 'store/characters';
 import { observer } from 'mobx-react';
-import { CharacterViewBox } from '../CharacterViewBox';
+import { Box } from 'ui/Box';
 
 interface StatsProps extends HTMLAttributes<HTMLDivElement> {
   character: Icharacter;
@@ -28,7 +28,7 @@ export const Stats: React.FC<StatsProps> = observer(
   ({ character, isEdit = false, ...otherProps }) => {
     return (
       <div {...otherProps}>
-        <CharacterViewBox headline="Stats">
+        <Box title="Stats">
           <DL>
             <dt>Toughness</dt>
             <dd>{character.toughness}</dd>
@@ -37,7 +37,7 @@ export const Stats: React.FC<StatsProps> = observer(
             <dt>Pace</dt>
             <dd>{character.pace}</dd>
           </DL>
-        </CharacterViewBox>
+        </Box>
       </div>
     );
   }

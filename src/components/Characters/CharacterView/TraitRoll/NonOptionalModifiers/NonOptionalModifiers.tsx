@@ -10,7 +10,7 @@ import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
 import { Ihindrance } from 'store/settings/settingHindranceModel';
 import { IedgeModel } from 'store/settings/settingEdgeModel';
-import { TwoColumns } from '../../OptionalModifiers';
+import { TwoColumns } from '../OptionalModifiers';
 
 const GridContainer = styled.div`
   display: grid;

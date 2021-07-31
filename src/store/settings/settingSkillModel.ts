@@ -1,14 +1,12 @@
-import { cast, Instance, SnapshotIn, getPropertyMembers, types } from 'mobx-state-tree';
-import { attributesModel } from 'store/characters/attributesModel';
-
-const { properties: attributes } = getPropertyMembers(attributesModel);
+import { cast, Instance, SnapshotIn, types } from 'mobx-state-tree';
+import { attributeNames } from 'store/consts';
 
 export const settingsSkillModel = types
   .model('settingSkillModel', {
     id: types.identifier,
     name: types.string,
     description: types.string,
-    associatedAttribute: types.enumeration(Object.keys(attributes)),
+    associatedAttribute: types.enumeration(attributeNames),
   })
   .actions((self) => ({
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(

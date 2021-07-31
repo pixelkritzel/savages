@@ -42,7 +42,7 @@ export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
   };
 
   render() {
-    const { className, hasError, variant = 'default', ...otherProps } = this.props;
+    const { className, hasError, variant = 'default', onValueChange, ...otherProps } = this.props;
 
     return (
       <InputContainer hasFocus={this.state.hasFocus}>

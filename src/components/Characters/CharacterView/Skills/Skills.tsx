@@ -21,30 +21,25 @@ export const Skills: React.FC<SkillsProps> = observer(({ character }) => {
   const { selectedSetting } = useContext<Istore>(StoreContext);
 
   return (
-    <div>
-      <h3>Skills</h3>
-      <Table>
-        <thead>
-          <tr>
-            <th>Skill</th>
-            {selectedSetting.isSkillSpezializations && <th>Specialization</th>}
-            <th>Dice</th>
+    <Table>
+      <thead>
+        <tr>
+          <th>Skill</th>
+          {selectedSetting.isSkillSpezializations && <th>Specialization</th>}
+          <th>Dice</th>
+        </tr>
+      </thead>
+      <tbody>
+        {mapToArray<Iskill>(character.skills).map((skill) => (
+          <tr key={skill.settingSkill.id}>
+            <td>{skill.settingSkill.name}</td>
+            {selectedSetting.isSkillSpezializations && <td>{skill.specializations?.join(' ')}</td>}
+            <td>
+              <SkillRoll character={character} skill={skill} />
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {mapToArray<Iskill>(character.skills).map((skill) => (
-            <tr key={skill.settingSkill.id}>
-              <td>{skill.settingSkill.name}</td>
-              {selectedSetting.isSkillSpezializations && (
-                <td>{skill.specializations?.join(' ')}</td>
-              )}
-              <td>
-                <SkillRoll character={character} skill={skill} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
+        ))}
+      </tbody>
+    </Table>
   );
 });

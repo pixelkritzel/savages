@@ -9,15 +9,5 @@ export const clueless: SIhindrance = {
   a haystack in a small pile of needles.
 
   He suffers a −1 penalty to Common Knowledge and Notice rolls.`,
-  modifiers: [
-    {
-      reason: 'Clueless',
-      isOptional: false,
-      traitNames: ['notice', 'common_knowledge'],
-      traitModifiers: [
-        { type: 'skill', traitName: 'notice', bonusValue: -1 },
-        { type: 'skill', traitName: 'common_knowledge', bonusValue: -1 },
-      ],
-    },
-  ],
+  modifiers: ['cluessless_mod_1'],
 };

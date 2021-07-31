@@ -41,10 +41,15 @@ export const RateOfFireAndReload = observer(function RateOfFireAndReloadFn({
   const { current: rateOfFireTicksId } = useRef(generateId());
   const { spendAmmunition } = useLocalStore(() => ({
     get spendAmmunition() {
-      return getSpentAmmunitionByRateOfFire({
-        rateOfFire: attackSkill.skillOptions.rateOfFire,
-        isThreeRoundBurst: attackSkill.skillOptions.isThreeRoundBurst,
-      });
+      return attackSkill.skillOptions.isSupressiveFire
+        ? getSpentAmmunitionByRateOfFire({
+            rateOfFire: weapon.rateOfFire,
+            isThreeRoundBurst: false,
+          }) * 3
+        : getSpentAmmunitionByRateOfFire({
+            rateOfFire: attackSkill.skillOptions.rateOfFire,
+            isThreeRoundBurst: attackSkill.skillOptions.isThreeRoundBurst,
+          });
     },
   }));
 

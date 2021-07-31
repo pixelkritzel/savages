@@ -2,18 +2,19 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
+import { Box } from 'ui/Box';
 import { Checkbox } from 'ui/Checkbox';
+import { TextLine } from 'ui/TextLine';
 
 import { Icharacter } from 'store/characters';
 
-import { TextLine } from '../../../../ui/TextLine';
-import { CharacterViewBox } from '../CharacterViewBox';
+import { Money } from '../Money';
 
 const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal};
-  row-gap: ${({ theme }) => theme.rhythms.inside.vertical};
+  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
+  row-gap: ${({ theme }) => theme.rhythms.inside.vertical}px;
 `;
 
 interface CharacterDescriptionsProps extends React.HTMLProps<HTMLDivElement> {
@@ -24,8 +25,14 @@ interface CharacterDescriptionsProps extends React.HTMLProps<HTMLDivElement> {
 export const CharacterDescription: React.FC<CharacterDescriptionsProps> = observer(
   ({ character, className, isEdit = false }) => (
     <div className={className}>
-      <CharacterViewBox headline={character.name}>
+      <Box title="Description">
         <Container>
+          <TextLine
+            isEdit={isEdit}
+            label="Name"
+            onValueChange={(value) => character.set('name', value)}
+            value={character.name}
+          />
           <TextLine
             isEdit={isEdit}
             label="Race"
@@ -44,12 +51,10 @@ export const CharacterDescription: React.FC<CharacterDescriptionsProps> = observ
             onValueChange={(value) => character.set('age', Number(value))}
             value={character.age.toString()}
           />
-          <TextLine
-            isEdit={isEdit}
-            label="Size"
-            onValueChange={(value) => character.set('size', Number(value))}
-            value={character.size.toString()}
-          />
+          <dl>
+            <dt>Size</dt>
+            <dd>{character.size}</dd>
+          </dl>
           <TextLine
             isEdit={isEdit}
             label="Bennies"
@@ -63,8 +68,9 @@ export const CharacterDescription: React.FC<CharacterDescriptionsProps> = observ
             id="conviction"
             onChange={() => character.set('conviction', !character.conviction)}
           />
+          <Money isEdit={isEdit} character={character} />
         </Container>
-      </CharacterViewBox>
+      </Box>
     </div>
   )
 );

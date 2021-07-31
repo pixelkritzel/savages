@@ -18,12 +18,12 @@ interface TextLineProps {
 
 const TextLineContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr auto;
-  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal};
+  grid-template-columns: minmax(0, 1fr) 28px;
+  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
 `;
 
 const StyledInput = styled(Input)`
-  min-width: 100%;
+  min-width: 0;
   max-width: 100%;
 `;
 
@@ -50,6 +50,7 @@ export class TextLine extends React.Component<TextLineProps> {
     return (
       <TextLineContainer>
         <FormGroup
+          inline
           label={label}
           input={({ id }) =>
             !this.isEdit ? (
@@ -64,7 +65,8 @@ export class TextLine extends React.Component<TextLineProps> {
               />
             )
           }
-        ></FormGroup>
+          style={{ minWidth: 0 }}
+        />
         {!this.isEdit ? (
           <Button className="btn-inline-link" variant="link" onClick={() => (this.isEdit = true)}>
             <BsPencil />

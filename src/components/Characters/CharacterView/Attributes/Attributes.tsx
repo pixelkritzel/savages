@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import { Icharacter } from 'store/characters';
 
 import { Dice } from '../Dice';
-import { CharacterViewBox } from '../CharacterViewBox';
+import { Box } from 'ui/Box';
 
-const StyledBox = styled(CharacterViewBox)`
+const StyledBox = styled(Box)`
   & > *:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.rhythms.inside.vertical};
+    margin-bottom: ${({ theme }) => theme.rhythms.inside.vertical}px;
   }
 `;
 
@@ -25,7 +25,7 @@ export const Attributes: React.FC<AttributesProps> = ({
 }) => {
   return (
     <div {...otherProps}>
-      <StyledBox headline="Attributes">
+      <StyledBox title="Attributes">
         <Dice character={character} isEdit={isEdit} trait={character.attributes.agility} />
         <Dice character={character} isEdit={isEdit} trait={character.attributes.smarts} />
         <Dice character={character} isEdit={isEdit} trait={character.attributes.spirit} />

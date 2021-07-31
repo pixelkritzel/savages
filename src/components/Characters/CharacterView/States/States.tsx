@@ -1,17 +1,19 @@
 import React from 'react';
-
-import { Checkbox } from 'ui/Checkbox';
-
+import { observer } from 'mobx-react';
+import { Box } from 'ui/Box';
 import { Icharacter } from 'store/characters';
 import styled from 'styled-components';
-import { CharacterViewBox } from '../CharacterViewBox';
+import { Checkbox } from 'ui/Checkbox';
 
-const StyledHealth = styled(CharacterViewBox)`
-  text-align: center;
+interface StatesProps {
+  character: Icharacter;
+}
 
-  & > *:not(:last-child) {
-    margin-bottom: 12px;
-  }
+const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
+  row-gap: ${({ theme }) => theme.rhythms.inside.vertical}px;
 `;
 
 const StyledCheckbox = styled(Checkbox)`
@@ -20,15 +22,18 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `;
 
-interface HealthProps extends React.HTMLProps<HTMLDivElement> {
-  character: Icharacter;
-}
+const Centered = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
-export const Health: React.FC<HealthProps> = ({ character, ...otherProps }) => {
+export const States = observer(function StatesFn({ character, ...otherProps }: StatesProps) {
+  const { states } = character;
   return (
-    <div {...otherProps}>
-      <StyledHealth headline="Health">
-        <div>
+    <Box title="States" {...otherProps}>
+      <GridContainer>
+        <Centered>
           <strong>Wounds</strong>
           <div>
             {character.wounds.map((_, woundIndex) => (
@@ -49,8 +54,8 @@ export const Health: React.FC<HealthProps> = ({ character, ...otherProps }) => {
               />
             ))}
           </div>
-        </div>
-        <div>
+        </Centered>
+        <Centered>
           <strong>Fatigue</strong>
           <div>
             {character.fatigue.map((_, fatigueIndex) => (
@@ -71,8 +76,8 @@ export const Health: React.FC<HealthProps> = ({ character, ...otherProps }) => {
               />
             ))}
           </div>
-        </div>
-        <div>
+        </Centered>
+        <Centered>
           <strong>Incapacitaded</strong>
           <div>
             <Checkbox
@@ -83,8 +88,38 @@ export const Health: React.FC<HealthProps> = ({ character, ...otherProps }) => {
               onChange={() => character.set('incapcitaded', !character.incapcitaded)}
             />
           </div>
-        </div>
-      </StyledHealth>
-    </div>
+        </Centered>
+        <Checkbox
+          label="Shaken"
+          checked={states.isShaken}
+          onChange={() => states.set('isShaken', !states.isShaken)}
+        />
+        <Checkbox
+          label="Distracted"
+          checked={states.isDistracted}
+          onChange={() => states.set('isDistracted', !states.isDistracted)}
+        />
+        <Checkbox
+          label="Entangled"
+          checked={states.isEntangled}
+          onChange={() => states.set('isEntangled', !states.isEntangled)}
+        />
+        <Checkbox
+          label="Stunned"
+          checked={states.isStunned}
+          onChange={() => states.set('isStunned', !states.isStunned)}
+        />
+        <Checkbox
+          label="Vulnerable"
+          checked={states.isVulnerable}
+          onChange={() => states.set('isVulnerable', !states.isVulnerable)}
+        />
+        <Checkbox
+          label="Bound"
+          checked={states.isBound}
+          onChange={() => states.set('isBound', !states.isBound)}
+        />
+      </GridContainer>
+    </Box>
   );
-};
+});

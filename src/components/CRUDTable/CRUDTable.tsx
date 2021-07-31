@@ -4,16 +4,15 @@ import { Link } from 'react-router-dom';
 
 import { BsPencil, BsTrash } from 'react-icons/bs';
 
-import { Button } from 'ui/Button';
+import { Button, buttonStyles } from 'ui/Button';
 // import { Icollection } from 'lib/state/createCollection';
 
-import { Istore } from 'store';
 import styled from 'styled-components';
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.rhythms.inside.vertical};
+  margin-bottom: ${({ theme }) => theme.rhythms.inside.vertical}px;
   border-bottom: 1px solid lightslategray;
 `;
 
@@ -24,8 +23,8 @@ const List = styled.ul`
 const TableRow = styled.li`
   display: flex;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.rhythms.inside.vertical};
-  padding: ${({ theme }) => theme.rhythms.inside.vertical} 0;
+  margin-bottom: ${({ theme }) => theme.rhythms.inside.vertical}px;
+  padding: ${({ theme }) => theme.rhythms.inside.vertical}px 0;
   border-bottom: 1px solid lightgray;
 `;
 
@@ -33,8 +32,12 @@ const IconInButton = styled.span`
   margin-left: 4px;
 `;
 
+const StyledLink = styled(Link)`
+  ${buttonStyles}
+`;
+
 interface CRUDTableProps {
-  collection: Istore['characters'];
+  collection: { id: string; name: string; delete: () => void }[];
   baseUrl: string;
   newLinkLabel: string;
   title: string;
@@ -56,14 +59,12 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
               <TableRow key={id}>
                 <Link to={`${baseUrl}/${id}`}>{name}</Link>
 
-                <Link to={`${baseUrl}/${id}/edit`}>
-                  <Button as="span">
-                    Edit
-                    <IconInButton>
-                      <BsPencil />
-                    </IconInButton>
-                  </Button>
-                </Link>
+                <StyledLink to={`${baseUrl}/${id}/edit`}>
+                  Edit
+                  <IconInButton>
+                    <BsPencil />
+                  </IconInButton>
+                </StyledLink>
                 <Button
                   onClick={() => {
                     if (window.confirm(`Are you sure, you want to delete ${name}`)) {
@@ -80,9 +81,7 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
             ))}
           </List>
           <div className="pull-right">
-            <Link to={`${baseUrl}/new`}>
-              <Button as="span">{newLinkLabel}</Button>
-            </Link>
+            <StyledLink to={`${baseUrl}/new`}>{newLinkLabel}</StyledLink>
           </div>
         </>
       </>

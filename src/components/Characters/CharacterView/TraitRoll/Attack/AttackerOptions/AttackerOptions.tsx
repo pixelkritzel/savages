@@ -28,13 +28,6 @@ export const AttackerOptions = observer(function AttackerOptionsFn({
             }
           />
         )}
-        <Checkbox
-          label="Off Hand Attack"
-          checked={attackSkill.skillOptions.isOffHand}
-          onChange={() =>
-            attackSkill.skillOptions.set('isOffHand', !attackSkill.skillOptions.isOffHand)
-          }
-        />
         {attackSkill.name === 'fighting' && (
           <FormGroup
             label={`Gang Up Bonus: ${attackSkill.skillOptions.gangUp}`}
