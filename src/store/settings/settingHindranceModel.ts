@@ -1,7 +1,7 @@
 import { types, Instance, SnapshotIn } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { modifierModel } from 'store/modifier';
+import { modifierModel } from 'store/modifiers';
 
 export const settingHindranceModel = types
   .model('hindranceModel', {

@@ -1,7 +1,7 @@
 import { cast, Instance, SnapshotIn, types } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { modifierModel } from 'store/modifier/modifierModel';
+import { modifierModel } from 'store/modifiers/modifierModel';
 
 const diceType = types.union(
   types.literal(4),

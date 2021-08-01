@@ -5,8 +5,8 @@ import { single_character_mock } from 'components/Characters/CharacterView/singl
 import { vanillaSetting } from 'store/settings/data/SavageWorldsVanilla';
 import { settingModel } from 'store/settings/settingModel';
 import { characterModel } from 'store/characters';
-import { modifierModel } from 'store/modifier';
-import { modifiers } from 'store/modifier/data';
+import { modifierModel } from 'store/modifiers';
+import { modifiers } from 'store/modifiers/data';
 
 const store = types.model('stores', {
   characters: types.array(characterModel),

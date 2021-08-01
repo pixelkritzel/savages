@@ -1,7 +1,7 @@
 import { types, Instance, SnapshotIn } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { modifierModel } from 'store/modifier/modifierModel';
+import { modifierModel } from 'store/modifiers/modifierModel';
 
 import { damageModel } from './damageModel';
 import { diceType } from 'store/consts';

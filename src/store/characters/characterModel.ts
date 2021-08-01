@@ -3,7 +3,7 @@ import { Itrait } from 'store/characters/traitModel';
 import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Imodifier } from 'store/modifier';
+import { Imodifier } from 'store/modifiers';
 import { weaponModel } from 'store/settings/settingWeaponModel';
 import { settingEdgeModel } from 'store/settings/settingEdgeModel';
 import { settingHindranceModel } from 'store/settings/settingHindranceModel';

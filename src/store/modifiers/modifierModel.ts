@@ -6,7 +6,7 @@ import { powerModel } from 'store/characters/power';
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
 
 import { traitModifierModel } from './traitModifierModel';
-import { settingsSkillModel } from './../settings/settingSkillModel';
+import { settingsSkillModel } from '../settings/settingSkillModel';
 
 import { Itrait } from 'store/characters/traitModel';
 import { diceType } from 'store/consts';

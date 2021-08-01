@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import { Icharacter } from 'store/characters';
 import { Table } from 'ui/Table';
 import { RateOfFireAndReload } from './RateOfFireAndReload';
+import { flattenDeep } from 'lodash';
 
 const GridContainer = styled.div`
   display: grid;
@@ -53,6 +54,17 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
     attackSkill,
   ]);
 
+  const rangeModifiers = character
+    .getModifiersByField('rangeModifiers')
+    .map(({ rangeModifiers }) => rangeModifiers)
+    .flat()
+    .filter(({ skill }) => skill === attackSkill.id)
+    .reduce(
+      (accumulatedModifiers, { range }) =>
+        range!.map((value, index) => value + accumulatedModifiers[index]),
+      [0, 0, 0]
+    );
+
   const { currentlyHoldWeapon } = character;
 
   return (
@@ -95,7 +107,9 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
               <tbody>
                 <tr>
                   <td>{currentlyHoldWeapon.name}</td>
-                  <td>{`${currentlyHoldWeapon.range[0]} / ${currentlyHoldWeapon.range[1]} / ${currentlyHoldWeapon.range[2]}`}</td>
+                  <td>{`${currentlyHoldWeapon.range[0] + rangeModifiers[0]} / ${
+                    currentlyHoldWeapon.range[1] + rangeModifiers[1]
+                  } / ${currentlyHoldWeapon.range[2] + rangeModifiers[2]}`}</td>
                   <td>{currentlyHoldWeapon.damage.humanFriendly}</td>
                   <td>{currentlyHoldWeapon.armorPiercing}</td>
                   <td>{currentlyHoldWeapon.rateOfFire}</td>
