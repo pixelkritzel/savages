@@ -10,7 +10,7 @@ import { weaponModel } from './settingWeaponModel';
 
 export const settingModel = types
   .model('setting', {
-    id: types.identifier,
+    _id: types.identifier,
     name: types.optional(types.string, ''),
     creation: creationRulesModel,
     availableEdges: types.array(settingEdgeModel),

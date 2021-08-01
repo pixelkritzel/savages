@@ -7,7 +7,9 @@ const _modelPrototype = types.model({
   name: types.optional(types.string, ''),
 });
 
-type TmodelPrototype = typeof _modelPrototype;
+type Tmodel = typeof _modelPrototype;
+
+interface TmodelPrototype extends Tmodel {}
 export interface ImodelPrototype extends Instance<TmodelPrototype> {}
 export interface SImodelPrototype extends SnapshotIn<TmodelPrototype> {}
 

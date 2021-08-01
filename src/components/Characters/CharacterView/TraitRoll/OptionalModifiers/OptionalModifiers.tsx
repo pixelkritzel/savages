@@ -13,8 +13,6 @@ import { Iskill, isSkill } from 'store/characters/skillModel';
 import { Ihindrance } from 'store/settings/settingHindranceModel';
 import { IedgeModel } from 'store/settings/settingEdgeModel';
 
-import { capitalizeFirstLetter } from 'lib/strings';
-
 const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -57,7 +55,7 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
             <h4>Hindrances</h4>
             <TwoColumns>
               {currentModifiers.optionalModifiers.hindrances.map((modifier) => (
-                <React.Fragment key={modifier.id}>
+                <React.Fragment key={modifier._id}>
                   <Checkbox
                     label={
                       <>
@@ -80,7 +78,7 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
             <h4>Edges</h4>
             <TwoColumns>
               {currentModifiers.optionalModifiers.edges.map((modifier) => (
-                <React.Fragment key={modifier.id}>
+                <React.Fragment key={modifier._id}>
                   <Checkbox
                     label={
                       <>
@@ -111,18 +109,16 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
                 />{' '}
                 None
               </label>
-              {(trait as Iskill).specializations?.map((spezialization) => (
-                <label key={spezialization}>
+              {(trait as Iskill).specializations?.map((specialization) => (
+                <label key={specialization._id}>
                   <input
                     type="radio"
                     name="selected-skill-specialization"
-                    checked={trait.selectedSkillSpecialization === spezialization}
-                    value={spezialization}
-                    onChange={() =>
-                      trait.set('selectedSkillSpecialization', spezialization.toString())
-                    }
+                    checked={trait.selectedSkillSpecialization === specialization}
+                    value={specialization._id}
+                    onChange={() => trait.set('selectedSkillSpecialization', specialization)}
                   />{' '}
-                  {capitalizeFirstLetter(spezialization)}
+                  {specialization.name}
                 </label>
               ))}
             </SkillSpecialization>

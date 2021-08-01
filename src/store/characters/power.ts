@@ -1,4 +1,5 @@
 import { types } from 'mobx-state-tree';
+import { v4 as uiidv4 } from 'uuid';
 
 const powerModifierModel = types.model('powerModifier', {
   name: types.string,
@@ -7,6 +8,7 @@ const powerModifierModel = types.model('powerModifier', {
 });
 
 export const powerModel = types.model('power', {
+  _id: types.optional(types.identifier, uiidv4),
   name: types.string,
   rank: types.enumeration(['Novice', 'Seasoned', 'Veteran', 'Heroic', 'Legendary']),
   powerPoints: types.number,

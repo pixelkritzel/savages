@@ -48,7 +48,7 @@ const StyledStates = styled(States)`
 export const CharacterView: React.FC<{}> = observer(function () {
   const { characterId } = useParams<{ characterId: string }>();
   const store = React.useContext<Istore>(StoreContext);
-  const character = store.characters.find((character) => character.id === characterId);
+  const character = store.characters.find((character) => character._id === characterId);
 
   if (!character) {
     throw new Error(`Character ${characterId} wasn't found!`);

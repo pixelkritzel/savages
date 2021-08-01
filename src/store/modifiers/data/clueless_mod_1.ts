@@ -1,7 +1,7 @@
 import { SImodifier } from '../modifierModel';
 
 export const cluelessMod1: SImodifier = {
-  id: 'cluessless_mod_1',
+  _id: 'cluessless_mod_1',
   reason: 'Clueless',
   isOptional: false,
   traitNames: ['notice', 'common_knowledge'],

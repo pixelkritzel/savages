@@ -63,7 +63,7 @@ export const NonOptionalModifiers: React.FC<NonOptionalModifiersProps> = observe
             <h4>Hindrances</h4>
             <TwoColumns>
               {modifiers.nonOptionalModifiers.hindrances.map((modifier) => (
-                <React.Fragment key={modifier.id}>
+                <React.Fragment key={modifier._id}>
                   <Checkbox
                     label={
                       <>
@@ -85,7 +85,7 @@ export const NonOptionalModifiers: React.FC<NonOptionalModifiersProps> = observe
             <h4>Edges</h4>
             <TwoColumns>
               {modifiers.nonOptionalModifiers.edges.map((modifier) => (
-                <React.Fragment key={modifier.id}>
+                <React.Fragment key={modifier._id}>
                   <Checkbox
                     label={
                       <>

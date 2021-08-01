@@ -11,7 +11,7 @@ import {
 
 import { characterModel, Icharacter } from 'store/characters';
 import { Isetting } from 'store/settings';
-import { settingsSkillModel } from 'store/settings/settingSkillModel';
+import { settingsSkillModel, specializationModel } from 'store/settings/settingSkillModel';
 
 import { Itrait, traitModel } from './traitModel';
 import { ATTACK_SKILLS, DICE_TYPES } from 'store/consts';
@@ -23,8 +23,11 @@ const _skillModel = traitModel
   .props({
     type: types.literal('skill'),
     settingSkill: types.reference(settingsSkillModel),
-    specializations: types.maybe(types.array(types.string)),
-    selectedSkillSpecialization: types.optional(types.union(types.string, types.null), null),
+    specializations: types.optional(types.array(types.reference(specializationModel)), []),
+    selectedSkillSpecialization: types.optional(
+      types.union(types.reference(specializationModel), types.null),
+      null
+    ),
     skillOptions: types.optional(skillOptions, {}),
   })
   .views((self) => ({
@@ -215,7 +218,7 @@ const _skillModel = traitModel
 
   .actions((self) => ({
     afterCreate() {
-      this.set('name', self.settingSkill.id);
+      this.set('name', self.settingSkill._id);
     },
     resetRollModifiers() {
       self.selectedSkillSpecialization = null;

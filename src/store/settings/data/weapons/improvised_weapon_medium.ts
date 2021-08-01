@@ -1,7 +1,7 @@
 import { SIweapon } from 'store/settings/settingWeaponModel';
 
 export const improvisedWeaponMedium: SIweapon = {
-  id: 'improvised_weapon_medium',
+  _id: 'improvised_weapon_medium',
   name: 'Improvised Weapon: Medium',
   weaponType: ['melee', 'throwable'],
   range: [2, 4, 8],

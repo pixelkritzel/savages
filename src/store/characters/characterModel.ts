@@ -17,7 +17,7 @@ import { sizeType } from 'store/consts';
 
 export const characterModel = types
   .model('character', {
-    id: types.identifier,
+    _id: types.identifier,
     wildcard: false,
     name: types.optional(types.string, ''),
     race: types.optional(types.string, ''),
@@ -280,7 +280,7 @@ export interface Icharacter extends Instance<typeof characterModel> {}
 export interface SIcharacter extends SnapshotIn<typeof characterModel> {}
 
 export const createCharacterScaffold = (): SIcharacter => ({
-  id: uuidv4(),
+  _id: uuidv4(),
   name: '',
   setting: 'vanilla-rules',
   attributes: {

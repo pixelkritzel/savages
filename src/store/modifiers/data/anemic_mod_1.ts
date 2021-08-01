@@ -1,7 +1,7 @@
 import { SImodifier } from '../modifierModel';
 
 export const anemicMod1: SImodifier = {
-  id: 'anemic_mod_1',
+  _id: 'anemic_mod_1',
   reason: 'Anemic',
   traitNames: ['vigor'],
   isOptional: true,

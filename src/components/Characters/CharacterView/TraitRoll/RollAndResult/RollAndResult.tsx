@@ -58,7 +58,7 @@ export const RollAndResult = observer(function ResultFn({
   const isFreeRerollPossible =
     character
       .getModifiersByField('freeReroll')
-      .filter(({ freeReroll }) => freeReroll === trait.id || freeReroll === 'all').length > 0;
+      .filter(({ freeReroll }) => freeReroll === trait._id || freeReroll === 'all').length > 0;
 
   const rerollBonus = useMemo(() => {
     const rerollBoni = character

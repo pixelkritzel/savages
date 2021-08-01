@@ -1,7 +1,7 @@
 import { SIweapon } from 'store/settings/settingWeaponModel';
 
 export const timmyGun: SIweapon = {
-  id: 'ranged_weapon_timmy_gun',
+  _id: 'ranged_weapon_timmy_gun',
   name: 'Timmy Gun (.45)',
   range: [12, 24, 48],
   weaponType: ['ranged'],

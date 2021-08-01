@@ -24,7 +24,7 @@ export type TraitRollResult = {
 
 export const traitModel = types
   .model('traitModel', {
-    id: types.optional(types.identifier, uuid4),
+    _id: types.optional(types.identifier, uuid4),
     name: types.optional(types.string, ''),
     type: types.string,
     dice: types.optional(diceType, 4),

@@ -1,7 +1,7 @@
 import { SIhindrance } from 'store/settings/settingHindranceModel';
 
 export const clueless: SIhindrance = {
-  id: 'clueless',
+  _id: 'clueless',
   name: 'Clueless',
   impact: 'major',
   summary: '–1 to Common Knowledge and Notice rolls.',

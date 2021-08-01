@@ -1,7 +1,7 @@
 import { SIweapon } from 'store/settings/settingWeaponModel';
 
 export const improvisedWeaponHeavy: SIweapon = {
-  id: 'improvised_weapon_heavy',
+  _id: 'improvised_weapon_heavy',
   name: 'Improvised Weapon: Heavy',
   weaponType: ['melee', 'throwable'],
   range: [1, 2, 4],

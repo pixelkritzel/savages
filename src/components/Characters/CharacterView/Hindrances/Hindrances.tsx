@@ -35,7 +35,7 @@ export const Hindrances: React.FC<HindrancesProps> = observer(({ hindrances, ...
   return (
     <StyledBox title="Hindrances">
       <ul>
-        {hindrances.map(({ id, impact, name, summary }) => (
+        {hindrances.map(({ _id: id, impact, name, summary }) => (
           <Hindrance key={id}>
             <strong>{name}</strong> <span>{impact}</span>
             <Summary>{summary}</Summary>

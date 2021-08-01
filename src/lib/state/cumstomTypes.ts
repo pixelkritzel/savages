@@ -9,3 +9,7 @@ export const customTypes = {
     0
   ),
 };
+
+export function createStringArray(strings: string[]) {
+  return types.array(types.string).create(strings);
+}

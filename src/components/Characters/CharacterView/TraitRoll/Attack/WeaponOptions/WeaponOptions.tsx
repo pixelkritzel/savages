@@ -8,7 +8,6 @@ import { useMemo } from 'react';
 import { Icharacter } from 'store/characters';
 import { Table } from 'ui/Table';
 import { RateOfFireAndReload } from './RateOfFireAndReload';
-import { flattenDeep } from 'lodash';
 
 const GridContainer = styled.div`
   display: grid;
@@ -58,7 +57,7 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
     .getModifiersByField('rangeModifiers')
     .map(({ rangeModifiers }) => rangeModifiers)
     .flat()
-    .filter(({ skill }) => skill === attackSkill.id)
+    .filter(({ skill }) => skill === attackSkill._id)
     .reduce(
       (accumulatedModifiers, { range }) =>
         range!.map((value, index) => value + accumulatedModifiers[index]),
@@ -77,14 +76,14 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
             <select
               id={id}
               name="currentWeapon"
-              value={currentlyHoldWeapon.id}
+              value={currentlyHoldWeapon._id}
               onChange={(event) => character.set('currentlyHoldWeapon', event.target.value as any)}
             >
               {!weapons.includes(currentlyHoldWeapon) && (
                 <option key="no_current_weapon">Please select a weapon</option>
               )}
               {weapons.map((weapon) => (
-                <option key={weapon.id} value={weapon.id}>
+                <option key={weapon._id} value={weapon._id}>
                   {weapon.name}
                 </option>
               ))}

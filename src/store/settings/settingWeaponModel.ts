@@ -29,7 +29,7 @@ export function getSpentAmmunitionByRateOfFire({
 
 export const weaponModel = types
   .model('weaponModel', {
-    id: types.optional(types.identifier, uuidv4),
+    _id: types.optional(types.identifier, uuidv4),
     name: types.string,
     damage: types.late(() => damageModel),
     notes: '',

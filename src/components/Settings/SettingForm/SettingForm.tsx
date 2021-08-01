@@ -20,8 +20,8 @@ export const SettingForm: React.FC<SettingFormProps> = observer(({ setting }) =>
           type="text"
           id="name"
           placeholder="Setting name"
-          value={setting.id}
-          onChange={(event) => setting.set('id', event.target.value)}
+          value={setting._id}
+          onChange={(event) => setting.set('_id', event.target.value)}
         />
       </DiceFormGroup>
 

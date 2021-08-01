@@ -36,8 +36,14 @@ const StyledLink = styled(Link)`
   ${buttonStyles}
 `;
 
+const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: ${({ theme }) => theme.rhythms.inside.vertical}px;
+`;
+
 interface CRUDTableProps {
-  collection: { id: string; name: string; delete: () => void }[];
+  collection: { _id: string; name: string; delete: () => void }[];
   baseUrl: string;
   newLinkLabel: string;
   title: string;
@@ -55,11 +61,11 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
             <h3 className="h6">Actions</h3>
           </Header>
           <List>
-            {collection.map(({ id, name }) => (
-              <TableRow key={id}>
-                <Link to={`${baseUrl}/${id}`}>{name}</Link>
+            {collection.map(({ _id, name }) => (
+              <TableRow key={_id}>
+                <Link to={`${baseUrl}/${_id}`}>{name}</Link>
 
-                <StyledLink to={`${baseUrl}/${id}/edit`}>
+                <StyledLink to={`${baseUrl}/${_id}/edit`}>
                   Edit
                   <IconInButton>
                     <BsPencil />
@@ -80,9 +86,9 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
               </TableRow>
             ))}
           </List>
-          <div className="pull-right">
+          <Footer>
             <StyledLink to={`${baseUrl}/new`}>{newLinkLabel}</StyledLink>
-          </div>
+          </Footer>
         </>
       </>
     );

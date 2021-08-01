@@ -19,8 +19,6 @@ export const CharacterViewBox = observer(function BoxFn({
   headline,
   ...otherProps
 }: CharacterViewBoxProps) {
-  console.log(children);
-
   return (
     <StyledBox {...otherProps}>
       <Headline>{headline}</Headline>

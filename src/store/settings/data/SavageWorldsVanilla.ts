@@ -19,7 +19,7 @@ import { tommyGun } from './weapons/tommy_gun';
 import { doubleTap } from './edges/double_tap';
 
 export const vanillaSetting: SIsetting = {
-  id: 'vanilla_setting',
+  _id: 'vanilla_setting',
   name: 'Savage Worlds Vanilla Rules',
   creation: {
     attributePoints: 5,

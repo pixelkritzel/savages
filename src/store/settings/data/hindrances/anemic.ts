@@ -1,7 +1,7 @@
 import { SIhindrance } from 'store/settings/settingHindranceModel';
 
 export const anemic: SIhindrance = {
-  id: 'anemic',
+  _id: 'anemic',
   name: 'Anemic',
   impact: 'minor',
   summary: '–2 Vigor when resisting Fatigue.',

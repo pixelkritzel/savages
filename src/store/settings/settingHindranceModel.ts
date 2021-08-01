@@ -5,7 +5,7 @@ import { modifierModel } from 'store/modifiers';
 
 export const settingHindranceModel = types
   .model('hindranceModel', {
-    id: types.optional(types.identifier, uuidv4),
+    _id: types.optional(types.identifier, uuidv4),
     name: types.string,
     impact: types.enumeration(['minor', 'major']),
     description: types.string,
@@ -16,7 +16,7 @@ export const settingHindranceModel = types
     afterCreate() {
       self.modifiers.forEach((modifier) => {
         modifier.set('name', self.name);
-        modifier.set('reason', `hindrance_${self.id}`);
+        modifier.set('reason', `hindrance_${self._id}`);
       });
     },
   }));

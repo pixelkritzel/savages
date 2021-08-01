@@ -1,7 +1,7 @@
 import { SImodifier } from '../modifierModel';
 
 export const moreReach: SImodifier = {
-  id: 'more_reach',
+  _id: 'more_reach',
   name: 'More Reach',
   isOptional: true,
   conditions: '+1d6 damage vs. creatures three Sizes larger or more',

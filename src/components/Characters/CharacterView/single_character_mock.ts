@@ -1,7 +1,7 @@
 import { SIcharacter } from 'store/characters';
 
 export const single_character_mock: SIcharacter = {
-  id: 'jerjer',
+  _id: 'jerjer',
   name: 'Jerjer Johannson',
   wildcard: true,
   setting: 'vanilla-rules',

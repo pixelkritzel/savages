@@ -1,7 +1,7 @@
 import { SIweapon } from 'store/settings/settingWeaponModel';
 
 export const shotgun: SIweapon = {
-  id: 'shotgun',
+  _id: 'shotgun',
   name: 'Shotgun',
   range: [12, 24, 48],
   weaponType: ['shotgun'],

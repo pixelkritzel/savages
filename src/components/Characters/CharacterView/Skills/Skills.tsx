@@ -31,9 +31,11 @@ export const Skills: React.FC<SkillsProps> = observer(({ character }) => {
       </thead>
       <tbody>
         {mapToArray<Iskill>(character.skills).map((skill) => (
-          <tr key={skill.settingSkill.id}>
+          <tr key={skill.settingSkill._id}>
             <td>{skill.settingSkill.name}</td>
-            {selectedSetting.isSkillSpezializations && <td>{skill.specializations?.join(' ')}</td>}
+            {selectedSetting.isSkillSpezializations && (
+              <td>{skill.specializations?.map(({ name }) => name).join(' ')}</td>
+            )}
             <td>
               <SkillRoll character={character} skill={skill} />
             </td>
