@@ -80,7 +80,7 @@ export const traitModel = types
             .sort((a, b) => b - a)[0] || 0;
 
       for (const modifier of character.activeModifiers) {
-        for (const traitModifier of modifier.traitModifiers) {
+        for (const traitModifier of modifier.traitModifiers.array) {
           if (
             traitModifier.traitName === trait.name &&
             modifier.isTechnicalConditionsFullfilled(self.unifiedOptions)

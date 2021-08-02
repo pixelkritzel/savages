@@ -5,12 +5,12 @@ import styled from 'styled-components';
 
 const StyledFormGroup = styled.div<{ inline: boolean }>`
   display: ${({ inline }) => (inline ? 'inline-grid' : 'grid')};
+  align-items: center;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
 `;
 
 const Label = styled.label<{ inline: boolean }>`
-  font-weight: bold;
   text-align: ${({ inline }) => (inline ? 'left' : 'right')};
 `;
 

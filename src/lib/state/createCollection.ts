@@ -1,20 +1,16 @@
-import { types, SnapshotIn, destroy, Instance, detach, getSnapshot, cast } from 'mobx-state-tree';
-import { persistence } from 'lib/persistence';
+import { types, SnapshotIn, destroy, Instance, detach, cast } from 'mobx-state-tree';
+
+// import { persistence } from 'lib/persistence';
 
 // This just provides the base type for the model
-const _modelPrototype = types.model({
-  id: types.identifier,
-  name: types.optional(types.string, ''),
+export const _modelPrototype = types.model({
+  _id: types.identifier,
 });
 
 type Tmodel = typeof _modelPrototype;
 
-interface TmodelPrototype extends Tmodel {}
-export interface ImodelPrototype extends Instance<TmodelPrototype> {}
-export interface SImodelPrototype extends SnapshotIn<TmodelPrototype> {}
-
 export function createCollection<
-  T extends TmodelPrototype,
+  T extends Tmodel,
   IActualModel extends Instance<T>,
   SIActualModel extends SnapshotIn<T>
 >(name: string, model: T, createModelScaffoldFn: () => SIActualModel) {
@@ -29,7 +25,7 @@ export function createCollection<
       get asArray() {
         return Array.from(self.all).map(([, value]) => value) as IActualModel[];
       },
-      get(id: IActualModel['id']) {
+      get(id: IActualModel['_id']) {
         const model = self.all.get(id);
         if (!model) {
           throw new Error(`Model ${id} was not found!`);
@@ -38,9 +34,9 @@ export function createCollection<
       },
     }))
     .actions((self) => ({
-      deleteModel(id: IActualModel['id']) {
+      deleteModel(id: IActualModel['_id']) {
         self.all.delete(id);
-        persistence.deleteItem(name, id);
+        // persistence.deleteItem(name, id);
       },
       discardNewModel() {
         if (self.newModel) {
@@ -54,9 +50,9 @@ export function createCollection<
       async saveNewModel() {
         if (self.newModel) {
           const newModel = detach(self.newModel);
-          self.all.set(newModel.id, newModel);
+          self.all.set(newModel._id, newModel);
           try {
-            persistence.saveItem(name, getSnapshot(newModel)!);
+            // persistence.saveItem(name, getSnapshot(newModel)!);
           } catch (e) {
             return 'ERROR';
           }
@@ -65,7 +61,7 @@ export function createCollection<
         return 'ERROR';
       },
       set(character: IActualModel | SIActualModel) {
-        self.all.set(character.id, character);
+        self.all.set(character._id, character);
       },
       setIsLoaded(isLoaded: typeof self['isLoaded']) {
         self.isLoaded = isLoaded;
@@ -77,8 +73,8 @@ export function createCollection<
       }
 
       async function loadCollection() {
-        const collectionData = await persistence.loadCollection(name);
-        collectionData.forEach((modelData) => self.set(modelData));
+        // const collectionData = await persistence.loadCollection(name);
+        // collectionData.forEach((modelData) => self.set(modelData));
         self.setIsLoaded(true);
       }
 
@@ -88,6 +84,6 @@ export function createCollection<
 
 export interface Icollection extends Instance<ReturnType<typeof createCollection>> {}
 
-export const collectionScaffold = {
+export const createCollectionScaffold = () => ({
   all: {},
-};
+});

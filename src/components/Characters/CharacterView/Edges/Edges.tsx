@@ -21,7 +21,7 @@ export const Edges: React.FC<EdgesProps> = observer(({ edges, ...otherProps }) =
     <div {...otherProps}>
       <StyledBox title="Edges">
         <dl>
-          {edges.map(({ id, name, summary }) => (
+          {edges.map(({ _id: id, name, summary }) => (
             <React.Fragment key={id}>
               <dt>
                 <strong>{name}</strong>

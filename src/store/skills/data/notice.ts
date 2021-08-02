@@ -1,6 +1,6 @@
-import { SIskillSetting } from 'store/settings/settingSkillModel';
+import { SIskill } from 'store/skills';
 
-export const notice: SIskillSetting = {
+export const notice: SIskill = {
   _id: 'notice',
   name: 'Notice',
   description: `Notice is a hero’s general awareness and alertness. It’s used to sense sights, sounds, tastes, and smells, spot clues, detect ambushes, spot hidden weapons on a foe, or tell if a rival is lying, frightened, happy, etc.

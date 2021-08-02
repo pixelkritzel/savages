@@ -1,7 +1,7 @@
 import { SIedgeModel } from 'store/settings/settingEdgeModel';
 
 export const doubleTap: SIedgeModel = {
-  id: 'double_tap',
+  _id: 'double_tap',
   name: 'Double Tap',
   summary: '+1 to hit and damage when firing no more than RoF 1 per action.',
   description: `Experienced firearms experts fire two shots in rapid succession without spoiling their aim.

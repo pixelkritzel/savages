@@ -1,7 +1,7 @@
 import { SIedgeModel } from 'store/settings/settingEdgeModel';
 
 export const giantKiller: SIedgeModel = {
-  id: 'giant_killer',
+  _id: 'giant_killer',
   name: 'Giant Killer',
   summary: '+1d6 damage vs. creatures three Sizes larger or more.',
   description: `The bigger they are, the harder they are to kill. At least for most. Your hero knows how to find the weak points in the most massive of foes.

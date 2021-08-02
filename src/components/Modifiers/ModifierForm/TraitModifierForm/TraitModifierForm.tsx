@@ -1,24 +1,24 @@
 import React, { useContext } from 'react';
 import { observer, useLocalStore } from 'mobx-react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Select from 'react-select';
-
-import { ItraitModifier, traitModifierModelTypes } from 'store/modifiers/traitModifierModel';
-import { RadioGroup } from 'ui/RadioGroup';
-import { capitalizeFirstLetter } from 'lib/strings';
-import { FormGroup } from 'ui/FormGroup';
-import { StoreContext } from 'components/StoreContext';
-import { Istore } from 'store';
-import { attributeNames } from 'store/consts';
 import { kebabCase } from 'lodash';
-import { IncDec } from 'ui/IncDec';
 
-const formGrid = css`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: ${({ theme }) => theme.rhythms.outside.horizontal}px;
-  row-gap: ${({ theme }) => theme.rhythms.outside.vertical}px;
-`;
+import { RadioGroup } from 'ui/RadioGroup';
+import { FormGroup } from 'ui/FormGroup';
+import { IncDec } from 'ui/IncDec';
+import { Button } from 'ui/Button';
+
+import { StoreContext } from 'components/StoreContext';
+
+import { capitalizeFirstLetter } from 'lib/strings';
+
+import { Istore } from 'store';
+import { ItraitModifier, traitModifierModelTypes } from 'store/modifiers/traitModifierModel';
+import { attributeNames } from 'store/consts';
+import { Iskill } from 'store/skills';
+
+import { formGrid, TwoColumns } from '../styled';
 
 const Form = styled.form`
   ${formGrid}
@@ -29,14 +29,21 @@ const NONE_OPTION = {
   value: '',
 };
 
+const Footer = styled(TwoColumns)`
+  margin-top: ${({ theme }) => theme.rhythms.outside.vertical}px;
+  justify-content: end;
+`;
+
 interface TraitModifierFormProps {
   title: string;
   traitModifier: ItraitModifier;
+  saveTraitModifier: () => void;
 }
 
 export const TraitModifierForm = observer(function TraitModifierFormFn({
   title,
   traitModifier,
+  saveTraitModifier,
   ...otherProps
 }: TraitModifierFormProps) {
   const store = useContext<Istore>(StoreContext);
@@ -50,7 +57,7 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
       } else if (traitModifier.type === 'skill') {
         return [
           NONE_OPTION,
-          ...store.selectedSetting.availableSkills.map(({ name, _id }) => ({
+          ...store.selectedSetting.availableSkills.array.map(({ name, _id }) => ({
             label: name,
             value: _id,
           })),
@@ -62,10 +69,10 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
     get selectedTraitOption() {
       return this.traitOptions?.find(({ value }) => value === traitModifier.traitName);
     },
-    get settingSkill() {
+    get settingSkill(): Iskill {
       return (
         (traitModifier.type === 'skill' &&
-          store.selectedSetting.availableSkills.find(
+          store.selectedSetting.availableSkills.array.find(
             ({ _id }) => _id === traitModifier.traitName
           )) ||
         undefined
@@ -75,7 +82,7 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
       return this.settingSkill
         ? [
             NONE_OPTION,
-            ...this.settingSkill.availableSkillSpezializations.map((spezialization) => ({
+            ...this.settingSkill.availableSkillSpezializations.array.map((spezialization) => ({
               label: capitalizeFirstLetter(spezialization.name),
               value: spezialization._id,
             })),
@@ -144,7 +151,7 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
           />
         ))}
         {localStore.settingSkill &&
-          localStore.settingSkill.availableSkillSpezializations.length > 0 && (
+          localStore.settingSkill.availableSkillSpezializations.array.length > 0 && (
             <>
               <FormGroup
                 inline
@@ -191,6 +198,11 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
               ))}
             </>
           )}
+        <Footer>
+          <Button variant="success" onClick={saveTraitModifier}>
+            Save
+          </Button>
+        </Footer>
       </Form>
     </>
   );

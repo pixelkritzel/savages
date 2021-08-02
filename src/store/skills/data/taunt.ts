@@ -1,6 +1,6 @@
-import { SIskillSetting } from 'store/settings/settingSkillModel';
+import { SIskill } from 'store/skills';
 
-export const taunt: SIskillSetting = {
+export const taunt: SIskill = {
   _id: 'taunt',
   name: 'Taunt',
   description: `Taunt attacks a person’s pride through ridicule, cruel jests, or oneupmanship.

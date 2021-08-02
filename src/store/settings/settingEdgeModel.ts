@@ -13,7 +13,7 @@ const diceType = types.union(
 
 export const settingEdgeModel = types
   .model('settingEdgeModel', {
-    id: types.optional(types.identifier, uuidv4),
+    _id: types.optional(types.identifier, uuidv4),
     name: types.string,
     summary: types.string,
     description: types.string,
@@ -39,7 +39,7 @@ export const settingEdgeModel = types
     afterCreate() {
       self.modifiers.forEach((modifier) => {
         modifier.set('name', self.name);
-        modifier.set('reason', `edge_${self.id}`);
+        modifier.set('reason', `edge_${self._id}`);
       });
     },
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(

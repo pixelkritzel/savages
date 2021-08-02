@@ -1,7 +1,10 @@
+import { baseSkillModel } from 'store/skills';
+import { createBoxedArray } from 'lib/state/createBoxedArray';
 import { Instance, SnapshotIn, types } from 'mobx-state-tree';
 
+import { powerModel } from 'store/powers';
+
 import { creationRulesModel } from './creationRulesModel';
-import { settingsSkillModel } from './settingSkillModel';
 
 import { vanillaSetting } from './data/SavageWorldsVanilla';
 import { settingEdgeModel } from './settingEdgeModel';
@@ -14,8 +17,9 @@ export const settingModel = types
     name: types.optional(types.string, ''),
     creation: creationRulesModel,
     availableEdges: types.array(settingEdgeModel),
-    availableSkills: types.array(settingsSkillModel),
+    availableSkills: createBoxedArray('', types.reference(baseSkillModel)),
     availableHindrances: types.array(settingHindranceModel),
+    availablePowers: createBoxedArray('', types.reference(powerModel)),
     availableWeapons: types.array(weaponModel),
     rules: types.model({
       skillSpezializations: types.array(types.string),

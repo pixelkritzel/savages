@@ -106,7 +106,7 @@ export type ButtonProps = React.ComponentProps<typeof StyledButton>;
 
 export function Button({ icon, children, variant, ...otherProps }: ButtonProps) {
   return (
-    <StyledButton variant={variant} {...otherProps}>
+    <StyledButton type="button" variant={variant} {...otherProps}>
       <Inner>
         {icon && <InnerIcon variant={variant}>{icon}</InnerIcon>}
         {children}

@@ -54,9 +54,8 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
   ]);
 
   const rangeModifiers = character
-    .getModifiersByField('rangeModifiers')
-    .map(({ rangeModifiers }) => rangeModifiers)
-    .flat()
+    .getModifiersByField('rangeModifier')
+    .map(({ rangeModifier }) => rangeModifier)
     .filter(({ skill }) => skill === attackSkill._id)
     .reduce(
       (accumulatedModifiers, { range }) =>

@@ -11,7 +11,7 @@ import {
 
 import { characterModel, Icharacter } from 'store/characters';
 import { Isetting } from 'store/settings';
-import { settingsSkillModel, specializationModel } from 'store/settings/settingSkillModel';
+import { baseSkillModel, specializationModel } from 'store/skills';
 
 import { Itrait, traitModel } from './traitModel';
 import { ATTACK_SKILLS, DICE_TYPES } from 'store/consts';
@@ -22,7 +22,7 @@ const _skillModel = traitModel
   .named('skillModel')
   .props({
     type: types.literal('skill'),
-    settingSkill: types.reference(settingsSkillModel),
+    settingSkill: types.reference(baseSkillModel),
     specializations: types.optional(types.array(types.reference(specializationModel)), []),
     selectedSkillSpecialization: types.optional(
       types.union(types.reference(specializationModel), types.null),
@@ -65,7 +65,7 @@ const _skillModel = traitModel
           .getModifiersByField('bonusDamage')
           .filter(
             ({ isTechnicalConditionsFullfilled, traitNames }) =>
-              isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.includes(self.name)
+              isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.has(self.name)
           )
           .reduce((bonusDamageSum, { bonusDamage }) => bonusDamageSum + bonusDamage, 0);
       return bonusDamageSum;
@@ -77,9 +77,11 @@ const _skillModel = traitModel
         .getModifiersByField('bonusDamageDices')
         .filter(
           ({ isTechnicalConditionsFullfilled, traitNames }) =>
-            isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.includes(self.name)
+            isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.has(self.name)
         )
-        .forEach(({ bonusDamageDices }) => (damageDices = [...damageDices, ...bonusDamageDices]));
+        .forEach(
+          ({ bonusDamageDices }) => (damageDices = [...damageDices, ...bonusDamageDices.asArray])
+        );
       return damageDices;
     },
   }))
@@ -104,13 +106,13 @@ const _skillModel = traitModel
           .getTraitModifiers(skill)
           .all.filter(
             ({ isActive, traitModifiers }) =>
-              isActive && traitModifiers.some(({ specialization }) => Boolean(specialization))
+              isActive && traitModifiers.array.some(({ specialization }) => Boolean(specialization))
           );
 
         modifierAccumulator.boni.skillSpecialization += modifiersForSkillSpecialization.reduce(
           (specializationBonusSum, { traitModifiers }) =>
             specializationBonusSum +
-            traitModifiers.reduce(
+            traitModifiers.array.reduce(
               (specializationBonusSum, { specialization }) =>
                 specialization.specializationName === skill.selectedSkillSpecialization
                   ? specialization.specializationBonus + specializationBonusSum
@@ -123,7 +125,7 @@ const _skillModel = traitModel
         modifierAccumulator.diceDifferences.skillSpecialization = modifiersForSkillSpecialization.reduce(
           (specializationBonusSum, { traitModifiers }) =>
             specializationBonusSum +
-            traitModifiers.reduce(
+            traitModifiers.array.reduce(
               (specializationDiceDifferenceSum, { specialization }) =>
                 specialization.specializationName === skill.selectedSkillSpecialization
                   ? specialization.specializationDiceDifference + specializationDiceDifferenceSum
@@ -145,7 +147,7 @@ const _skillModel = traitModel
           if (
             isShooting(skill) &&
             character.currentlyHoldWeapon.minimumStrength +
-              sum(character.getModifiersByField('minumumStrength')) >
+              sum(character.getModifiersByField('minimumStrength')) >
               character.attributes.strength.dice &&
             character.getModifiersByField('ignoreMinimumStrength').length === 0
           ) {

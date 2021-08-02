@@ -1,45 +1,34 @@
 import React, { useRef, useContext } from 'react';
-import { action } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Select from 'react-select';
-import ReactModal from 'react-modal';
 
 import { Box } from 'ui/Box';
-import { Button } from 'ui/Button';
 import { Checkbox } from 'ui/Checkbox';
 import { FormGroup } from 'ui/FormGroup';
 import { Input } from 'ui/Input';
+import { IncDec } from 'ui/IncDec';
 
 import { StoreContext } from 'components/StoreContext';
 
 import { Istore } from 'store';
-import { modifierModel } from 'store/modifiers';
-import { ItraitModifier, traitModifierModel } from 'store/modifiers/traitModifierModel';
+import { createModifierScaffold, modifierModel } from 'store/modifiers';
+import { attributeNames, DICE_TYPES } from 'store/consts';
 
-import { TraitModifierForm } from './TraitModifierForm';
+import { capitalizeFirstLetter } from 'lib/strings';
 
-const formGrid = css`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: ${({ theme }) => theme.rhythms.outside.horizontal}px;
-  row-gap: ${({ theme }) => theme.rhythms.outside.vertical}px;
-`;
+import { AddedHindrances } from './AddedHindrances';
+import { GrantedPowers } from './GrantedPowers';
+import { GrantedSkills } from './GrantedSkills';
+import { Traits } from './Traits';
+import { formGrid, TwoColumns } from './styled';
 
 const Form = styled.form`
   ${formGrid}
 `;
 
-const TwoColumns = styled.div`
-  grid-column: 1 / span 2;
-`;
-
-const Traits = styled(Box)`
+const BonusDamageDice = styled(Box)`
   ${formGrid}
-`;
-
-const NewTraitButton = styled(Button)`
-  justify-self: end;
 `;
 
 interface ModifierFormProps {
@@ -48,19 +37,26 @@ interface ModifierFormProps {
 
 export const ModifierForm = observer(function ModifierFormFn({ ...otherProps }: ModifierFormProps) {
   const store = useContext<Istore>(StoreContext);
-  const localStore = useLocalStore<{
-    newTraitModifier?: ItraitModifier;
-  }>(() => ({}));
-  const { current: modifier } = useRef(modifierModel.create());
-
-  const newTraitModifier = action(
-    () => (localStore.newTraitModifier = traitModifierModel.create())
-  );
-
-  const saveNewTraitModifier = action(() => {
-    modifier.addTraitModifier(localStore.newTraitModifier!);
-    localStore.newTraitModifier = undefined;
-  });
+  const localStore = useLocalStore(() => ({
+    get traitOptions() {
+      const attributes = attributeNames.map((name) => ({
+        label: capitalizeFirstLetter(name),
+        value: name,
+      }));
+      const skills = store.selectedSetting.availableSkills.array.map(({ name, _id }) => ({
+        label: name,
+        value: _id,
+      }));
+      return [...attributes, ...skills, { label: 'Pace', value: 'pace' }];
+    },
+    get edgesOptions() {
+      return store.selectedSetting.availableEdges.map(({ name, _id }) => ({
+        label: name,
+        value: _id,
+      }));
+    },
+  }));
+  const { current: modifier } = useRef(modifierModel.create(createModifierScaffold()));
 
   return (
     <Form>
@@ -93,53 +89,123 @@ export const ModifierForm = observer(function ModifierFormFn({ ...otherProps }: 
         />
       ))}
       <TwoColumns>
-        <Traits title="Traits" asFieldset>
-          <TwoColumns>
+        <Traits modifier={modifier} traitOptions={localStore.traitOptions} />
+      </TwoColumns>
+      {([
+        ['bennies', 'Bennies'],
+        ['aimingHelp', 'Additional aiming ignore bonuss'],
+        ['toughness', 'Toughness'],
+        ['size', 'Size'],
+        ['freeEdges', 'Free Edges'],
+        ['bonusDamage', 'Additional Damage'],
+        ['rerollBonus', 'Bonus while rerolling'],
+        ['rerollDamageBonus', 'Additional Damage while rerolling'],
+        ['armor', 'Armor bonus'],
+        ['ignoreWounds', 'Ignore Wound penalties'],
+        ['ignoreMultiActionPenalty', 'Ignore multi action'],
+        ['ignoreRecoil', 'Ignore recoil bonus'],
+        ['pace', 'Pace'],
+        ['minimumStrength', 'Treat strength as higher'],
+        ['reach', 'Reach'],
+      ] as const).map(([key, label]) => (
+        <FormGroup
+          inline
+          key={key}
+          label={label}
+          input={() => (
+            <IncDec
+              value={modifier[key]}
+              onIncrement={() => modifier.set(key, modifier[key] + 1)}
+              onDecrement={() => modifier.set(key, modifier[key] - 1)}
+            />
+          )}
+        />
+      ))}
+      {([
+        ['ignoreImprovisedWeapon', ' Ignore improvised weapon malus'],
+        ['ignoreMinimumStrength', 'Ignore minimum strength'],
+        ['ignoreOffhand', 'Ignore offhand malus'],
+        ['big', 'Big'],
+        ['hardy', 'Hardy'],
+      ] as const).map(([key, label]) => (
+        <Checkbox
+          key={key}
+          label={label}
+          checked={modifier[key]}
+          onChange={() => modifier.set(key, !modifier[key])}
+        />
+      ))}
+      <TwoColumns>
+        <BonusDamageDice title="Bonus Damage Dice" asFieldset>
+          {DICE_TYPES.map((diceSides) => (
             <FormGroup
-              inline
-              label="Applicable Traits"
-              input={({ id }) => (
-                <Select
-                  id={id}
-                  isMulti
-                  options={store.selectedSetting.availableSkills.map(({ name, _id }) => ({
-                    label: name,
-                    value: _id,
-                  }))}
-                  onChange={(values) => {
-                    modifier.set(
-                      'traitNames',
-                      // @ts-expect-error
-                      values.map(({ value }) => value)
-                    );
-                  }}
+              key={diceSides}
+              label={`D${diceSides}`}
+              input={() => (
+                <IncDec
+                  value={modifier.bonusDamageDices[diceSides]}
+                  onIncrement={() =>
+                    modifier.bonusDamageDices.set(
+                      diceSides,
+                      modifier.bonusDamageDices[diceSides] + 1
+                    )
+                  }
+                  onDecrement={() =>
+                    modifier.bonusDamageDices.set(
+                      diceSides,
+                      modifier.bonusDamageDices[diceSides] - 1
+                    )
+                  }
+                  disableDecrement={modifier.bonusDamageDices[diceSides] === 0}
                 />
               )}
             />
-          </TwoColumns>
-          <h3>Trait modifiers</h3>
-          <NewTraitButton type="button" variant="success" onClick={() => newTraitModifier()}>
-            New Trait modifier
-          </NewTraitButton>
-          {localStore.newTraitModifier && (
-            <ReactModal
-              isOpen={Boolean(localStore.newTraitModifier)}
-              shouldCloseOnEsc={true}
-              onRequestClose={() => saveNewTraitModifier()}
-              ariaHideApp={false}
-            >
-              <TraitModifierForm
-                traitModifier={localStore.newTraitModifier}
-                title="New trait modifier"
-              />
-            </ReactModal>
+          ))}
+        </BonusDamageDice>
+
+        <FormGroup
+          label="Free reroll for"
+          input={({ id }) => (
+            <Select
+              id={id}
+              options={localStore.traitOptions}
+              onChange={(values) => {
+                modifier.set(
+                  'traitNames',
+                  // @ts-expect-error
+                  { array: values.map(({ value }) => value) }
+                );
+              }}
+            />
           )}
-          <ul>
-            {modifier.traitModifiers.map(({ _id, traitName }) => (
-              <li key={_id}>{traitName}</li>
-            ))}
-          </ul>
-        </Traits>
+        />
+        {([
+          ['forbiddenEdges', 'Unavailable Edges'],
+          ['grantedEdges', 'Grants Edges'],
+        ] as const).map(([key, label]) => (
+          <FormGroup
+            key={key}
+            label={label}
+            input={({ id }) => (
+              <Select
+                id={id}
+                isMulti
+                options={localStore.edgesOptions}
+                onChange={(values) => {
+                  modifier.set(
+                    key,
+                    // @ts-expect-error
+                    { array: values.map(({ value }) => value) }
+                  );
+                }}
+              />
+            )}
+          />
+        ))}
+
+        <AddedHindrances modifier={modifier} />
+        <GrantedPowers modifier={modifier} />
+        <GrantedSkills modifier={modifier} />
       </TwoColumns>
     </Form>
   );

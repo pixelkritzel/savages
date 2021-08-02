@@ -1,79 +1,97 @@
+import { _modelPrototype } from 'lib/state/createCollection';
 import { types, Instance, getParent, SnapshotOut, SnapshotIn, destroy } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { powerModel } from 'store/characters/power';
-
 import { padWithMathOperator } from 'utils/padWithMathOpertor';
 
-import { traitModifierModel, ItraitModifier } from './traitModifierModel';
-import { settingsSkillModel } from '../settings/settingSkillModel';
+import { traitModifierModel } from './traitModifierModel';
+import { baseSkillModel } from 'store/skills';
 
 import { Itrait } from 'store/characters/traitModel';
-import { diceType } from 'store/consts';
-import { objectType } from 'lib/mst-types/object';
+import { DICE_TYPES } from 'store/consts';
+import { createSet } from 'lib/state/createSet';
+import { createBoxedArray } from 'lib/state/createBoxedArray';
+import { traitRollOptions } from 'store/characters/traitRollOptions';
 
-const modifierModelFields = types.model('modifier', {
-  _id: types.optional(types.identifier, uuidv4),
+export const bonusDamageDicesModel = types
+  .model({ 4: 0, 6: 0, 8: 0, 10: 0, 12: 0 })
+  .views((self) => ({
+    get asArray() {
+      let damageDices: number[] = [];
+      for (const diceSides of DICE_TYPES) {
+        damageDices = [
+          ...damageDices,
+          ...(Array.from({ length: self[diceSides] }).fill(diceSides) as number[]),
+        ];
+      }
+      return damageDices;
+    },
+  }))
+  .actions((self) => ({
+    set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
+      key: K,
+      value: T[K]
+    ) {
+      self[key] = value;
+    },
+  }));
+
+const modifierModelProps = {
   name: '',
+  isActive: false,
   reason: '',
   isOptional: true,
   isBenefit: true,
   conditions: '',
-  traitNames: types.optional(types.array(types.string), []),
-  traitModifiers: types.optional(types.array(traitModifierModel), []),
+  traitNames: createSet('', types.string),
+  traitModifiers: createBoxedArray('', traitModifierModel),
   bennies: 0,
   aimingHelp: 0,
   toughness: 0,
   size: 0,
   freeEdges: 0,
-  freeReroll: '',
   bonusDamage: 0,
-  bonusDamageDices: types.optional(types.array(diceType), []),
   rerollBonus: 0,
   rerollDamageBonus: 0,
   armor: 0,
   ignoreWounds: 0,
   ignoreMultiActionPenalty: 0,
   ignoreRecoil: 0,
+  ignoreVision: 0,
+  pace: 0,
+  minimumStrength: 0,
+  reach: 0,
   ignoreImprovisedWeapon: false,
   ignoreMinimumStrength: false,
-  ignoreVision: 0,
   ignoreOffhand: false,
   big: false,
-  pace: 0,
-  minumumStrength: 0,
-  forbiddenEdges: types.optional(types.array(types.string), []),
-  grantedEdges: types.optional(types.array(types.string), []),
-  addedHindrances: types.optional(types.array(types.string), []),
-  grantedWeapons: types.optional(types.array(types.string), []),
   hardy: false, // TODO: Race ability - second shaken doesn't cause a wound - interesting, when implementing fight
-  reach: 0,
-  grantedPowers: types.optional(types.array(types.reference(powerModel)), []),
-  grantedSkills: types.optional(
-    types.array(types.model({ skillName: types.string, isEnhancedSkill: false })),
-    []
+  bonusDamageDices: types.optional(bonusDamageDicesModel, {}),
+  freeReroll: '',
+  forbiddenEdges: createSet('', types.string),
+  grantedEdges: createSet('', types.string),
+  addedHindrances: createSet('', types.string),
+  grantedWeapons: createSet('', types.string),
+  grantedPowers: createSet('', types.string),
+  grantedSkills: createSet('', types.string),
+  // TODO: The following fields have to be implented at ModifierForm
+  technicalConditions: createBoxedArray('', traitRollOptions),
+  replaceBaseSkill: createBoxedArray('', baseSkillModel),
+  rangeModifier: types.optional(
+    types.model('rangeModifierModel', {
+      skill: '',
+      range: types.optional(types.array(types.number), []),
+    }),
+    {}
   ),
-  grantedSuperPowers: types.optional(types.array(types.reference(powerModel)), []),
-  isActive: false,
-  technicalConditions: types.optional(types.array(objectType), []),
-  replaceSettingSkill: types.optional(types.array(settingsSkillModel), []),
-  rangeModifiers: types.optional(
-    types.array(
-      types.model('rangeModifierModel', {
-        skill: types.string,
-        range: types.optional(types.array(types.number), []),
-      })
-    ),
-    []
-  ),
-});
+};
 
-export interface SOmodifierFields extends SnapshotOut<typeof modifierModelFields> {}
-
-export const modifierModel = modifierModelFields
+export const modifierModel = _modelPrototype
+  .named('modifierModel')
+  .props(modifierModelProps)
   .views((self) => ({
     getHumanFriendlyTraitModifierValueByTrait(traitName: string) {
-      const traitModifier = self.traitModifiers.find(
+      const traitModifier = self.traitModifiers.array.find(
         (traitMod) => traitMod.traitName === traitName
       );
       if (!traitModifier) {
@@ -84,9 +102,9 @@ export const modifierModel = modifierModelFields
       )}`;
     },
     isTechnicalConditionsFullfilled(options: Itrait['unifiedOptions']) {
-      return self.technicalConditions.length === 0
+      return self.technicalConditions.array.length === 0
         ? true
-        : self.technicalConditions
+        : self.technicalConditions.array
             .map((condition) => {
               return Object.entries({ ...condition }).every(([key, value]) => {
                 return options[key] === value;
@@ -116,11 +134,12 @@ export const modifierModel = modifierModelFields
     ) {
       self[key] = value;
     },
-    addTraitModifier(traitMod: ItraitModifier) {
-      self.traitModifiers.push(traitMod);
-    },
   }));
 
 export interface Imodifier extends Instance<typeof modifierModel> {}
 export interface SOmodifier extends SnapshotOut<typeof modifierModel> {}
 export interface SImodifier extends SnapshotIn<typeof modifierModel> {}
+
+export function createModifierScaffold(): SImodifier {
+  return { _id: uuidv4() };
+}
