@@ -15,6 +15,7 @@ export const ModifiersCollection = observer(function ModifiersFn({
 
   return (
     <CRUDTable
+      // @ts-expect-error
       collection={modifiers}
       baseUrl="modifiers"
       newLinkLabel="Create new modifier"

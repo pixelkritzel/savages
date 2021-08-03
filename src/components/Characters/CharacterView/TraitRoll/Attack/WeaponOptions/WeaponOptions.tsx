@@ -58,8 +58,8 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
     .map(({ rangeModifier }) => rangeModifier)
     .filter(({ skill }) => skill === attackSkill._id)
     .reduce(
-      (accumulatedModifiers, { range }) =>
-        range!.map((value, index) => value + accumulatedModifiers[index]),
+      (accumulatedModifiers, { asArray }) =>
+        asArray!.map((value, index) => value + accumulatedModifiers[index]),
       [0, 0, 0]
     );
 

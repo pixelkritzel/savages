@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from 'react';
+import { useContext } from 'react';
 import { observer, useLocalStore } from 'mobx-react';
 import styled from 'styled-components';
 import Select from 'react-select';
@@ -12,7 +12,7 @@ import { IncDec } from 'ui/IncDec';
 import { StoreContext } from 'components/StoreContext';
 
 import { Istore } from 'store';
-import { createModifierScaffold, modifierModel } from 'store/modifiers';
+import { Imodifier } from 'store/modifiers';
 import { attributeNames, DICE_TYPES } from 'store/consts';
 
 import { capitalizeFirstLetter } from 'lib/strings';
@@ -22,6 +22,8 @@ import { GrantedPowers } from './GrantedPowers';
 import { GrantedSkills } from './GrantedSkills';
 import { Traits } from './Traits';
 import { formGrid, TwoColumns } from './styled';
+import { Range } from './Range';
+import { Button } from 'ui/Button';
 
 const Form = styled.form`
   ${formGrid}
@@ -31,11 +33,26 @@ const BonusDamageDice = styled(Box)`
   ${formGrid}
 `;
 
+const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  column-gap: ${({ theme }) => theme.rhythms.outside.horizontal}px;
+`;
+
 interface ModifierFormProps {
-  children?: React.ReactNode;
+  title: string;
+  modifier: Imodifier;
+  saveModifier: () => void;
+  cancel: () => void;
 }
 
-export const ModifierForm = observer(function ModifierFormFn({ ...otherProps }: ModifierFormProps) {
+export const ModifierForm = observer(function ModifierFormFn({
+  modifier,
+  title,
+  saveModifier,
+  cancel,
+  ...otherProps
+}: ModifierFormProps) {
   const store = useContext<Istore>(StoreContext);
   const localStore = useLocalStore(() => ({
     get traitOptions() {
@@ -56,10 +73,12 @@ export const ModifierForm = observer(function ModifierFormFn({ ...otherProps }: 
       }));
     },
   }));
-  const { current: modifier } = useRef(modifierModel.create(createModifierScaffold()));
 
   return (
     <Form>
+      <TwoColumns>
+        <h1>{title}</h1>
+      </TwoColumns>
       {([
         ['name', 'Name'],
         ['conditions', 'Conditions'],
@@ -206,6 +225,15 @@ export const ModifierForm = observer(function ModifierFormFn({ ...otherProps }: 
         <AddedHindrances modifier={modifier} />
         <GrantedPowers modifier={modifier} />
         <GrantedSkills modifier={modifier} />
+        <Range rangeModifier={modifier.rangeModifier} />
+        <Footer>
+          <Button variant="danger" size="big" onClick={() => cancel()}>
+            Cancel
+          </Button>
+          <Button variant="success" size="big" onClick={() => saveModifier()}>
+            Save Modifier
+          </Button>
+        </Footer>
       </TwoColumns>
     </Form>
   );

@@ -17,6 +17,12 @@ Default.args = {
   children: 'Click Me',
 };
 
+export const BigButton = Template.bind({});
+BigButton.args = {
+  children: 'Click Me',
+  size: 'big',
+};
+
 export const Danger = Template.bind({});
 Danger.args = {
   children: 'Click Me',

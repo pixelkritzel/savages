@@ -8,6 +8,7 @@ import { Button, buttonStyles } from 'ui/Button';
 // import { Icollection } from 'lib/state/createCollection';
 
 import styled from 'styled-components';
+import { Icollection } from 'lib/state';
 
 const Header = styled.div`
   display: flex;
@@ -43,7 +44,7 @@ const Footer = styled.div`
 `;
 
 interface CRUDTableProps {
-  collection: { _id: string; name: string; delete: () => void }[];
+  collection: Icollection;
   baseUrl: string;
   newLinkLabel: string;
   title: string;
@@ -61,11 +62,11 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
             <h3 className="h6">Actions</h3>
           </Header>
           <List>
-            {collection.map(({ _id, name }) => (
+            {collection.asArray.map(({ _id, name }) => (
               <TableRow key={_id}>
-                <Link to={`${baseUrl}/${_id}`}>{name}</Link>
+                <Link to={`/${baseUrl}/${_id}`}>{name}</Link>
 
-                <StyledLink to={`${baseUrl}/${_id}/edit`}>
+                <StyledLink to={`/${baseUrl}/${_id}/edit`}>
                   Edit
                   <IconInButton>
                     <BsPencil />
@@ -74,7 +75,7 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
                 <Button
                   onClick={() => {
                     if (window.confirm(`Are you sure, you want to delete ${name}`)) {
-                      // collection.deleteModel(id);
+                      collection.deleteModel(_id);
                     }
                   }}
                 >
@@ -87,7 +88,7 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
             ))}
           </List>
           <Footer>
-            <StyledLink to={`${baseUrl}/new`}>{newLinkLabel}</StyledLink>
+            <StyledLink to={`/${baseUrl}/new`}>{newLinkLabel}</StyledLink>
           </Footer>
         </>
       </>

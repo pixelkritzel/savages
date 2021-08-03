@@ -1,19 +1,35 @@
-import { types, SnapshotIn, destroy, Instance, detach, cast } from 'mobx-state-tree';
+import {
+  types,
+  SnapshotIn,
+  destroy,
+  Instance,
+  flow,
+  getSnapshot,
+  isStateTreeNode,
+  SnapshotOut,
+} from 'mobx-state-tree';
+import PouchDB from 'pouchdb';
+
+import { createPouchAdapter } from 'persistence/pouchAdapter';
 
 // import { persistence } from 'lib/persistence';
 
 // This just provides the base type for the model
 export const _modelPrototype = types.model({
   _id: types.identifier,
+  name: types.string,
 });
 
-type Tmodel = typeof _modelPrototype;
+export type Tmodel = typeof _modelPrototype;
 
 export function createCollection<
   T extends Tmodel,
   IActualModel extends Instance<T>,
   SIActualModel extends SnapshotIn<T>
 >(name: string, model: T, createModelScaffoldFn: () => SIActualModel) {
+  const db = new PouchDB<SIActualModel>(name);
+  const pouchAdapter = createPouchAdapter(db);
+
   return types
     .model(name, {
       all: types.map(model),
@@ -25,44 +41,35 @@ export function createCollection<
       get asArray() {
         return Array.from(self.all).map(([, value]) => value) as IActualModel[];
       },
-      get(id: IActualModel['_id']) {
+      get(id: IActualModel['_id']): IActualModel {
         const model = self.all.get(id);
         if (!model) {
           throw new Error(`Model ${id} was not found!`);
         }
         return model as IActualModel;
       },
+      has(value: string | IActualModel) {
+        return self.all.has(typeof value === 'string' ? value : value._id);
+      },
     }))
     .actions((self) => ({
       deleteModel(id: IActualModel['_id']) {
         self.all.delete(id);
-        // persistence.deleteItem(name, id);
+        pouchAdapter.delete(id);
       },
-      discardNewModel() {
-        if (self.newModel) {
-          destroy(self.newModel);
+      set: flow(function* (id: string, value: IActualModel) {
+        const pouchModel = yield pouchAdapter.set(id, getSnapshot(value) as any);
+        self.all.set(id, pouchModel);
+      }),
+      add: flow(function* (value: SIActualModel | IActualModel) {
+        if (self.has(value._id)) {
+          throw new Error(`collectionModel ${name} tried to add already existing model!`);
         }
-      },
-      new() {
-        self.newModel = cast(model.create(createModelScaffoldFn()));
-        return self.newModel!;
-      },
-      async saveNewModel() {
-        if (self.newModel) {
-          const newModel = detach(self.newModel);
-          self.all.set(newModel._id, newModel);
-          try {
-            // persistence.saveItem(name, getSnapshot(newModel)!);
-          } catch (e) {
-            return 'ERROR';
-          }
-          return 'SUCCESS';
-        }
-        return 'ERROR';
-      },
-      set(character: IActualModel | SIActualModel) {
-        self.all.set(character._id, character);
-      },
+        const dbModel = yield pouchAdapter.add(
+          (isStateTreeNode(value) ? getSnapshot(value) : value) as any
+        );
+        self.all.set(value._id, dbModel);
+      }),
       setIsLoaded(isLoaded: typeof self['isLoaded']) {
         self.isLoaded = isLoaded;
       },
@@ -72,11 +79,12 @@ export function createCollection<
         loadCollection();
       }
 
-      async function loadCollection() {
-        // const collectionData = await persistence.loadCollection(name);
-        // collectionData.forEach((modelData) => self.set(modelData));
+      const loadCollection = flow(function* () {
+        const collectionData = (yield pouchAdapter.loadAll()) as SIActualModel[];
+        collectionData.forEach((modelData) => self.all.set(modelData._id, modelData));
         self.setIsLoaded(true);
-      }
+        console.log(JSON.stringify(collectionData, undefined, 2));
+      });
 
       return { afterCreate };
     });

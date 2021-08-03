@@ -4,10 +4,16 @@ import styled, { css } from 'styled-components';
 import { focusStyles } from 'utils/focus-styles';
 
 type buttonVariants = 'default' | 'danger' | 'success' | 'link' | 'icon' | undefined;
-
+type buttonSizes = 'default' | 'big';
 type StyledButtonProps = {
   icon?: JSX.Element;
   variant?: buttonVariants;
+  size?: buttonSizes;
+};
+
+const BUTTON_SIZES: { [key in buttonSizes]: string } = {
+  default: '2px 6px',
+  big: '6px 18px',
 };
 
 const buttonInnerBorderBoxShadow = 'inset 0px 0px 0px 1px white';
@@ -35,8 +41,8 @@ export const buttonStyles = css<StyledButtonProps>`
   display: inline-flex;
 
   position: relative;
-  padding: ${({ variant = 'default' }) =>
-    variant === 'link' || variant === 'icon' ? '0' : '2px 6px'};
+  padding: ${({ variant = 'default', size = 'default' }) =>
+    variant === 'link' || variant === 'icon' ? '0' : BUTTON_SIZES[size]};
   text-decoration: ${({ variant = 'default' }) =>
     variant === 'link' ? 'underline' : 'none !important'};
   cursor: ${({ variant = 'default' }) => (variant === 'link' ? 'pointer' : 'default')};

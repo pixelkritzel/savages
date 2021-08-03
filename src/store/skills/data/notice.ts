@@ -1,6 +1,7 @@
-import { SIskill } from 'store/skills';
+import { SIskill, createSkillScaffold } from 'store/skills';
 
 export const notice: SIskill = {
+  ...createSkillScaffold(),
   _id: 'notice',
   name: 'Notice',
   description: `Notice is a hero’s general awareness and alertness. It’s used to sense sights, sounds, tastes, and smells, spot clues, detect ambushes, spot hidden weapons on a foe, or tell if a rival is lying, frightened, happy, etc.

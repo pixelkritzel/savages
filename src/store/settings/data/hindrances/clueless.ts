@@ -9,5 +9,5 @@ export const clueless: SIhindrance = {
   a haystack in a small pile of needles.
 
   He suffers a −1 penalty to Common Knowledge and Notice rolls.`,
-  modifiers: ['cluessless_mod_1'],
+  modifiers: [],
 };

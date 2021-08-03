@@ -16,5 +16,5 @@ export const doubleTap: SIedgeModel = {
     attributes: [],
     skills: [{ skillName: 'shooting', value: 6 }],
   },
-  modifiers: ['double_tap_mod_1'],
+  modifiers: [],
 };

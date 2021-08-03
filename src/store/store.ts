@@ -1,23 +1,21 @@
+import { types, Instance } from 'mobx-state-tree';
+
+import { modifiersCollectionModel } from './modifiers/modifiersCollection';
 import { createSkillsCollection, skillsCollection } from './skills/skillsCollection';
 import { createCollectionScaffold } from 'lib/state/createCollection';
 import { powersCollection } from './powers';
-import { SImodifier } from 'store/modifiers/modifierModel';
-import { modifiersDB } from 'persistence/index';
-import { types, Instance } from 'mobx-state-tree';
 
 import { single_character_mock } from 'components/Characters/CharacterView/single_character_mock';
 
 import { vanillaSetting } from 'store/settings/data/SavageWorldsVanilla';
 import { settingModel } from 'store/settings/settingModel';
 import { characterModel } from 'store/characters';
-import { modifierModel } from 'store/modifiers';
-import { modifiers } from 'store/modifiers/data';
 
 const store = types
   .model('stores', {
     characters: types.array(characterModel),
     settings: types.array(settingModel),
-    modifiers: types.array(modifierModel),
+    modifiers: modifiersCollectionModel,
     powers: powersCollection,
     selectedSetting: types.reference(settingModel),
     skills: skillsCollection,
@@ -30,14 +28,7 @@ const store = types
       self[key] = value;
     },
   }))
-  .actions((self) => ({
-    async afterCreate() {
-      (await modifiersDB.allDocs<SImodifier>()).rows
-        .map(({ doc }) => doc)
-        .filter((doc) => Boolean(doc))
-        .forEach((modifier) => self.modifiers.push(modifier as SImodifier));
-    },
-  }));
+  .actions((self) => ({}));
 
 export interface Istore extends Instance<typeof store> {}
 
@@ -46,7 +37,7 @@ export function createStore() {
     skills: createSkillsCollection(),
     characters: [single_character_mock],
     settings: [vanillaSetting],
-    modifiers,
+    modifiers: createCollectionScaffold(),
     powers: createCollectionScaffold(),
     selectedSetting: 'vanilla_setting',
   });

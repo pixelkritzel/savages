@@ -12,5 +12,5 @@ export const giantKiller: SIedgeModel = {
     attributes: [],
     skills: [],
   },
-  modifiers: ['giant_killer_mod_1'],
+  modifiers: [],
 };

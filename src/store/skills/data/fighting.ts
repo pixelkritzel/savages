@@ -1,6 +1,7 @@
-import { SIskill } from 'store/skills';
+import { createSkillScaffold, SIskill } from 'store/skills';
 
 export const fighting: SIskill = {
+  ...createSkillScaffold(),
   _id: 'fighting',
   name: 'Fighting',
   description:

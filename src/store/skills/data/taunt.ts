@@ -1,6 +1,7 @@
-import { SIskill } from 'store/skills';
+import { SIskill, createSkillScaffold } from 'store/skills';
 
 export const taunt: SIskill = {
+  ...createSkillScaffold(),
   _id: 'taunt',
   name: 'Taunt',
   description: `Taunt attacks a person’s pride through ridicule, cruel jests, or oneupmanship.
