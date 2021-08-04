@@ -153,7 +153,7 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
               <h4>Weapon Modifiers</h4>
               {currentlyHoldWeapon.modifiers.length > 0 && (
                 <>
-                  {currentlyHoldWeapon.modifiers.map((modifier, index) => (
+                  {currentlyHoldWeapon.modifiers.array.map((modifier, index) => (
                     <Checkbox
                       key={index}
                       label={modifier.name}

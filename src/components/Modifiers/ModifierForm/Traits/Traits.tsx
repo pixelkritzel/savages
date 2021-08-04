@@ -31,7 +31,7 @@ const NoTraitModifiers = styled(TwoColumns)`
   text-align: center;
 `;
 
-const TraitModifierRow = styled.div`
+const TraitModifierRow = styled.li`
   grid-column: 1 / span 2;
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -114,8 +114,8 @@ export const Traits = observer(function TraitsFn({
       )}
       <TwoColumns>
         {Boolean(modifier.traitModifiers.length) ? (
-          <TraitModifierList
-            listItems={modifier.traitModifiers.array.map((traitMod) => (
+          <TraitModifierList>
+            {modifier.traitModifiers.array.map((traitMod) => (
               <TraitModifierRow key={traitMod._id}>
                 <div>
                   <strong>{capitalizeFirstLetter(traitMod.traitName)}</strong>:
@@ -129,7 +129,7 @@ export const Traits = observer(function TraitsFn({
                 </Button>
               </TraitModifierRow>
             ))}
-          />
+          </TraitModifierList>
         ) : (
           <NoTraitModifiers>No trait modifiers yet</NoTraitModifiers>
         )}

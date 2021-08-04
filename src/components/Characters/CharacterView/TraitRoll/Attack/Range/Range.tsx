@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { Checkbox } from 'ui/Checkbox';
 import { Iskill } from 'store/characters/skillModel';
-import { Iweapon } from 'store/settings/settingWeaponModel';
+import { Iweapon } from 'store/weapons/weaponModel';
 import styled from 'styled-components';
 
 const GridContainer = styled.div`

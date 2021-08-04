@@ -118,6 +118,10 @@ export const theme = {
       normal: colors.grays[800],
       error: colors.danger.default,
     },
+    padding: {
+      default: '10px',
+      inline: '0 6px',
+    },
   },
   box: {
     borderColors: {

@@ -3,12 +3,14 @@ import styled from 'styled-components';
 import { focusStyles } from 'utils/focus-styles';
 
 const StyledInput = styled.input<{ hasError?: boolean; variant?: 'default' | 'inline' }>`
+  height: ${({ variant }) => variant === 'default' && '36px'};
+
+  padding: ${({ theme, variant = 'default' }) => theme.input.padding[variant]};
   border: 1px solid
     ${({ theme, hasError }) =>
       hasError ? theme.input.borderColor.error : theme.input.borderColor.normal};
   border-radius: 4px;
-  background-color: inherit;
-  padding: ${({ variant }) => variant === 'inline' && '0 6px'};
+  background-color: white;
 
   &:focus {
     outline: none;
@@ -21,6 +23,9 @@ const InputContainer = styled.div<{ hasFocus: boolean }>`
 
 interface InputProps extends React.ComponentProps<typeof StyledInput> {
   onValueChange?: (value: string) => void;
+  hasError?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
@@ -42,15 +47,23 @@ export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
   };
 
   render() {
-    const { className, hasError, variant = 'default', onValueChange, ...otherProps } = this.props;
+    const {
+      className,
+      style,
+      hasError,
+      variant = 'default',
+      onValueChange,
+      ...otherProps
+    } = this.props;
 
     return (
-      <InputContainer hasFocus={this.state.hasFocus}>
+      <InputContainer className={className} style={style} hasFocus={this.state.hasFocus}>
         <StyledInput
           onBlur={this.onBlur}
           onChange={this.onChange}
           onFocus={this.onFocus}
           variant={variant}
+          hasError={hasError}
           {...otherProps}
         />
       </InputContainer>

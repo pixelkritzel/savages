@@ -1,4 +1,4 @@
-import { SIweapon } from 'store/settings/settingWeaponModel';
+import { SIweapon } from 'store/weapons/weaponModel';
 
 export const shotgun: SIweapon = {
   _id: 'shotgun',

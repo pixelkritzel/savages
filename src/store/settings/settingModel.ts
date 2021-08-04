@@ -9,7 +9,7 @@ import { creationRulesModel } from './creationRulesModel';
 import { vanillaSetting } from './data/SavageWorldsVanilla';
 import { settingEdgeModel } from './settingEdgeModel';
 import { settingHindranceModel } from './settingHindranceModel';
-import { weaponModel } from './settingWeaponModel';
+import { weaponModel } from '../weapons/weaponModel';
 
 export const settingModel = types
   .model('setting', {
@@ -20,7 +20,7 @@ export const settingModel = types
     availableSkills: createBoxedArray('', types.reference(baseSkillModel)),
     availableHindrances: types.array(settingHindranceModel),
     availablePowers: createBoxedArray('', types.reference(powerModel)),
-    availableWeapons: types.array(weaponModel),
+    availableWeapons: createBoxedArray('', types.reference(weaponModel)),
     rules: types.model({
       skillSpezializations: types.array(types.string),
     }),

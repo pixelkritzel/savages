@@ -24,7 +24,7 @@ export const EditModifier = observer(function NewModifierFn({ ...otherProps }: E
     <div {...otherProps}>
       <ModifierForm
         modifier={modifier}
-        title="Edit modifier"
+        title={`Edit ${copyOfModifier.name}`}
         saveModifier={() => {
           history.push('/modifiers');
         }}

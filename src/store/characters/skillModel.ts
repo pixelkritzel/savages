@@ -1,5 +1,5 @@
-import { getSpentAmmunitionByRateOfFire } from 'store/settings/settingWeaponModel';
-import { Iweapon } from './../settings/settingWeaponModel';
+import { getSpentAmmunitionByRateOfFire } from 'store/weapons/weaponModel';
+import { Iweapon } from '../weapons/weaponModel';
 import {
   types,
   Instance,

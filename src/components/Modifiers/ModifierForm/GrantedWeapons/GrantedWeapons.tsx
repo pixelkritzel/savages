@@ -20,7 +20,7 @@ export const GrantedWeapons = observer(function GrantedWeaponsFn({
   const store = useContext<Istore>(StoreContext);
   const localStore = useLocalStore(() => ({
     get weaponsOptions(): OptionsType<OptionTypeBase> {
-      return store.selectedSetting.availableWeapons.map(({ _id, name }) => ({
+      return store.selectedSetting.availableWeapons.array.map(({ _id, name }) => ({
         label: name,
         value: _id,
       }));

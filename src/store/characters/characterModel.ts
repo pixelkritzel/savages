@@ -4,7 +4,7 @@ import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-stat
 import { v4 as uuidv4 } from 'uuid';
 
 import { Imodifier } from 'store/modifiers';
-import { weaponModel } from 'store/settings/settingWeaponModel';
+import { weaponModel } from 'store/weapons/weaponModel';
 import { settingEdgeModel } from 'store/settings/settingEdgeModel';
 import { settingHindranceModel } from 'store/settings/settingHindranceModel';
 import { settingModel } from 'store/settings/settingModel';
@@ -101,7 +101,7 @@ export const characterModel = types
         edges: edges.map(({ modifiers }) => modifiers).flat(),
         // @ts-expect-error
         hindrances: hindrances.map(({ modifiers }) => modifiers).flat(),
-        weapons: currentlyHoldWeapon.modifiers,
+        weapons: currentlyHoldWeapon.modifiers.array,
       };
       return {
         ...modifiers,
@@ -200,8 +200,8 @@ export const characterModel = types
       });
 
       (self.currentlyHoldWeapon.minimumStrength > self.attributes.strength.dice
-        ? self.currentlyHoldWeapon.modifiers.filter((modifier) => !modifier.isBenefit)
-        : self.currentlyHoldWeapon.modifiers
+        ? self.currentlyHoldWeapon.modifiers.array.filter((modifier) => !modifier.isBenefit)
+        : self.currentlyHoldWeapon.modifiers.array
       )
         .filter(
           (modifier) =>

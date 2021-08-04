@@ -1,4 +1,4 @@
-import { Instance, types } from 'mobx-state-tree';
+import { Instance, types, SnapshotIn } from 'mobx-state-tree';
 import { diceType } from 'store/consts';
 import { rollDice } from 'utils/rollDice';
 
@@ -69,3 +69,8 @@ export const damageModel = types
   }));
 
 export interface Idamage extends Instance<typeof damageModel> {}
+export interface SIdamage extends SnapshotIn<typeof damageModel> {}
+
+export function createDamageScaffold(value?: Partial<SIdamage>): SIdamage {
+  return {};
+}

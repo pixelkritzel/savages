@@ -12,6 +12,9 @@ export function createSet<T extends IAnyModelType | string>(
       has(value: Instance<typeof type>) {
         return self.array.includes(value);
       },
+      get length() {
+        return self.array.length;
+      },
     }))
     .actions((self) => ({
       delete(value: Instance<typeof type>) {

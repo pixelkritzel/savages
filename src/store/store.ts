@@ -1,7 +1,8 @@
+import { weaponsCollection } from './weapons/weaponsCollection';
 import { types, Instance } from 'mobx-state-tree';
 
 import { modifiersCollectionModel } from './modifiers/modifiersCollection';
-import { createSkillsCollection, skillsCollection } from './skills/skillsCollection';
+import { skillsCollection } from './skills/skillsCollection';
 import { createCollectionScaffold } from 'lib/state/createCollection';
 import { powersCollection } from './powers';
 
@@ -19,6 +20,7 @@ const store = types
     powers: powersCollection,
     selectedSetting: types.reference(settingModel),
     skills: skillsCollection,
+    weapons: weaponsCollection,
   })
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
@@ -34,11 +36,12 @@ export interface Istore extends Instance<typeof store> {}
 
 export function createStore() {
   return store.create({
-    skills: createSkillsCollection(),
+    skills: createCollectionScaffold(),
     characters: [single_character_mock],
     settings: [vanillaSetting],
     modifiers: createCollectionScaffold(),
     powers: createCollectionScaffold(),
     selectedSetting: 'vanilla_setting',
+    weapons: createCollectionScaffold(),
   });
 }

@@ -11,13 +11,14 @@ export function Modifiers() {
   return (
     <Switch>
       <Route path={`${match.path}/new`}>
-        {' '}
-        <NewModifier />{' '}
+        <NewModifier />
       </Route>
       <Route path={`${match.path}/:modifierId/edit`}>
         <EditModifier />
       </Route>
-      <Route path={`${match.path}/:modifierId`}>Modifier View</Route>
+      <Route path={`${match.path}/:modifierId`}>
+        <EditModifier />
+      </Route>
 
       <Route path={`${match.path}/`}>
         <ModifiersCollection />

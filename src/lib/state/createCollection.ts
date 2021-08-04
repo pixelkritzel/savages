@@ -1,13 +1,4 @@
-import {
-  types,
-  SnapshotIn,
-  destroy,
-  Instance,
-  flow,
-  getSnapshot,
-  isStateTreeNode,
-  SnapshotOut,
-} from 'mobx-state-tree';
+import { types, SnapshotIn, Instance, flow, getSnapshot, isStateTreeNode } from 'mobx-state-tree';
 import PouchDB from 'pouchdb';
 
 import { createPouchAdapter } from 'persistence/pouchAdapter';
@@ -83,7 +74,6 @@ export function createCollection<
         const collectionData = (yield pouchAdapter.loadAll()) as SIActualModel[];
         collectionData.forEach((modelData) => self.all.set(modelData._id, modelData));
         self.setIsLoaded(true);
-        console.log(JSON.stringify(collectionData, undefined, 2));
       });
 
       return { afterCreate };

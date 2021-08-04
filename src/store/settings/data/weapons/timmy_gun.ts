@@ -1,4 +1,4 @@
-import { SIweapon } from 'store/settings/settingWeaponModel';
+import { SIweapon } from 'store/weapons/weaponModel';
 
 export const timmyGun: SIweapon = {
   _id: 'ranged_weapon_timmy_gun',

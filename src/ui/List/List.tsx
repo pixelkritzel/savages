@@ -8,15 +8,9 @@ const UL = styled.ul`
 `;
 
 interface ListProps {
-  listItems: React.ReactNode[];
+  children: React.ReactNode | React.ReactNode;
 }
 
-export const List = observer(function ListFn({ listItems, ...otherProps }: ListProps) {
-  return (
-    <UL {...otherProps}>
-      {listItems.map((item, index) => (
-        <li key={index}>{item}</li>
-      ))}
-    </UL>
-  );
+export const List = observer(function ListFn({ children, ...otherProps }: ListProps) {
+  return <UL {...otherProps}>{children}</UL>;
 });

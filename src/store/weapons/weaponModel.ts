@@ -1,9 +1,10 @@
-import { types, Instance, SnapshotIn } from 'mobx-state-tree';
+import { createBoxedArray } from 'lib/state/createBoxedArray';
+import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { modifierModel } from 'store/modifiers/modifierModel';
 
-import { damageModel } from './damageModel';
+import { createDamageScaffold, damageModel } from '../settings/damageModel';
 import { diceType } from 'store/consts';
 
 export const WEAPON_TYPES = ['melee', 'throwable', 'shotgun', 'ranged'] as const;
@@ -29,9 +30,9 @@ export function getSpentAmmunitionByRateOfFire({
 
 export const weaponModel = types
   .model('weaponModel', {
-    _id: types.optional(types.identifier, uuidv4),
+    _id: types.identifier,
     name: types.string,
-    damage: types.late(() => damageModel),
+    damage: damageModel,
     notes: '',
     weaponType: types.array(types.enumeration([...WEAPON_TYPES])),
     specialization: '',
@@ -56,7 +57,7 @@ export const weaponModel = types
     minimumStrength: types.optional(diceType, 4),
     weight: 1,
     cost: 100,
-    modifiers: types.array(types.reference(modifierModel)),
+    modifiers: createBoxedArray('', types.reference(modifierModel)),
   })
   .views((self) => ({
     get isRangedWeapon() {
@@ -108,3 +109,13 @@ export const weaponModel = types
 
 export interface Iweapon extends Instance<typeof weaponModel> {}
 export interface SIweapon extends SnapshotIn<typeof weaponModel> {}
+export interface SOweapon extends SnapshotOut<typeof weaponModel> {}
+
+export function createWeaponScaffold(value?: Partial<SIweapon>): SIweapon {
+  return {
+    _id: uuidv4(),
+    name: '',
+    modifiers: { array: [] as any[] },
+    damage: createDamageScaffold(),
+  };
+}

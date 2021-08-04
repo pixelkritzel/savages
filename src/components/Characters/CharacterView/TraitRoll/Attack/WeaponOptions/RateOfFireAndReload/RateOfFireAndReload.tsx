@@ -6,7 +6,7 @@ import { Alert } from 'ui/Alert';
 import { Button } from 'ui/Button';
 import { FormGroup } from 'ui/FormGroup';
 
-import { getSpentAmmunitionByRateOfFire, Iweapon } from 'store/settings/settingWeaponModel';
+import { getSpentAmmunitionByRateOfFire, Iweapon } from 'store/weapons/weaponModel';
 import { Iskill } from 'store/characters/skillModel';
 import { IskillOptions } from 'store/characters/skillOptions';
 

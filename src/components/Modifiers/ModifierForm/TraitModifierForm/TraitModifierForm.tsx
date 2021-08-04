@@ -16,7 +16,7 @@ import { capitalizeFirstLetter } from 'lib/strings';
 import { Istore } from 'store';
 import { ItraitModifier, traitModifierModelTypes } from 'store/modifiers/traitModifierModel';
 import { attributeNames } from 'store/consts';
-import { Iskill } from 'store/skills';
+import { IbaseSkill } from 'store/skills';
 
 import { formGrid, TwoColumns } from '../styled';
 
@@ -69,7 +69,7 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
     get selectedTraitOption() {
       return this.traitOptions?.find(({ value }) => value === traitModifier.traitName);
     },
-    get settingSkill(): Iskill {
+    get settingSkill(): IbaseSkill {
       return (
         (traitModifier.type === 'skill' &&
           store.selectedSetting.availableSkills.array.find(
