@@ -28,13 +28,26 @@ export function getSpentAmmunitionByRateOfFire({
   return rateOfFire === 1 && isThreeRoundBurst ? 3 : SPENT_AMMUNITION_BY_RATE_FIRE[rateOfFire];
 }
 
+export const weaponTypeFields = {
+  melee: false,
+  throwable: false,
+  shotgun: false,
+  ranged: false,
+} as const;
+
+const weaponTypeModel = types.model('weaponTypeModel', weaponTypeFields).actions((self) => ({
+  set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(key: K, value: T[K]) {
+    self[key] = value;
+  },
+}));
+
 export const weaponModel = types
   .model('weaponModel', {
     _id: types.identifier,
     name: types.string,
     damage: damageModel,
     notes: '',
-    weaponType: types.array(types.enumeration([...WEAPON_TYPES])),
+    weaponType: weaponTypeModel,
     specialization: '',
     range: types.optional(types.array(types.number), []),
     isImprovisedWeapon: false,
@@ -61,23 +74,19 @@ export const weaponModel = types
   })
   .views((self) => ({
     get isRangedWeapon() {
-      return (
-        self.weaponType.includes('shotgun') ||
-        self.weaponType.includes('ranged') ||
-        self.weaponType.includes('throwable')
-      );
+      return self.weaponType.shotgun || self.weaponType.ranged || self.weaponType.throwable;
     },
     get isMeleeWeapon() {
-      return self.weaponType.includes('melee');
+      return self.weaponType.melee;
     },
     isForSkill(skillName: string) {
       switch (skillName) {
         case 'athletics':
-          return self.weaponType.includes('throwable');
+          return self.weaponType.throwable;
         case 'fighting':
-          return self.weaponType.includes('melee');
+          return self.weaponType.melee;
         case 'shooting':
-          return self.weaponType.includes('shotgun') || self.weaponType.includes('ranged');
+          return self.weaponType.shotgun || self.weaponType.ranged;
         default:
           return false;
       }
@@ -117,5 +126,6 @@ export function createWeaponScaffold(value?: Partial<SIweapon>): SIweapon {
     name: '',
     modifiers: { array: [] as any[] },
     damage: createDamageScaffold(),
+    weaponType: {},
   };
 }

@@ -174,7 +174,7 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
                 />
               )}
 
-              {isShooting && currentlyHoldWeapon.weaponType.includes('shotgun') && (
+              {isShooting && currentlyHoldWeapon.weaponType.shotgun && (
                 <Checkbox
                   label="Use slugs"
                   checked={attackSkill.skillOptions.isShotgunSlugs}

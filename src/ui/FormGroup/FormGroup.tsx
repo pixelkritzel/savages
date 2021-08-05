@@ -2,49 +2,67 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { generateId } from 'utils/generateId';
 import styled, { css } from 'styled-components';
+import { gridSpanStyles, gridStyles } from 'ui/Grid';
 
-const StyledFormGroup = styled.div<{ inline: boolean; direction: 'column' | 'row' }>`
-  display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
-  width: 100%;
-  height: ${({ direction }) => direction === 'column' && '100%'};
-  flex-direction: ${({ direction = 'row' }) => direction};
-  column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
-  row-gap: ${({ theme }) => theme.rhythms.inside.vertical}px;
-  align-items: ${({ direction = 'row' }) => (direction === 'column' ? 'stretch' : 'top')};
+type formGroupStylingProps = { inline: boolean; direction: 'column' | 'row' };
 
-  ${({ direction }) =>
-    direction === 'column' &&
-    css`
-      & > * {
-        width: 100%;
-      }
-    `};
+const StyledFormGroup = styled.div<formGroupStylingProps>`
+  ${({ inline, direction = 'row' }) =>
+    !inline && direction === 'row'
+      ? gridStyles
+      : css<formGroupStylingProps>`
+          display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
+          height: ${({ direction }) => direction === 'column' && '100%'};
+          flex-direction: ${({ direction = 'row' }) => direction};
+          column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
+          row-gap: ${({ theme }) => theme.rhythms.inside.vertical}px;
+          align-items: ${({ direction = 'row' }) =>
+            direction === 'column' ? 'stretch' : 'baseline'};
+        `}
 `;
 
-const Label = styled.label<{ inline: boolean; direction: 'column' | 'row' }>`
-  ${({ theme, direction }) =>
-    direction === 'column'
+const Label = styled.label<formGroupStylingProps>`
+  ${({ inline, direction = 'row' }) =>
+    !inline && direction === 'row'
       ? css`
-          padding-left: ${theme.input.padding.default};
+          ${gridSpanStyles}
+          grid-column: 1 / 5;
+          width: 100%;
+          text-align: right;
         `
-      : css<{ inline: boolean; direction: 'column' | 'row' }>`
-          margin-top: ${({ theme, inline, direction = 'row' }) =>
-            theme.input.padding[inline || direction === 'column' ? 'inline' : 'default']};
+      : css<formGroupStylingProps>`
+          ${({ theme, direction }) =>
+            direction === 'column'
+              ? css`
+                  padding-left: ${theme.input.padding.default};
+                `
+              : css<{ inline: boolean; direction: 'column' | 'row' }>`
+                  margin-top: ${({ theme, inline, direction = 'row' }) =>
+                    theme.input.padding[inline || direction === 'column' ? 'inline' : 'default']};
+                `}
+          text-align: ${({ inline, direction = 'row' }) =>
+            inline || direction === 'column' ? 'left' : 'right'};
+          width: ${({ inline }) => !inline && '30%'};
+          flex-shrink: 0;
         `}
-  text-align: ${({ inline, direction = 'row' }) =>
-    inline || direction === 'column' ? 'left' : 'right'};
-  width: ${({ inline }) => !inline && '50%'};
-  flex-shrink: 0;
 `;
 
 const InputContainer = styled.div<{ inline: boolean; direction: 'column' | 'row' }>`
-  width: 100%;
-  height: ${({ direction }) => direction === 'column' && '100%'};
+  ${({ inline, direction = 'row' }) =>
+    !inline && direction === 'row'
+      ? css`
+          ${gridSpanStyles}
+          grid-column: 5 / 13;
+        `
+      : css<formGroupStylingProps>`
+          width: 100%;
+          height: ${({ direction }) => direction === 'column' && '100%'};
 
-  input {
-    min-width: 100%;
-    max-width: 100%;
-  }
+          input {
+            min-width: 100%;
+            max-width: 100%;
+          }
+        `}
 `;
 
 interface FormGroupProps extends React.ComponentProps<typeof StyledFormGroup> {

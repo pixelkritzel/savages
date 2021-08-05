@@ -42,7 +42,7 @@ export const Range = observer(function RangeFn({
             })`}
             disabled={
               rangeModifier === '-8' &&
-              (currentlyHoldWeapon.weaponType.includes('shotgun') || !attackSkill.skillOptions.aim)
+              (currentlyHoldWeapon.weaponType.shotgun || !attackSkill.skillOptions.aim)
             }
             checked={attackSkill.skillOptions.range === rangeModifier}
             onChange={() =>

@@ -1,22 +1,18 @@
-import { Instance, types, SnapshotIn } from 'mobx-state-tree';
-import { diceType } from 'store/consts';
+import { dicesModel } from './../modifiers/modifierModel';
+import { Instance, types, SnapshotIn, getSnapshot } from 'mobx-state-tree';
 import { rollDice } from 'utils/rollDice';
 
 export const damageModel = types
   .model('damageModel', {
-    dices: types.array(
-      types.model('damageDicesModel', {
-        sides: types.optional(diceType, 4),
-        numberOfDices: 1,
-      })
-    ),
+    dices: dicesModel,
     strength: false,
     bonus: 0,
   })
   .views((self) => ({
     get humanFriendly() {
-      let humanFriendlyString = self.dices
-        .map((dice) => `${dice.numberOfDices}D${dice.sides}`)
+      let humanFriendlyString = Object.entries(getSnapshot(self.dices))
+        .filter(([sides, numberOfDices]) => numberOfDices > 0)
+        .map(([sides, numberOfDices]) => `${numberOfDices}D${sides}`)
         .join(' + ');
       if (self.strength) {
         humanFriendlyString += `${humanFriendlyString.length > 0 ? ' + ' : ''}STR`;
@@ -48,9 +44,9 @@ export const damageModel = types
       if (isJoker) {
         sumDiceRoll += 2;
       }
-      for (const dice of self.dices) {
-        for (let i = 0; i <= dice.numberOfDices; i++) {
-          sumDiceRoll += rollDice(Math.min(dice.sides, strength.dice));
+      for (const [sides, numberOfDices] of Object.entries(self.dices)) {
+        for (let i = 0; i <= numberOfDices; i++) {
+          sumDiceRoll += rollDice(Math.min(Number(sides), strength.dice));
         }
       }
       for (const dice of bonusDices) {
@@ -72,5 +68,5 @@ export interface Idamage extends Instance<typeof damageModel> {}
 export interface SIdamage extends SnapshotIn<typeof damageModel> {}
 
 export function createDamageScaffold(value?: Partial<SIdamage>): SIdamage {
-  return {};
+  return { dices: {} };
 }

@@ -186,7 +186,7 @@ const _skillModel = traitModel
           modifierAccumulator.boni.speed = Number(skill.skillOptions.speed);
           modifierAccumulator.boni.shotgun =
             isShooting(skill) &&
-            character.currentlyHoldWeapon.weaponType.includes('shotgun') &&
+            character.currentlyHoldWeapon.weaponType.shotgun &&
             !skill.skillOptions.isShotgunSlugs &&
             skill.skillOptions.range === '0'
               ? 2

@@ -8,6 +8,7 @@ export const gridStyles = css<{
   horizontal?: 'start' | 'end' | 'center' | 'stretch';
 }>`
   display: ${({ inline }) => (inline ? 'inline-grid' : 'grid')};
+  width: ${({ inline }) => !inline && '100%'};
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-gap: ${({ theme, spacing = 'outside' }) => theme.rhythms[spacing].vertical}px
     ${({ theme, spacing = 'outside' }) => theme.rhythms[spacing].horizontal}px;
@@ -20,14 +21,16 @@ export const Grid = styled.div`
 `;
 
 export const gridSpanStyles = css<{
-  start: number;
-  end: number;
+  start?: number;
+  end?: number;
   vertical?: 'start' | 'end' | 'center' | 'stretch';
   horizontal?: 'start' | 'end' | 'center' | 'stretch';
+  row?: number;
 }>`
   grid-column: ${({ start = 1 }) => start} / ${({ end = 13 }) => end};
+  grid-row: ${({ row = 'auto' }) => row};
   justify-self: ${({ horizontal = 'auto' }) => horizontal};
-  align-self: ${({ horizontal = 'auto' }) => horizontal};
+  align-self: ${({ vertical = 'auto' }) => vertical};
 `;
 
 const StyledSpan = styled.div`
@@ -36,12 +39,8 @@ const StyledSpan = styled.div`
 
 interface SpanProps extends React.ComponentProps<typeof StyledSpan> {}
 
-export function Span({ start, end, children, ...otherProps }: SpanProps) {
-  return (
-    <StyledSpan start={start} end={end} {...otherProps}>
-      {children}
-    </StyledSpan>
-  );
+export function Span({ children, ...otherProps }: SpanProps) {
+  return <StyledSpan {...otherProps}>{children}</StyledSpan>;
 }
 
 export const flexStyles = css<{

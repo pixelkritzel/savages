@@ -6,6 +6,8 @@ import { generateId } from 'utils/generateId';
 const InputCheckbox = styled.input`
   margin-right: 8px;
   margin-top: 5px;
+  width: auto !important;
+  min-width: auto !important;
 `;
 
 const Label = styled.label`

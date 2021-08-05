@@ -12,7 +12,7 @@ import { createSet } from 'lib/state/createSet';
 import { createBoxedArray } from 'lib/state/createBoxedArray';
 import { traitRollOptions } from 'store/characters/traitRollOptions';
 
-export const bonusDamageDicesModel = types
+export const dicesModel = types
   .model({ 4: 0, 6: 0, 8: 0, 10: 0, 12: 0 })
   .views((self) => ({
     get asArray() {
@@ -95,7 +95,7 @@ export const modifierModel = _modelPrototype
     ignoreOffhand: types.boolean,
     big: types.boolean,
     hardy: types.boolean, // TODO: Race ability - second shaken doesn't cause a wound - interesting, when implementing fight
-    bonusDamageDices: bonusDamageDicesModel,
+    bonusDamageDices: dicesModel,
     freeReroll: types.string,
     forbiddenEdges: createSet('', types.string),
     grantedEdges: createSet('', types.string),
