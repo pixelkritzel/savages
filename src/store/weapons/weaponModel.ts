@@ -1,5 +1,7 @@
+import { createSet } from 'lib/state/createSet';
+import { IskillsCollection, skillsCollection } from './../skills/skillsCollection';
 import { createBoxedArray } from 'lib/state/createBoxedArray';
-import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
+import { types, Instance, SnapshotIn, SnapshotOut, getRoot } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { modifierModel } from 'store/modifiers/modifierModel';
@@ -48,8 +50,12 @@ export const weaponModel = types
     damage: damageModel,
     notes: '',
     weaponType: weaponTypeModel,
-    specialization: '',
-    range: types.optional(types.array(types.number), []),
+    specializations: types.model({
+      athletics: createSet('', types.string),
+      fighting: createSet('', types.string),
+      shooting: createSet('', types.string),
+    }),
+    range: types.optional(createBoxedArray('', types.number), { array: [0, 0, 0] }),
     isImprovisedWeapon: false,
     isTwoHanded: false,
     isThreeRoundBurstSelectable: false,
@@ -74,7 +80,10 @@ export const weaponModel = types
   })
   .views((self) => ({
     get isRangedWeapon() {
-      return self.weaponType.shotgun || self.weaponType.ranged || self.weaponType.throwable;
+      return this.isShootingWeapon || self.weaponType.throwable;
+    },
+    get isShootingWeapon() {
+      return self.weaponType.shotgun || self.weaponType.ranged;
     },
     get isMeleeWeapon() {
       return self.weaponType.melee;
@@ -90,6 +99,12 @@ export const weaponModel = types
         default:
           return false;
       }
+    },
+    get availableSkills() {
+      return ['athletics', 'fighting', 'shooting'] as const;
+      // return (['athletics', 'fighting', 'shooting'] as const).filter((skillName) =>
+      //   this.isForSkill(skillName)
+      // );
     },
     get remainingAmmunition() {
       return self.shots - self.spentAmmunition;
@@ -127,5 +142,10 @@ export function createWeaponScaffold(value?: Partial<SIweapon>): SIweapon {
     modifiers: { array: [] as any[] },
     damage: createDamageScaffold(),
     weaponType: {},
+    specializations: {
+      athletics: { array: [] },
+      fighting: { array: [] },
+      shooting: { array: [] },
+    },
   };
 }

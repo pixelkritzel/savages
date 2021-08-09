@@ -45,11 +45,13 @@ export function Span({ children, ...otherProps }: SpanProps) {
 
 export const flexStyles = css<{
   inline?: boolean;
+  direction?: 'row' | 'column';
   spacing?: 'inside' | 'outside';
   vertical?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
   horizontal?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
 }>`
   display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
+  flex-direction: ${({ direction = 'row' }) => direction};
   gap: ${({ theme, spacing = 'outside' }) => theme.rhythms[spacing].vertical}px
     ${({ theme, spacing = 'outside' }) => theme.rhythms[spacing].horizontal}px;
   flex-wrap: wrap;

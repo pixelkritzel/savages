@@ -9,7 +9,11 @@ export const tommyGun: SIweapon = {
     dices: [{ sides: 6, numberOfDices: 2 }],
   },
   armorPiercing: 1,
-  specialization: 'longarms',
+  specializations: {
+    athletics: { array: [] },
+    fighting: { array: [] },
+    shooting: { array: [] },
+  },
   rateOfFire: 3,
   shots: 30,
   minimumStrength: 6,

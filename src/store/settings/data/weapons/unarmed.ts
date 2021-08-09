@@ -9,4 +9,9 @@ export const unarmed: SIweapon = {
     strength: true,
     bonus: 0,
   },
+  specializations: {
+    athletics: { array: [] },
+    fighting: { array: [] },
+    shooting: { array: [] },
+  },
 };

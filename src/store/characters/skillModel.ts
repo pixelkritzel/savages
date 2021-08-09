@@ -65,7 +65,8 @@ const _skillModel = traitModel
           .getModifiersByField('bonusDamage')
           .filter(
             ({ isTechnicalConditionsFullfilled, traitNames }) =>
-              isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.has(self.name)
+              isTechnicalConditionsFullfilled(self.unifiedOptions) &&
+              traitNames.array.includes(self.name)
           )
           .reduce((bonusDamageSum, { bonusDamage }) => bonusDamageSum + bonusDamage, 0);
       return bonusDamageSum;
@@ -77,7 +78,8 @@ const _skillModel = traitModel
         .getModifiersByField('bonusDamageDices')
         .filter(
           ({ isTechnicalConditionsFullfilled, traitNames }) =>
-            isTechnicalConditionsFullfilled(self.unifiedOptions) && traitNames.has(self.name)
+            isTechnicalConditionsFullfilled(self.unifiedOptions) &&
+            traitNames.array.includes(self.name)
         )
         .forEach(
           ({ bonusDamageDices }) => (damageDices = [...damageDices, ...bonusDamageDices.asArray])
@@ -96,7 +98,9 @@ const _skillModel = traitModel
         if (
           (self.isSkillSpezialized &&
             self.isAttack &&
-            character.currentlyHoldWeapon.specialization !== skill.selectedSkillSpecialization) ||
+            character.currentlyHoldWeapon.specializations[
+              skill.name as keyof Iweapon['specializations']
+            ]?.array.includes(skill.selectedSkillSpecialization)) ||
           (self.isSkillSpezialized && skill.selectedSkillSpecialization === null)
         ) {
           modifierAccumulator.boni.skillSpecialization = -2;

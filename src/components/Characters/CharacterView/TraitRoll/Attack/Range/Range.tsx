@@ -37,8 +37,8 @@ export const Range = observer(function RangeFn({
             key={index}
             label={`${label} (${
               rangeModifier !== '-8'
-                ? currentlyHoldWeapon.range[index]
-                : currentlyHoldWeapon.range[2] * 4
+                ? currentlyHoldWeapon.range.array[index]
+                : currentlyHoldWeapon.range.array[2] * 4
             })`}
             disabled={
               rangeModifier === '-8' &&

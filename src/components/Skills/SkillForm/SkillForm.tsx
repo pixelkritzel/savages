@@ -9,7 +9,7 @@ import Select, { OptionsType, OptionTypeBase } from 'react-select';
 import { FormGroup } from 'ui/FormGroup';
 import { Input } from 'ui/Input';
 import { Flex, Grid, Span } from 'ui/Grid';
-import { Textarea } from 'store/Textarea';
+import { Textarea } from 'ui/Textarea';
 import { Button } from 'ui/Button';
 import { List } from 'ui/List';
 
@@ -17,6 +17,12 @@ import { IbaseSkill, Ispezialization, specializationModel } from 'store/skills';
 import { attributeNames } from 'store/consts';
 
 import { capitalizeFirstLetter } from 'lib/strings';
+import { Checkbox } from 'ui/Checkbox';
+import { snakeCase } from 'lodash';
+
+const StyledTextareaFormGroup = styled(FormGroup)`
+  height: 100%;
+`;
 
 const StyledTextarea = styled(Textarea)`
   width: 100%;
@@ -33,6 +39,7 @@ interface SkillFormProps {
   saveSkill: () => void;
   discardSkill: () => void;
   title: string;
+  isNewSkill?: boolean;
 }
 
 export const SkillForm = observer(function SkillFormFn({
@@ -40,16 +47,19 @@ export const SkillForm = observer(function SkillFormFn({
   saveSkill,
   discardSkill,
   title,
+  isNewSkill,
   ...otherProps
 }: SkillFormProps) {
   const localStore = useLocalStore<{
     specialization?: Ispezialization;
     specializationClone?: Ispezialization;
     attributeOptions: OptionsType<OptionTypeBase>;
+    isChangeIdentifier: boolean;
   }>(() => ({
     get attributeOptions() {
       return attributeNames.map((name) => ({ label: capitalizeFirstLetter(name), value: name }));
     },
+    isChangeIdentifier: false,
   }));
 
   const saveSpecialization = action(() => {
@@ -78,13 +88,17 @@ export const SkillForm = observer(function SkillFormFn({
     skill.availableSkillSpezializations.delete(specialization);
   });
 
+  const toggleIsSkillSpecialization = action(
+    () => (localStore.isChangeIdentifier = !localStore.isChangeIdentifier)
+  );
+
   return (
     <form>
       <Grid>
         <Span as="h1">{title}</Span>
         <Span start={1} end={7}>
           <Grid>
-            <Span start={1} end={13}>
+            <Span>
               <FormGroup
                 label="Skill name"
                 direction="column"
@@ -92,18 +106,45 @@ export const SkillForm = observer(function SkillFormFn({
                   <Input
                     id={id}
                     type="text"
-                    value={skill.name}
+                    value={skill.displayName}
                     placeholder="E.g. Common Knowledge"
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      skill.set('displayName', event.target.value);
+                      if (!localStore.isChangeIdentifier) {
+                        skill.set('name', snakeCase(event.target.value));
+                      }
+                    }}
+                  />
+                )}
+              />
+            </Span>
+            <Span>
+              <FormGroup
+                label="Skill Identifier"
+                direction="column"
+                input={({ id }) => (
+                  <Input
+                    id={id}
+                    type="text"
+                    value={skill.name}
+                    readOnly={!localStore.isChangeIdentifier}
+                    placeholder="E.g. common_knowledge"
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       skill.set('name', event.target.value)
                     }
                   />
                 )}
               />
+              <Checkbox
+                label="Change identifier"
+                checked={localStore.isChangeIdentifier}
+                onChange={toggleIsSkillSpecialization}
+              />
             </Span>
-            <Span start={1} end={13}>
+
+            <Span>
               <FormGroup
-                label="Skill name"
+                label="Associated Attribute"
                 direction="column"
                 input={({ id }) => (
                   <Select
@@ -120,10 +161,10 @@ export const SkillForm = observer(function SkillFormFn({
           </Grid>
         </Span>
         <Span start={7} end={13}>
-          <FormGroup
+          <StyledTextareaFormGroup
             label="Description"
             direction="column"
-            input={({ id }) => (
+            input={({ id }: { id: string }) => (
               <StyledTextarea
                 id={id}
                 value={skill.description}
@@ -134,7 +175,7 @@ export const SkillForm = observer(function SkillFormFn({
             )}
           />
         </Span>
-        <Span start={1} end={13}>
+        <Span>
           <Grid>
             <Span as={Flex} horizontal="space-between" vertical="baseline">
               <h3>Skill Specializations</h3>
@@ -186,7 +227,7 @@ export const SkillForm = observer(function SkillFormFn({
               </Span>
             )}
 
-            <Span start={1} end={13}>
+            <Span>
               {skill.availableSkillSpezializations.length === 0 ? (
                 <NoSkillSpecializations>No skill specializations yet</NoSkillSpecializations>
               ) : (

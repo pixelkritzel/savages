@@ -14,4 +14,9 @@ export const shotgun: SIweapon = {
   minimumStrength: 6,
   weight: 10,
   cost: 300,
+  specializations: {
+    athletics: { array: [] },
+    fighting: { array: [] },
+    shooting: { array: [] },
+  },
 };

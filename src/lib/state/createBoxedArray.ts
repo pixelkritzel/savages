@@ -24,6 +24,9 @@ export function createBoxedArray<T extends IAnyType | string>(
         add(value: Instance<typeof type>) {
           self.array.push(value);
         },
+        set(index: number, value: Instance<typeof type>) {
+          self.array[index] = value;
+        },
         clear() {
           self.array.splice(0, self.array.length);
         },

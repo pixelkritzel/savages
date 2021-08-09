@@ -38,6 +38,8 @@ export function createSpecializationScaffold(
 export const baseSkillModel = _modelPrototype
   .named('skillModel')
   .props({
+    displayName: types.string,
+    name: types.string,
     description: types.string,
     associatedAttribute: types.enumeration(attributeNames),
     availableSkillSpezializations: createSet('', specializationModel),
@@ -58,6 +60,7 @@ export interface SObaseSkill extends SnapshotOut<typeof baseSkillModel> {}
 export function createBaseSkillScaffold(initalValue?: Partial<SIbaseSkill>): SIbaseSkill {
   return {
     _id: uuidv4(),
+    displayName: '',
     name: '',
     description: '',
     associatedAttribute: 'agility',

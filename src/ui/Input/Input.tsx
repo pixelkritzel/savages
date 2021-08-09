@@ -15,6 +15,11 @@ const StyledInput = styled.input<{ hasError?: boolean; variant?: 'default' | 'in
   &:focus {
     outline: none;
   }
+
+  &[readonly] {
+    color: ${({ theme }) => theme.colors.grays['600']};
+    border-color: ${({ theme }) => theme.colors.grays['800']};
+  }
 `;
 
 const InputContainer = styled.div<{ hasFocus: boolean }>`

@@ -175,7 +175,8 @@ export const characterModel = types
 
       self.modifiers.edges.forEach((modifier) => {
         if (
-          (modifier.traitNames.has(trait.name) || modifier.traitNames.has('all')) &&
+          (modifier.traitNames.array.includes(trait.name) ||
+            modifier.traitNames.array.includes('all')) &&
           modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
         ) {
           if (modifier.isOptional) {
@@ -188,7 +189,8 @@ export const characterModel = types
 
       self.modifiers.hindrances.forEach((modifier) => {
         if (
-          (modifier.traitNames.has(trait.name) || modifier.traitNames.has('all')) &&
+          (modifier.traitNames.array.includes(trait.name) ||
+            modifier.traitNames.array.includes('all')) &&
           modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
         ) {
           if (modifier.isOptional) {
@@ -205,7 +207,8 @@ export const characterModel = types
       )
         .filter(
           (modifier) =>
-            (modifier.traitNames.has(trait.name) || modifier.traitNames.has('all')) &&
+            (modifier.traitNames.array.includes(trait.name) ||
+              modifier.traitNames.array.includes('all')) &&
             modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
         )
         .forEach((modifier) => {

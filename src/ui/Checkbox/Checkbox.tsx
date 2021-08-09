@@ -24,10 +24,12 @@ interface CheckboxProps extends React.ComponentProps<typeof InputCheckbox> {
 }
 
 export const Checkbox: React.FC<CheckboxProps> = observer(
-  ({ className, id = generateId(), label, type = 'checkbox', ...otherProps }) => (
-    <CheckboxContainer className={className}>
-      <InputCheckbox type="checkbox" id={id} {...otherProps} />
-      <Label htmlFor={id}>{label}</Label>
-    </CheckboxContainer>
-  )
+  ({ className, id = generateId(), label, type = 'checkbox', ...otherProps }) => {
+    return (
+      <CheckboxContainer className={className}>
+        <InputCheckbox type="checkbox" id={id} {...otherProps} />
+        <Label htmlFor={id}>{label}</Label>
+      </CheckboxContainer>
+    );
+  }
 );

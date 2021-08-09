@@ -29,7 +29,7 @@ export function createCollection<
       newModel: types.maybe(model),
     })
     .views((self) => ({
-      get asArray() {
+      get asArray(): IActualModel[] {
         return Array.from(self.all).map(([, value]) => value) as IActualModel[];
       },
       get(id: IActualModel['_id']): IActualModel {

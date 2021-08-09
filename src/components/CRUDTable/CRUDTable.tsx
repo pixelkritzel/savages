@@ -9,6 +9,7 @@ import { Button, buttonStyles } from 'ui/Button';
 
 import styled from 'styled-components';
 import { Icollection } from 'lib/state';
+import { capitalizeFirstLetter } from 'lib/strings';
 
 const Header = styled.div`
   display: flex;
@@ -64,7 +65,7 @@ export const CRUDTable: React.FC<CRUDTableProps> = observer(
           <List>
             {collection.asArray.map(({ _id, name }) => (
               <TableRow key={_id}>
-                <Link to={`/${baseUrl}/${_id}`}>{name}</Link>
+                <Link to={`/${baseUrl}/${_id}`}>{capitalizeFirstLetter(name)}</Link>
 
                 <StyledLink to={`/${baseUrl}/${_id}/edit`}>
                   Edit

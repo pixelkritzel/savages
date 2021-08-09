@@ -24,6 +24,7 @@ const colors = {
   },
   disabled: '#808080',
   grays: {
+    600: '#6c6c6c',
     700: '#999',
     800: '#ddd',
     900: '#fafafa',
@@ -115,7 +116,7 @@ export const theme = {
   },
   input: {
     borderColor: {
-      normal: colors.grays[800],
+      normal: colors.text.default,
       error: colors.danger.default,
     },
     padding: {

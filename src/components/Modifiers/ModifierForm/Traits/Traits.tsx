@@ -67,7 +67,7 @@ export const Traits = observer(function TraitsFn({
   );
 
   const saveTraitModifier = action(() => {
-    if (!modifier.traitModifiers.has(localStore.traitModifier)) {
+    if (!modifier.traitModifiers.array.includes(localStore.traitModifier)) {
       modifier.traitModifiers.add(localStore.traitModifier!);
     }
     localStore.traitModifier = undefined;

@@ -105,9 +105,9 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
               <tbody>
                 <tr>
                   <td>{currentlyHoldWeapon.name}</td>
-                  <td>{`${currentlyHoldWeapon.range[0] + rangeModifiers[0]} / ${
-                    currentlyHoldWeapon.range[1] + rangeModifiers[1]
-                  } / ${currentlyHoldWeapon.range[2] + rangeModifiers[2]}`}</td>
+                  <td>{`${currentlyHoldWeapon.range.array[0] + rangeModifiers[0]} / ${
+                    currentlyHoldWeapon.range.array[1] + rangeModifiers[1]
+                  } / ${currentlyHoldWeapon.range.array[2] + rangeModifiers[2]}`}</td>
                   <td>{currentlyHoldWeapon.damage.humanFriendly}</td>
                   <td>{currentlyHoldWeapon.armorPiercing}</td>
                   <td>{currentlyHoldWeapon.rateOfFire}</td>

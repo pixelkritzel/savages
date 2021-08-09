@@ -35,6 +35,7 @@ interface TextareaProps extends React.ComponentProps<typeof StyledTextarea> {
 export const Textarea = observer(function TextareaFn({
   className,
   style,
+  onValueChange,
   ...otherProps
 }: TextareaProps) {
   const [hasFocus, setHasFocus] = useState(false);

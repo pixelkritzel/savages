@@ -27,6 +27,7 @@ li,
 figure,
 figcaption,
 blockquote,
+input,
 dl,
 dd {
   margin: 0;
@@ -79,6 +80,14 @@ select {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+hr {
+  background-color: ${({ theme }) => theme.colors.grays['600']};
+  width: 80%;
+  height: 1px;
+  margin: 0 auto;
+
 }
 
 `;

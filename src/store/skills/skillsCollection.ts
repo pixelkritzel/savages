@@ -1,4 +1,4 @@
-import { SnapshotIn } from 'mobx-state-tree';
+import { SnapshotIn, Instance } from 'mobx-state-tree';
 import { createCollection } from 'lib/state';
 
 import {
@@ -15,6 +15,7 @@ export const skillsCollection = createCollection<
   SObaseSkill
 >('skillsCollection', baseSkillModel, createBaseSkillScaffold);
 
+export interface IskillsCollection extends Instance<typeof skillsCollection> {}
 export interface SIskillsCollection extends SnapshotIn<typeof skillsCollection> {}
 
 export function createSkillsCollection(): SIskillsCollection {

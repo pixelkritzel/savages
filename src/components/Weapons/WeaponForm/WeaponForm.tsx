@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { observer, useLocalStore } from 'mobx-react';
 import styled from 'styled-components';
 import Select from 'react-select';
@@ -13,13 +13,17 @@ import { IncDec } from 'ui/IncDec';
 import { StoreContext } from 'components/StoreContext';
 
 import { Istore } from 'store';
-import { Iweapon, weaponTypeFields, WEAPON_TYPES } from 'store/weapons';
+import { Iweapon, SIweapon, SOweapon, weaponTypeFields, WEAPON_TYPES } from 'store/weapons';
 import { Flex, Grid, Span } from 'ui/Grid';
 import { RadioGroup } from 'ui/RadioGroup';
 import { capitalizeFirstLetter } from 'lib/strings';
-import { Textarea } from 'store/Textarea';
+import { Textarea } from 'ui/Textarea';
 import { DICE_TYPES } from 'store/consts';
+import { action } from 'mobx';
+import { Iskill } from 'store/characters/skillModel';
+import { IbaseSkill } from 'store/skills';
 
+type SkillNamesForWeapons = 'athletics' | 'fighting' | 'shooting';
 interface WeaponFormProps {
   title: string;
   weapon: Iweapon;
@@ -35,7 +39,28 @@ export const WeaponForm = observer(function WeaponFormFn({
   ...otherProps
 }: WeaponFormProps) {
   const store = useContext<Istore>(StoreContext);
-  const localStore = useLocalStore(() => ({}));
+  interface IavailableSkill extends IbaseSkill {
+    name: SkillNamesForWeapons;
+  }
+
+  const localStore = useLocalStore(() => ({
+    get availableSkills() {
+      return (store.skills.asArray.filter((skill) =>
+        weapon.isForSkill(skill.name)
+      ) as unknown) as IavailableSkill[];
+    },
+  }));
+
+  const toggleWeaponSpecialization = (
+    skillName: SkillNamesForWeapons,
+    specializationName: string
+  ) => {
+    if (weapon.specializations[skillName].array.includes(specializationName)) {
+      weapon.specializations[skillName].delete(specializationName);
+    } else {
+      weapon.specializations[skillName].add(specializationName);
+    }
+  };
 
   return (
     <form>
@@ -74,6 +99,7 @@ export const WeaponForm = observer(function WeaponFormFn({
                     capitalizeFirstLetter(weaponType),
                   ]).map(([weaponType, label], index) => (
                     <Span
+                      key={weaponType}
                       start={index % 2 === 0 ? 1 : 7}
                       end={index % 2 === 0 ? 7 : 13}
                       row={Math.ceil((1 + 1 * index) / 2)}
@@ -98,6 +124,33 @@ export const WeaponForm = observer(function WeaponFormFn({
           />
         </Span>
 
+        {!!localStore.availableSkills.length && <Span as="h3">Weapon specializations</Span>}
+        {localStore.availableSkills.map((skill, index) => (
+          <Span
+            key={skill._id}
+            start={1 + (12 / localStore.availableSkills.length) * index}
+            end={
+              1 +
+              12 / localStore.availableSkills.length +
+              (12 / localStore.availableSkills.length) * index
+            }
+          >
+            <Flex direction="column" spacing="inside">
+              <strong>{capitalizeFirstLetter(skill.displayName)}</strong>
+              {skill.availableSkillSpezializations.array?.map((specialization) => {
+                return (
+                  <Checkbox
+                    key={specialization._id}
+                    label={specialization.name}
+                    checked={weapon.specializations[skill.name].array.includes(specialization.name)}
+                    onChange={() => toggleWeaponSpecialization(skill.name, specialization.name)}
+                  />
+                );
+              })}
+            </Flex>
+          </Span>
+        ))}
+        <Span as="hr" />
         <Span as="h3">Weapon Damage</Span>
 
         {DICE_TYPES.map((diceSides) => (
@@ -144,7 +197,69 @@ export const WeaponForm = observer(function WeaponFormFn({
             onChange={() => weapon.damage.set('strength', !weapon.damage.strength)}
           />
         </Span>
-
+        <Span as="hr" />
+        {weapon.isRangedWeapon && (
+          <>
+            <Span as="h3">Range</Span>
+            {['Short', 'Medium', 'Long'].map((label, index) => (
+              <Span key={label} start={1 + 4 * index} end={5 + 4 * index}>
+                <FormGroup
+                  direction="column"
+                  label={label}
+                  input={({ id }) => (
+                    <Input
+                      id={id}
+                      type="number"
+                      value={weapon.range.array[index]}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        weapon.range.set(index, Number(event.target.value))
+                      }
+                    />
+                  )}
+                />
+              </Span>
+            ))}
+            <Span as="hr" />
+          </>
+        )}
+        {weapon.isShootingWeapon && (
+          <>
+            <Span start={1} end={7}>
+              <FormGroup
+                label="Shots"
+                direction="column"
+                input={({ id }) => (
+                  <Input
+                    id={id}
+                    type="number"
+                    value={weapon.shots}
+                    onValueChange={(value) => weapon.set('shots', Number(value))}
+                  />
+                )}
+              />
+            </Span>
+            <Span start={7} end={13}>
+              <FormGroup
+                label={`Rate of Fire: ${weapon.rateOfFire}`}
+                direction="column"
+                input={({ id }) => (
+                  <Input
+                    id={id}
+                    type="range"
+                    step={1}
+                    min={1}
+                    max={6}
+                    value={weapon.rateOfFire}
+                    onValueChange={(value) =>
+                      weapon.set('rateOfFire', Number(value) as SOweapon['rateOfFire'])
+                    }
+                  />
+                )}
+              />
+            </Span>
+            <Span as="hr" />
+          </>
+        )}
         <Span as={Flex} horizontal="end">
           <Button variant="danger" size="big" onClick={() => discardWeapon()}>
             Cancel

@@ -9,9 +9,6 @@ export function createSet<T extends IAnyModelType | string>(
       array: types.array(type),
     })
     .views((self) => ({
-      has(value: Instance<typeof type>) {
-        return self.array.includes(value);
-      },
       get length() {
         return self.array.length;
       },
@@ -21,7 +18,7 @@ export function createSet<T extends IAnyModelType | string>(
         self.array.splice(self.array.indexOf(value));
       },
       add(value: Instance<typeof type>) {
-        if (!self.has(value)) {
+        if (!self.array.includes(value)) {
           self.array.push(value);
         }
       },
