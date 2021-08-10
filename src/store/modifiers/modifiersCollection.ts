@@ -1,10 +1,17 @@
-import { SOmodifier } from './modifierModel';
-import { modifierModel, SImodifier, createModifierScaffold } from 'store/modifiers/modifierModel';
+import { Instance } from 'mobx-state-tree';
+
+import {
+  modifierModel,
+  SImodifier,
+  createModifierScaffold,
+  Imodifier,
+} from 'store/modifiers/modifierModel';
 import { createCollection } from 'lib/state';
 
 export const modifiersCollectionModel = createCollection<
   typeof modifierModel,
-  // @ts-expect-error
-  SImodifier,
-  SOmodifier
+  Imodifier,
+  SImodifier
 >('modifiersCollection', modifierModel, createModifierScaffold);
+
+export interface Imodifiers extends Instance<typeof modifiersCollectionModel> {}

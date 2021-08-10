@@ -4,10 +4,12 @@ import styled from 'styled-components';
 import { Iskill, isMelee, isShooting as isShootingFn } from 'store/characters/skillModel';
 import { FormGroup } from 'ui/FormGroup';
 import { Checkbox } from 'ui/Checkbox';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { Icharacter } from 'store/characters';
 import { Table } from 'ui/Table';
 import { RateOfFireAndReload } from './RateOfFireAndReload';
+import { StoreContext } from 'components/StoreContext';
+import { Istore } from 'store';
 
 const GridContainer = styled.div`
   display: grid;
@@ -47,6 +49,7 @@ export const WeaponOptions = observer(function WeaponOptionsFn({
 
   ...otherProps
 }: WeaponOptionsProps) {
+  const store = useContext<Istore>(StoreContext);
   const isShooting = useMemo(() => isShootingFn(attackSkill), [attackSkill]);
   const weapons = useMemo(() => character.getWeaponsByAttackSkill(attackSkill), [
     character,

@@ -1,4 +1,12 @@
-import { types, SnapshotIn, Instance, flow, getSnapshot, isStateTreeNode } from 'mobx-state-tree';
+import {
+  types,
+  SnapshotIn,
+  Instance,
+  flow,
+  getSnapshot,
+  isStateTreeNode,
+  detach,
+} from 'mobx-state-tree';
 import PouchDB from 'pouchdb';
 
 import { createPouchAdapter } from 'persistence/pouchAdapter';
@@ -44,27 +52,51 @@ export function createCollection<
       },
     }))
     .actions((self) => ({
-      deleteModel(id: IActualModel['_id']) {
-        self.all.delete(id);
-        pouchAdapter.delete(id);
-      },
-      set: flow(function* (id: string, value: IActualModel) {
-        const pouchModel = yield pouchAdapter.set(id, getSnapshot(value) as any);
-        self.all.set(id, pouchModel);
-      }),
-      add: flow(function* (value: SIActualModel | IActualModel) {
-        if (self.has(value._id)) {
-          throw new Error(`collectionModel ${name} tried to add already existing model!`);
-        }
-        const dbModel = yield pouchAdapter.add(
-          (isStateTreeNode(value) ? getSnapshot(value) : value) as any
-        );
-        self.all.set(value._id, dbModel);
-      }),
-      setIsLoaded(isLoaded: typeof self['isLoaded']) {
-        self.isLoaded = isLoaded;
+      _set(id: string, value: IActualModel | SIActualModel) {
+        self.all.set(id, value);
       },
     }))
+    .actions((self) => {
+      return {
+        deleteModel(id: IActualModel['_id']) {
+          self.all.delete(id);
+          pouchAdapter.delete(id);
+        },
+        async set(id: string, value: IActualModel) {
+          const pouchModel = await pouchAdapter.set(id, getSnapshot(value) as any);
+          self._set(id, pouchModel);
+        },
+        async add(value: SIActualModel | IActualModel) {
+          if (self.has(value._id)) {
+            throw new Error(`collectionModel ${name} tried to add already existing model!`);
+          }
+          const dbModel = await pouchAdapter.add(
+            (isStateTreeNode(value) ? getSnapshot(value) : value) as any
+          );
+          self._set(value._id, dbModel);
+          console.log(JSON.stringify(self, undefined, 2));
+
+          return self.get(dbModel._id);
+        },
+        setIsLoaded(isLoaded: typeof self['isLoaded']) {
+          self.isLoaded = isLoaded;
+        },
+        new() {
+          // @ts-expect-error
+          self.newModel = model.create(createModelScaffoldFn() as SIActualModel) as IActualModel;
+        },
+        async saveNewModel() {
+          if (self.newModel) {
+            const newModel = detach(self.newModel);
+            // @ts-expect-error
+            return await this.add(newModel);
+          }
+        },
+        async discardNewModel() {
+          self.newModel = undefined;
+        },
+      };
+    })
     .actions((self) => {
       function afterCreate() {
         loadCollection();

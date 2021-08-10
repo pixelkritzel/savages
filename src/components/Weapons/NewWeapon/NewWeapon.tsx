@@ -5,6 +5,7 @@ import { weaponModel, createWeaponScaffold } from 'store/weapons';
 import { StoreContext } from 'components/StoreContext';
 import { Istore } from 'store';
 import { useHistory } from 'react-router-dom';
+import { useEffect } from 'react';
 
 interface NewWeaponProps {
   children?: React.ReactNode;
@@ -13,20 +14,25 @@ interface NewWeaponProps {
 export const NewWeapon = observer(function NewWeaponFn({ ...otherProps }: NewWeaponProps) {
   const store = useContext<Istore>(StoreContext);
   const history = useHistory();
-  const { current: weapon } = useRef(weaponModel.create(createWeaponScaffold()));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => store.weapons.new(), []);
+
   return (
     <div {...otherProps}>
-      <WeaponForm
-        weapon={weapon}
-        title="New weapon"
-        saveWeapon={() => {
-          store.weapons.add(weapon);
-          history.push('/weapons');
-        }}
-        discardWeapon={() => {
-          history.push('/weapons');
-        }}
-      />
+      {store.weapons.newModel && (
+        <WeaponForm
+          weapon={store.weapons.newModel}
+          title="New weapon"
+          saveWeapon={() => {
+            store.weapons.saveNewModel();
+            history.push('/weapons');
+          }}
+          discardWeapon={() => {
+            store.weapons.discardNewModel();
+            history.push('/weapons');
+          }}
+        />
+      )}
     </div>
   );
 });

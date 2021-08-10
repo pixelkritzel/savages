@@ -1,3 +1,4 @@
+import { Imodifier } from './../modifiers/modifierModel';
 import { createSet } from 'lib/state/createSet';
 import { IskillsCollection, skillsCollection } from './../skills/skillsCollection';
 import { createBoxedArray } from 'lib/state/createBoxedArray';
@@ -8,6 +9,7 @@ import { modifierModel } from 'store/modifiers/modifierModel';
 
 import { createDamageScaffold, damageModel } from '../settings/damageModel';
 import { diceType } from 'store/consts';
+import { Imodifiers } from 'store/modifiers/modifiersCollection';
 
 export const WEAPON_TYPES = ['melee', 'throwable', 'shotgun', 'ranged'] as const;
 
@@ -99,12 +101,6 @@ export const weaponModel = types
         default:
           return false;
       }
-    },
-    get availableSkills() {
-      return ['athletics', 'fighting', 'shooting'] as const;
-      // return (['athletics', 'fighting', 'shooting'] as const).filter((skillName) =>
-      //   this.isForSkill(skillName)
-      // );
     },
     get remainingAmmunition() {
       return self.shots - self.spentAmmunition;

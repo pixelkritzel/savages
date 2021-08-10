@@ -58,7 +58,7 @@ const InputContainer = styled.div<{ inline: boolean; direction: 'column' | 'row'
           width: 100%;
           height: ${({ direction }) => direction === 'column' && '100%'};
         `}
-  input {
+  input, select {
     min-width: 100%;
     max-width: 100%;
   }
