@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { focusStyles } from 'utils/focus-styles';
+import { focusStyles } from 'lib/utils/focus-styles';
 
 type buttonVariants = 'default' | 'danger' | 'success' | 'link' | 'icon' | undefined;
 type buttonSizes = 'default' | 'big';

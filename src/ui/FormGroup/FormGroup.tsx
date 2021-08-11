@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { generateId } from 'utils/generateId';
+import { generateId } from 'lib/utils/generateId';
 import styled, { css } from 'styled-components';
 import { gridSpanStyles, gridStyles } from 'ui/Grid';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { focusStyles } from 'utils/focus-styles';
+import { focusStyles } from 'lib/utils/focus-styles';
 
 const StyledInput = styled.input<{ hasError?: boolean; variant?: 'default' | 'inline' }>`
   height: ${({ variant }) => variant === 'default' && '36px'};

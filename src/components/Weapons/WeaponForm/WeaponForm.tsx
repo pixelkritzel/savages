@@ -1,30 +1,27 @@
 import React, { useContext } from 'react';
+import { action } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react';
-import styled from 'styled-components';
-import Select from 'react-select';
+import ReactModal from 'react-modal';
 
-import { Box } from 'ui/Box';
 import { Button } from 'ui/Button';
 import { Checkbox } from 'ui/Checkbox';
 import { FormGroup } from 'ui/FormGroup';
 import { Input } from 'ui/Input';
 import { IncDec } from 'ui/IncDec';
+import { Flex, Grid, Span } from 'ui/Grid';
+import { Textarea } from 'ui/Textarea';
 
 import { StoreContext } from 'components/StoreContext';
+import { ModifierForm } from 'components/Modifiers/ModifierForm';
 
 import { Istore } from 'store';
-import { Iweapon, SIweapon, SOweapon, weaponTypeFields, WEAPON_TYPES } from 'store/weapons';
-import { Flex, Grid, Span } from 'ui/Grid';
-import { RadioGroup } from 'ui/RadioGroup';
+import { Iweapon, SOweapon, weaponTypeFields, WEAPON_TYPES } from 'store/weapons';
 import { capitalizeFirstLetter } from 'lib/strings';
-import { Textarea } from 'ui/Textarea';
 import { DICE_TYPES } from 'store/consts';
-import { action } from 'mobx';
-import { Iskill } from 'store/characters/skillModel';
 import { IbaseSkill } from 'store/skills';
-import { createModifierScaffold, Imodifier, modifierModel } from 'store/modifiers';
-import ReactModal from 'react-modal';
-import { ModifierForm } from 'components/Modifiers/ModifierForm';
+import { Imodifier } from 'store/modifiers';
+
+import { EditModifier } from './EditModifier';
 
 type SkillNamesForWeapons = 'athletics' | 'fighting' | 'shooting';
 interface WeaponFormProps {
@@ -377,22 +374,42 @@ export const WeaponForm = observer(function WeaponFormFn({
         )}
         <Span as="h3">Modifiers</Span>
         <Span>
-          {weapon.modifiers.length === 0
-            ? "This weapon doesn't have any modifiers"
-            : weapon.modifiers.array.map((modifier) => (
-                <Flex key={modifier._id}>
+          <Grid spacing="inside">
+            {weapon.modifiers.length === 0 ? (
+              <Span>This weapon doesn't have any modifiers</Span>
+            ) : (
+              weapon.modifiers.array.map((modifier: Imodifier) => (
+                <Span as={Flex} key={modifier._id} horizontal="space-between" spacing="inside">
                   <div>{modifier.name}</div>
                   <div>
-                    <Flex>
-                      <Button>Edit</Button>
-                      <Button>Remove</Button>
+                    <Flex spacing="inside">
+                      <EditModifier modifier={modifier} />
+                      <Button onClick={() => store.modifiers.deleteModel(modifier._id)}>
+                        Remove
+                      </Button>
                     </Flex>
                   </div>
-                </Flex>
-              ))}
+                </Span>
+              ))
+            )}
+          </Grid>
         </Span>
         <Span as={Flex} horizontal="space-between">
-          <Button disabled={!store.modifiers.asArray.length}>Add existing modifier</Button>
+          <select
+            disabled={!store.modifiers.asArray.length}
+            value=""
+            onChange={(event) => weapon.modifiers.add(store.modifiers.get(event?.target.value))}
+          >
+            <option>Add an existing modifier</option>
+            {store.modifiers.asArray
+              .filter((modifier) => !weapon.modifiers.array.includes(modifier))
+              .map((modifier) => (
+                <option key={modifier._id} value={modifier._id}>
+                  {modifier.name}
+                </option>
+              ))}
+          </select>
+
           <Button variant="success" onClick={newModifier}>
             New modifier
           </Button>

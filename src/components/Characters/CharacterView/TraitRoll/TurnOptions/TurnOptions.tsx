@@ -5,7 +5,7 @@ import { Itrait } from 'store/characters/traitModel';
 import styled from 'styled-components';
 import { FormGroup } from 'ui/FormGroup';
 import { Checkbox } from 'ui/Checkbox';
-import { generateId } from 'utils/generateId';
+import { generateId } from 'lib/utils/generateId';
 
 interface TurnOptionsProps {
   trait: Itrait;

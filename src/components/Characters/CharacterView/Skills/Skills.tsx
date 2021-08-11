@@ -11,7 +11,7 @@ import { Iskill } from 'store/characters/skillModel';
 
 import { SkillRoll } from './SkillRoll';
 
-import { mapToArray } from 'utils/mapToArray';
+import { mapToArray } from 'lib/utils/mapToArray';
 
 interface SkillsProps {
   character: Icharacter;

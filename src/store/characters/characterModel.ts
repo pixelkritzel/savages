@@ -1,6 +1,6 @@
 import { statesModel } from './statesModel';
 import { Itrait } from 'store/characters/traitModel';
-import { addMiddleware, types, Instance, SnapshotIn, IDisposer, getRoot } from 'mobx-state-tree';
+import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Imodifier } from 'store/modifiers';
@@ -175,9 +175,8 @@ export const characterModel = types
 
       self.modifiers.edges.forEach((modifier) => {
         if (
-          (modifier.traitNames.array.includes(trait.name) ||
-            modifier.traitNames.array.includes('all')) &&
-          modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
+          modifier.traitNames.array.includes(trait.name) ||
+          modifier.traitNames.array.includes('all')
         ) {
           if (modifier.isOptional) {
             optionalModifiers.edges.push(modifier);
@@ -189,9 +188,8 @@ export const characterModel = types
 
       self.modifiers.hindrances.forEach((modifier) => {
         if (
-          (modifier.traitNames.array.includes(trait.name) ||
-            modifier.traitNames.array.includes('all')) &&
-          modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
+          modifier.traitNames.array.includes(trait.name) ||
+          modifier.traitNames.array.includes('all')
         ) {
           if (modifier.isOptional) {
             optionalModifiers.hindrances.push(modifier);

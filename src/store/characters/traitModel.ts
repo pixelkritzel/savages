@@ -9,8 +9,8 @@ import {
 
 import { diceType, DICE_TYPES } from 'store/consts';
 
-import { padWithMathOperator } from 'utils/padWithMathOpertor';
-import { rollDice } from 'utils/rollDice';
+import { padWithMathOperator } from 'lib/utils/padWithMathOpertor';
+import { rollDice } from 'lib/utils/rollDice';
 import { SOtraitOptions, traitOptions } from './traitOptions';
 import { SOskillOptions } from './skillOptions';
 
@@ -81,10 +81,7 @@ export const traitModel = types
 
       for (const modifier of character.activeModifiers) {
         for (const traitModifier of modifier.traitModifiers.array) {
-          if (
-            traitModifier.traitName === trait.name &&
-            modifier.isTechnicalConditionsFullfilled(self.unifiedOptions)
-          ) {
+          if (traitModifier.traitName === trait.name) {
             modifierAccumulator.diceDifferences[modifier.reason] = traitModifier.bonusDice;
             modifierAccumulator.boni[modifier.reason] = traitModifier.bonusValue;
           }

@@ -63,11 +63,6 @@ const _skillModel = traitModel
         (self.skillOptions.isThreeRoundBurst && self.skillOptions.rateOfFire === 1 ? 1 : 0) +
         character
           .getModifiersByField('bonusDamage')
-          .filter(
-            ({ isTechnicalConditionsFullfilled, traitNames }) =>
-              isTechnicalConditionsFullfilled(self.unifiedOptions) &&
-              traitNames.array.includes(self.name)
-          )
           .reduce((bonusDamageSum, { bonusDamage }) => bonusDamageSum + bonusDamage, 0);
       return bonusDamageSum;
     },
@@ -76,11 +71,6 @@ const _skillModel = traitModel
       let damageDices: number[] = [];
       character
         .getModifiersByField('bonusDamageDices')
-        .filter(
-          ({ isTechnicalConditionsFullfilled, traitNames }) =>
-            isTechnicalConditionsFullfilled(self.unifiedOptions) &&
-            traitNames.array.includes(self.name)
-        )
         .forEach(
           ({ bonusDamageDices }) => (damageDices = [...damageDices, ...bonusDamageDices.asArray])
         );

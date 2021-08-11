@@ -1,15 +1,12 @@
-import { Imodifier } from './../modifiers/modifierModel';
 import { createSet } from 'lib/state/createSet';
-import { IskillsCollection, skillsCollection } from './../skills/skillsCollection';
 import { createBoxedArray } from 'lib/state/createBoxedArray';
-import { types, Instance, SnapshotIn, SnapshotOut, getRoot } from 'mobx-state-tree';
+import { types, Instance, SnapshotIn, SnapshotOut } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { modifierModel } from 'store/modifiers/modifierModel';
 
 import { createDamageScaffold, damageModel } from '../settings/damageModel';
 import { diceType } from 'store/consts';
-import { Imodifiers } from 'store/modifiers/modifiersCollection';
 
 export const WEAPON_TYPES = ['melee', 'throwable', 'shotgun', 'ranged'] as const;
 

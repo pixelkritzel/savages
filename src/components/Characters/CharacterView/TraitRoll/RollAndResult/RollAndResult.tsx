@@ -9,7 +9,7 @@ import { Button } from 'ui/Button';
 import { Icharacter } from 'store/characters';
 import { Itrait, TraitRollResult } from 'store/characters/traitModel';
 
-import { padWithMathOperator } from 'utils/padWithMathOpertor';
+import { padWithMathOperator } from 'lib/utils/padWithMathOpertor';
 import { isAttackSkill, isShooting, isSkill } from 'store/characters/skillModel';
 import { Idamage } from 'store/settings/damageModel';
 

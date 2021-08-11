@@ -1,7 +1,6 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import { WeaponForm } from '../WeaponForm';
-import { weaponModel, createWeaponScaffold } from 'store/weapons';
 import { StoreContext } from 'components/StoreContext';
 import { Istore } from 'store';
 import { useHistory } from 'react-router-dom';

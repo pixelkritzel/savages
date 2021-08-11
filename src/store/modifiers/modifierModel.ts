@@ -2,15 +2,13 @@ import { _modelPrototype } from 'lib/state/createCollection';
 import { types, Instance, getParent, SnapshotOut, SnapshotIn, destroy } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
-import { padWithMathOperator } from 'utils/padWithMathOpertor';
-
-import { traitModifierModel } from './traitModifierModel';
-
-import { Itrait } from 'store/characters/traitModel';
-import { DICE_TYPES } from 'store/consts';
+import { padWithMathOperator } from 'lib/utils/padWithMathOpertor';
 import { createSet } from 'lib/state/createSet';
 import { createBoxedArray } from 'lib/state/createBoxedArray';
-import { traitRollOptions } from 'store/characters/traitRollOptions';
+
+import { DICE_TYPES } from 'store/consts';
+
+import { traitModifierModel } from './traitModifierModel';
 
 export const dicesModel = types
   .model({ 4: 0, 6: 0, 8: 0, 10: 0, 12: 0 })
@@ -57,12 +55,6 @@ const rangeModifierModel = types
     },
   }));
 
-const replaceSkillAttributeModel = types.model({ skill: '', attribute: '' }).actions((self) => ({
-  set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(key: K, value: T[K]) {
-    self[key] = value;
-  },
-}));
-
 export const modifierModel = _modelPrototype
   .named('modifierModel')
   .props({
@@ -104,9 +96,6 @@ export const modifierModel = _modelPrototype
     grantedPowers: createSet('', types.string),
     grantedSkills: createSet('', types.string),
     rangeModifier: rangeModifierModel,
-    // TODO: The following fields have to be implented at ModifierForm
-    technicalConditions: createBoxedArray('', traitRollOptions),
-    replaceSkillAttribute: replaceSkillAttributeModel,
   })
   .views((self) => ({
     getHumanFriendlyTraitModifierValueByTrait(traitName: string) {
@@ -119,17 +108,6 @@ export const modifierModel = _modelPrototype
       return `Dice: ${padWithMathOperator(traitModifier.bonusDice)} | Bonus: ${padWithMathOperator(
         traitModifier.bonusValue
       )}`;
-    },
-    isTechnicalConditionsFullfilled(options: Itrait['unifiedOptions']) {
-      return self.technicalConditions.array.length === 0
-        ? true
-        : self.technicalConditions.array
-            .map((condition) => {
-              return Object.entries({ ...condition }).every(([key, value]) => {
-                return options[key] === value;
-              });
-            })
-            .some((isFullfilled) => isFullfilled);
     },
 
     get source() {
@@ -205,7 +183,5 @@ export function createModifierScaffold(): SImodifier {
     grantedWeapons: { array: [] },
     grantedPowers: { array: [] },
     grantedSkills: { array: [] },
-    technicalConditions: { array: [] },
-    replaceSkillAttribute: { skill: '', attribute: '' },
   };
 }

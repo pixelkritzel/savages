@@ -22,6 +22,16 @@ const store = types
     skills: skillsCollection,
     weapons: weaponsCollection,
   })
+  .views((self) => ({
+    get isAllLoaded() {
+      return (
+        self.modifiers.isLoaded &&
+        self.powers.isLoaded &&
+        self.skills.isLoaded &&
+        self.weapons.isLoaded
+      );
+    },
+  }))
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
       key: K,

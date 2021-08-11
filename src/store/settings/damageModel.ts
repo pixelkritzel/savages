@@ -1,6 +1,6 @@
 import { dicesModel } from './../modifiers/modifierModel';
 import { Instance, types, SnapshotIn, getSnapshot } from 'mobx-state-tree';
-import { rollDice } from 'utils/rollDice';
+import { rollDice } from 'lib/utils/rollDice';
 
 export const damageModel = types
   .model('damageModel', {

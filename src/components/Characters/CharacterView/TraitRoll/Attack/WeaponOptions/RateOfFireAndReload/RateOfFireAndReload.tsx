@@ -10,7 +10,7 @@ import { getSpentAmmunitionByRateOfFire, Iweapon } from 'store/weapons/weaponMod
 import { Iskill } from 'store/characters/skillModel';
 import { IskillOptions } from 'store/characters/skillOptions';
 
-import { generateId } from 'utils/generateId';
+import { generateId } from 'lib/utils/generateId';
 
 const Container = styled.div`
   grid-area: 3 / 1 / 3 / 4;

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
-import { generateId } from 'utils/generateId';
+import { generateId } from 'lib/utils/generateId';
 
 const InputCheckbox = styled.input`
   margin-right: 8px;

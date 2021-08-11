@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
-import { focusStyles } from 'utils/focus-styles';
+import { focusStyles } from 'lib/utils/focus-styles';
 import { useState } from 'react';
 
 const StyledTextarea = styled.textarea<{ hasError?: boolean }>`

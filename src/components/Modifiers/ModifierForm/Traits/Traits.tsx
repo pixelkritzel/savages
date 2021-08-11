@@ -12,7 +12,7 @@ import { List } from 'ui/List';
 import { Imodifier } from 'store/modifiers';
 import { ItraitModifier, traitModifierModel } from 'store/modifiers/traitModifierModel';
 
-import { padWithMathOperator } from 'utils/padWithMathOpertor';
+import { padWithMathOperator } from 'lib/utils/padWithMathOpertor';
 import { capitalizeFirstLetter } from 'lib/strings';
 
 import { TraitModifierForm } from '../TraitModifierForm';
