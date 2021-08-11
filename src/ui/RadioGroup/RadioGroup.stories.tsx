@@ -11,12 +11,15 @@ export default {
 
 const Template: ComponentStory<typeof RadioGroup> = (args) => {
   const [value, setValue] = useState('');
-  return <RadioGroup {...args} selectedValue={value} setSelectedValue={setValue} />;
+  return (
+    <>
+      Pizza toping? <RadioGroup {...args} selectedValue={value} setSelectedValue={setValue} />
+    </>
+  );
 };
 
 export const Default = Template.bind({});
 Default.args = {
-  title: 'Pizza toping?',
   radios: [
     ['none', 'None'],
     ['tuna', 'Tuna'],

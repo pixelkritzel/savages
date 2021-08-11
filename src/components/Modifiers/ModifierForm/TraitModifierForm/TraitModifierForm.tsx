@@ -19,6 +19,7 @@ import { attributeNames } from 'store/consts';
 import { IbaseSkill } from 'store/skills';
 
 import { formGrid, TwoColumns } from '../styled';
+import { Box } from 'ui/Box';
 
 const Form = styled.form`
   ${formGrid}
@@ -62,8 +63,22 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
             value: _id,
           })),
         ];
+      } else if (traitModifier.type === 'pace') {
+        return [
+          {
+            label: 'Pace',
+            value: 'pace',
+          },
+        ];
+      } else if (traitModifier.type === 'all') {
+        return [
+          {
+            label: 'All',
+            value: 'all',
+          },
+        ];
       } else {
-        return null;
+        return [];
       }
     },
     get selectedTraitOption() {
@@ -100,12 +115,15 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
     <>
       <h4>{title}</h4>
       <Form>
-        <RadioGroup
-          radios={traitModifierModelTypes.map((type) => [type, capitalizeFirstLetter(type)])}
-          title="Type"
-          selectedValue={traitModifier.type}
-          setSelectedValue={(value) => traitModifier.set('type', value)}
-        />
+        <Box title="Type">
+          <RadioGroup
+            radios={traitModifierModelTypes.map((type) => [type, capitalizeFirstLetter(type)])}
+            selectedValue={traitModifier.type}
+            setSelectedValue={(value) =>
+              traitModifier.setType(value as typeof traitModifierModelTypes[number])
+            }
+          />
+        </Box>
         {localStore.traitOptions ? (
           <FormGroup
             inline
@@ -113,7 +131,7 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
             input={({ id }) => (
               <Select
                 id={id}
-                input={localStore.selectedTraitOption}
+                input={traitModifier.traitName}
                 options={localStore.traitOptions!}
                 onChange={(option) => {
                   if (option) {

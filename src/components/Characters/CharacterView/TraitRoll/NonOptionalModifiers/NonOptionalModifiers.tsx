@@ -8,7 +8,7 @@ import { InfoPopover } from 'components/InfoPopover';
 
 import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
-import { Ihindrance } from 'store/settings/settingHindranceModel';
+import { Ihindrance } from 'store/hindrances/hindranceModel';
 import { IedgeModel } from 'store/settings/settingEdgeModel';
 import { TwoColumns } from '../OptionalModifiers';
 

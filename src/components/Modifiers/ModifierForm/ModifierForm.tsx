@@ -64,7 +64,12 @@ export const ModifierForm = observer(function ModifierFormFn({
         label: name,
         value: _id,
       }));
-      return [...attributes, ...skills, { label: 'Pace', value: 'pace' }];
+      return [
+        { label: 'All', value: 'all' },
+        ...attributes,
+        ...skills,
+        { label: 'Pace', value: 'pace' },
+      ];
     },
     get edgesOptions() {
       return store.selectedSetting.availableEdges.map(({ name, _id }) => ({

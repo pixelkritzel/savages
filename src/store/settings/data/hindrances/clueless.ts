@@ -1,4 +1,4 @@
-import { SIhindrance } from 'store/settings/settingHindranceModel';
+import { SIhindrance } from 'store/hindrances/hindranceModel';
 
 export const clueless: SIhindrance = {
   _id: 'clueless',

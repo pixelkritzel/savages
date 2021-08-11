@@ -1,19 +1,18 @@
-import { statesModel } from './statesModel';
-import { Itrait } from 'store/characters/traitModel';
 import { addMiddleware, types, Instance, SnapshotIn, IDisposer } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Imodifier } from 'store/modifiers';
 import { weaponModel } from 'store/weapons/weaponModel';
 import { settingEdgeModel } from 'store/settings/settingEdgeModel';
-import { settingHindranceModel } from 'store/settings/settingHindranceModel';
+import { hindranceModel } from 'store/hindrances/hindranceModel';
 import { settingModel } from 'store/settings/settingModel';
+import { sizeType } from 'store/consts';
 
 import { attributesModel } from './attributesModel';
 import { powerModel } from './power';
 import { Iskill, skillModel } from './skillModel';
 import { traitModel } from './traitModel';
-import { sizeType } from 'store/consts';
+import { statesModel } from './statesModel';
 
 export const characterModel = types
   .model('character', {
@@ -47,7 +46,7 @@ export const characterModel = types
     setting: types.reference(settingModel),
     skills: types.map(types.late(() => skillModel)),
     edges: types.array(types.reference(settingEdgeModel)),
-    hindrances: types.array(types.reference(settingHindranceModel)),
+    hindrances: types.array(types.reference(hindranceModel)),
     powers: types.map(powerModel),
     basePowerPoints: 0,
     currentPowerPoints: 0,
@@ -147,7 +146,7 @@ export const characterModel = types
       return errors;
     },
 
-    getTraitModifiers(trait: Itrait) {
+    getTraitModifiers(traitName: string) {
       type TraitModifiers = {
         edges: Imodifier[];
         hindrances: Imodifier[];
@@ -175,7 +174,7 @@ export const characterModel = types
 
       self.modifiers.edges.forEach((modifier) => {
         if (
-          modifier.traitNames.array.includes(trait.name) ||
+          modifier.traitNames.array.includes(traitName) ||
           modifier.traitNames.array.includes('all')
         ) {
           if (modifier.isOptional) {
@@ -188,7 +187,7 @@ export const characterModel = types
 
       self.modifiers.hindrances.forEach((modifier) => {
         if (
-          modifier.traitNames.array.includes(trait.name) ||
+          modifier.traitNames.array.includes(traitName) ||
           modifier.traitNames.array.includes('all')
         ) {
           if (modifier.isOptional) {
@@ -205,9 +204,8 @@ export const characterModel = types
       )
         .filter(
           (modifier) =>
-            (modifier.traitNames.array.includes(trait.name) ||
-              modifier.traitNames.array.includes('all')) &&
-            modifier.isTechnicalConditionsFullfilled(trait.unifiedOptions)
+            modifier.traitNames.array.includes(traitName) ||
+            modifier.traitNames.array.includes('all')
         )
         .forEach((modifier) => {
           if (modifier.isOptional) {

@@ -8,6 +8,7 @@ import { StoreContext } from 'components/StoreContext';
 
 import { Istore } from 'store';
 import { Imodifier } from 'store/modifiers';
+import { Ihindrance } from 'store/hindrances';
 
 interface AddedHindrancesProps {
   modifier: Imodifier;
@@ -20,7 +21,7 @@ export const AddedHindrances = observer(function AddedHindrancesFn({
   const store = useContext<Istore>(StoreContext);
   const localStore = useLocalStore(() => ({
     get hindrancesOptions(): OptionsType<OptionTypeBase> {
-      return store.selectedSetting.availableHindrances.map(({ _id, name }) => ({
+      return store.selectedSetting.availableHindrances.array.map(({ _id, name }: Ihindrance) => ({
         label: name,
         value: _id,
       }));

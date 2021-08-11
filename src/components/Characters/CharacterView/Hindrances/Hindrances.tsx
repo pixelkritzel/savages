@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Box } from 'ui/Box';
 
-import { Ihindrance } from 'store/settings/settingHindranceModel';
+import { Ihindrance } from 'store/hindrances/hindranceModel';
 
 const StyledBox = styled(Box)`
   ul {

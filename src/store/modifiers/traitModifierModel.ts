@@ -16,16 +16,16 @@ const traitModifierSpecializationModel = types
     },
   }));
 
-export const traitModifierModelTypes = ['attribute', 'skill', 'pace'] as const;
+export const traitModifierModelTypes = ['attribute', 'skill', 'pace', 'all'] as const;
 
 export const traitModifierModel = types
   .model('traitModifierModel', {
     _id: types.optional(types.identifier, uuid4),
     type: types.optional(
       types.enumeration((traitModifierModelTypes as unknown) as string[]),
-      'attribute'
+      'all'
     ),
-    traitName: '',
+    traitName: 'all',
     bonusValue: 0,
     bonusDice: 0,
     diceMinimum: 0,
@@ -38,6 +38,11 @@ export const traitModifierModel = types
     get source() {
       return getParent(self, 2);
     },
+    get validationErrors() {
+      return {
+        traitName: self.traitName === 'undefined' ? ('trait_name_missing' as const) : false,
+      };
+    },
   }))
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
@@ -47,11 +52,15 @@ export const traitModifierModel = types
       if (key === 'traitName' && value !== self.traitName) {
         self.specialization = traitModifierSpecializationModel.create({});
       }
-      if (key === 'type' && value !== 'skill') {
-        self.specialization = traitModifierSpecializationModel.create({});
+      self[key] = value;
+    },
+    setType(type: typeof traitModifierModelTypes[number]) {
+      if (type === 'all' || type === 'pace') {
+        self.traitName = type;
+      } else {
         self.traitName = '';
       }
-      self[key] = value;
+      self.type = type;
     },
   }));
 

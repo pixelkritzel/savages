@@ -10,7 +10,7 @@ import { InfoPopover } from 'components/InfoPopover';
 import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
 import { Iskill, isSkill } from 'store/characters/skillModel';
-import { Ihindrance } from 'store/settings/settingHindranceModel';
+import { Ihindrance } from 'store/hindrances/hindranceModel';
 import { IedgeModel } from 'store/settings/settingEdgeModel';
 
 const GridContainer = styled.div`

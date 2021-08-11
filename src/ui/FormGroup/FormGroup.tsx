@@ -53,12 +53,13 @@ const InputContainer = styled.div<{ inline: boolean; direction: 'column' | 'row'
       ? css`
           ${gridSpanStyles}
           grid-column: 5 / 13;
+          justify-self: stretch;
         `
       : css<formGroupStylingProps>`
           width: 100%;
           height: ${({ direction }) => direction === 'column' && '100%'};
         `}
-  input, select {
+  input:not([type="radio"]), select {
     min-width: 100%;
     max-width: 100%;
   }

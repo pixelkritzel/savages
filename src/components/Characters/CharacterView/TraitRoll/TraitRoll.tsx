@@ -112,7 +112,7 @@ export class TraitRoll extends React.Component<RollDiceProps> {
 
   @computed
   get currentModifiers() {
-    return this.props.character.getTraitModifiers(this.props.trait);
+    return this.props.character.getTraitModifiers(this.props.trait.name);
   }
 
   render() {

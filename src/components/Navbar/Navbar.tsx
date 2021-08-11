@@ -15,6 +15,7 @@ export const Navbar: React.FC = () => {
       <Link to="/modifiers">Modifiers</Link>
       <Link to="/skills">Skills</Link>
       <Link to="/weapons">Weapons</Link>
+      <Link to="/hindrances">Hindrances</Link>
     </Container>
   );
 };

@@ -1,8 +1,4 @@
 import { giantKiller } from './edges/giant_killer';
-
-import { anemic } from './hindrances/anemic';
-
-import { clueless } from './hindrances/clueless';
 import { SIsetting } from './../settingModel';
 
 import { doubleTap } from './edges/double_tap';
@@ -14,7 +10,7 @@ export const vanillaSetting: SIsetting = {
     attributePoints: 5,
   },
   availableEdges: [doubleTap, giantKiller],
-  availableHindrances: [anemic, clueless],
+  availableHindrances: { array: [] },
   availableSkills: {
     array: [],
   },

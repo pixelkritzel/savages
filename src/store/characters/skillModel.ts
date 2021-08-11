@@ -97,7 +97,7 @@ const _skillModel = traitModel
         }
 
         const modifiersForSkillSpecialization = character
-          .getTraitModifiers(skill)
+          .getTraitModifiers(skill.name)
           .all.filter(
             ({ isActive, traitModifiers }) =>
               isActive && traitModifiers.array.some(({ specialization }) => Boolean(specialization))

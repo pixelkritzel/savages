@@ -384,9 +384,7 @@ export const WeaponForm = observer(function WeaponFormFn({
                   <div>
                     <Flex spacing="inside">
                       <EditModifier modifier={modifier} />
-                      <Button onClick={() => store.modifiers.deleteModel(modifier._id)}>
-                        Remove
-                      </Button>
+                      <Button onClick={() => weapon.modifiers.delete(modifier._id)}>Remove</Button>
                     </Flex>
                   </div>
                 </Span>

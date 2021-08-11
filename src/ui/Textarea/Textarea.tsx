@@ -40,17 +40,17 @@ export const Textarea = observer(function TextareaFn({
 }: TextareaProps) {
   const [hasFocus, setHasFocus] = useState(false);
 
-  const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
     setHasFocus(false);
     otherProps.onBlur && otherProps.onBlur(event);
   };
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     otherProps.onValueChange && otherProps.onValueChange(event.target.value);
     otherProps.onChange && otherProps.onChange(event);
   };
 
-  const onFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onFocus = (event: React.FocusEvent<HTMLTextAreaElement>) => {
     setHasFocus(true);
     otherProps.onFocus && otherProps.onFocus(event);
   };
