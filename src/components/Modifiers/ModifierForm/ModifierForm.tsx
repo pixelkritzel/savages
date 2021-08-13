@@ -3,11 +3,12 @@ import { observer, useLocalStore } from 'mobx-react';
 import styled from 'styled-components';
 import Select from 'react-select';
 
-import { Box } from 'ui/Box';
 import { Checkbox } from 'ui/Checkbox';
 import { FormGroup } from 'ui/FormGroup';
+import { Flex, Grid, Span } from 'ui/Grid';
 import { Input } from 'ui/Input';
 import { IncDec } from 'ui/IncDec';
+import { Button } from 'ui/Button';
 
 import { StoreContext } from 'components/StoreContext';
 
@@ -21,23 +22,7 @@ import { AddedHindrances } from './AddedHindrances';
 import { GrantedPowers } from './GrantedPowers';
 import { GrantedSkills } from './GrantedSkills';
 import { Traits } from './Traits';
-import { formGrid, TwoColumns } from './styled';
 import { Range } from './Range';
-import { Button } from 'ui/Button';
-
-const Form = styled.form`
-  ${formGrid}
-`;
-
-const BonusDamageDice = styled(Box)`
-  ${formGrid}
-`;
-
-const Footer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  column-gap: ${({ theme }) => theme.rhythms.outside.horizontal}px;
-`;
 
 interface ModifierFormProps {
   title: string;
@@ -45,6 +30,10 @@ interface ModifierFormProps {
   saveModifier: () => void;
   cancel: () => void;
 }
+
+const Centered = styled.div`
+  text-align: center;
+`;
 
 export const ModifierForm = observer(function ModifierFormFn({
   modifier,
@@ -80,113 +69,139 @@ export const ModifierForm = observer(function ModifierFormFn({
   }));
 
   return (
-    <Form>
-      <TwoColumns>
-        <h1>{title}</h1>
-      </TwoColumns>
+    <Grid as="form">
+      <Span as="h1">{title}</Span>
+
       {([
-        ['name', 'Name'],
+        ['name', 'Name *'],
         ['conditions', 'Conditions'],
-      ] as const).map(([key, label]) => (
-        <FormGroup
-          inline
-          key={key}
-          label={label}
-          input={({ id }) => (
-            <Input
-              id={id}
-              value={modifier[key]}
-              onValueChange={(value) => modifier.set(key, value)}
-            />
-          )}
-        />
+      ] as const).map(([key, label], index) => (
+        <Span key={key} start={!(index % 2) ? 1 : 7} end={!(index % 2) ? 7 : 13}>
+          <FormGroup
+            direction="column"
+            key={key}
+            label={label}
+            input={({ id }) => (
+              <Input
+                id={id}
+                value={modifier[key]}
+                onValueChange={(value) => modifier.set(key, value)}
+              />
+            )}
+          />
+        </Span>
       ))}
       {([
         ['isOptional', 'Optional Modifier'],
         ['isBenefit', 'Benefit'],
-      ] as const).map(([key, label]) => (
-        <Checkbox
-          key={key}
-          label={label}
-          checked={modifier[key]}
-          onChange={() => modifier.set(key, !modifier[key])}
-        />
+      ] as const).map(([key, label], index) => (
+        <Span key={key} start={!(index % 2) ? 1 : 7} end={!(index % 2) ? 7 : 13}>
+          <Checkbox
+            key={key}
+            label={label}
+            checked={modifier[key]}
+            onChange={() => modifier.set(key, !modifier[key])}
+          />
+        </Span>
       ))}
-      <TwoColumns>
+      <Span as="hr" />
+      <Span>
         <Traits modifier={modifier} traitOptions={localStore.traitOptions} />
-      </TwoColumns>
+      </Span>
       {([
-        ['bennies', 'Bennies'],
-        ['aimingHelp', 'Additional aiming ignore bonuss'],
-        ['toughness', 'Toughness'],
-        ['size', 'Size'],
-        ['freeEdges', 'Free Edges'],
-        ['bonusDamage', 'Additional Damage'],
-        ['rerollBonus', 'Bonus while rerolling'],
-        ['rerollDamageBonus', 'Additional Damage while rerolling'],
-        ['armor', 'Armor bonus'],
-        ['ignoreWounds', 'Ignore Wound penalties'],
-        ['ignoreMultiActionPenalty', 'Ignore multi action'],
-        ['ignoreRecoil', 'Ignore recoil bonus'],
-        ['pace', 'Pace'],
-        ['minimumStrength', 'Treat strength as higher'],
-        ['reach', 'Reach'],
-      ] as const).map(([key, label]) => (
-        <FormGroup
-          inline
-          key={key}
-          label={label}
-          input={() => (
-            <IncDec
-              value={modifier[key]}
-              onIncrement={() => modifier.set(key, modifier[key] + 1)}
-              onDecrement={() => modifier.set(key, modifier[key] - 1)}
-            />
-          )}
-        />
-      ))}
-      {([
-        ['ignoreImprovisedWeapon', ' Ignore improvised weapon malus'],
-        ['ignoreMinimumStrength', 'Ignore minimum strength'],
-        ['ignoreOffhand', 'Ignore offhand malus'],
-        ['big', 'Big'],
-        ['hardy', 'Hardy'],
-      ] as const).map(([key, label]) => (
-        <Checkbox
-          key={key}
-          label={label}
-          checked={modifier[key]}
-          onChange={() => modifier.set(key, !modifier[key])}
-        />
-      ))}
-      <TwoColumns>
-        <BonusDamageDice title="Bonus Damage Dice" asFieldset>
-          {DICE_TYPES.map((diceSides) => (
+        { key: 'bennies', label: 'Bennies', componentType: 'INC_DEC' },
+        { key: 'aimingHelp', label: 'Additional aiming ignore bonuss', componentType: 'INC_DEC' },
+        { key: 'toughness', label: 'Toughness', componentType: 'INC_DEC' },
+        { key: 'size', label: 'Size', componentType: 'INC_DEC' },
+        { key: 'freeEdges', label: 'Free Edges', componentType: 'INC_DEC' },
+        { key: 'bonusDamage', label: 'Additional Damage', componentType: 'INC_DEC' },
+        { key: 'rerollBonus', label: 'Bonus while rerolling', componentType: 'INC_DEC' },
+        {
+          key: 'rerollDamageBonus',
+          label: 'Additional Damage while rerolling',
+          componentType: 'INC_DEC',
+        },
+        { key: 'armor', label: 'Armor bonus', componentType: 'INC_DEC' },
+        { key: 'ignoreWounds', label: 'Ignore Wound penalties', componentType: 'INC_DEC' },
+        { key: 'ignoreMultiActionPenalty', label: 'Ignore multi action', componentType: 'INC_DEC' },
+        { key: 'ignoreRecoil', label: 'Ignore recoil bonus', componentType: 'INC_DEC' },
+        { key: 'pace', label: 'Pace', componentType: 'INC_DEC' },
+        { key: 'minimumStrength', label: 'Treat strength as higher', componentType: 'INC_DEC' },
+        { key: 'reach', label: 'Reach', componentType: 'INC_DEC' },
+        {
+          key: 'ignoreImprovisedWeapon',
+          label: ' Ignore improvised weapon malus',
+          componentType: 'CHECKBOX',
+        },
+        {
+          key: 'ignoreMinimumStrength',
+          label: 'Ignore minimum strength',
+          componentType: 'CHECKBOX',
+        },
+        { key: 'ignoreOffhand', label: 'Ignore offhand malus', componentType: 'CHECKBOX' },
+        { key: 'big', label: 'Big', componentType: 'CHECKBOX' },
+        { key: 'hardy', label: 'Hardy', componentType: 'CHECKBOX' },
+      ] as const).map(({ key, label, componentType }, index) => (
+        <Span key={key} start={!(index % 2) ? 1 : 7} end={!(index % 2) ? 7 : 13}>
+          {componentType === 'INC_DEC' && typeof modifier[key] === 'number' ? (
             <FormGroup
-              key={diceSides}
-              label={`D${diceSides}`}
+              key={key}
+              label={label}
               input={() => (
                 <IncDec
-                  value={modifier.bonusDamageDices[diceSides]}
+                  value={modifier[key]}
                   onIncrement={() =>
-                    modifier.bonusDamageDices.set(
-                      diceSides,
-                      modifier.bonusDamageDices[diceSides] + 1
+                    modifier.set(
+                      key,
+                      // @ts-expect-error
+                      modifier[key] + 1
                     )
                   }
                   onDecrement={() =>
-                    modifier.bonusDamageDices.set(
-                      diceSides,
-                      modifier.bonusDamageDices[diceSides] - 1
+                    modifier.set(
+                      key,
+                      // @ts-expect-error
+                      modifier[key] - 1
                     )
                   }
-                  disableDecrement={modifier.bonusDamageDices[diceSides] === 0}
                 />
               )}
             />
-          ))}
-        </BonusDamageDice>
-
+          ) : (
+            <Checkbox
+              key={key}
+              label={label}
+              checked={modifier[key]}
+              onChange={() => modifier.set(key, !modifier[key])}
+            />
+          )}
+        </Span>
+      ))}
+      <Span as="hr" />
+      <Span as="h4">
+        <Centered>Bonus Damage Dice</Centered>
+      </Span>
+      {DICE_TYPES.map((diceSides, index) => (
+        <Span key={diceSides} start={!(index % 2) ? 1 : 7} end={!(index % 2) ? 7 : 13}>
+          <FormGroup
+            label={`D${diceSides}`}
+            input={() => (
+              <IncDec
+                value={modifier.bonusDamageDices[diceSides]}
+                onIncrement={() =>
+                  modifier.bonusDamageDices.set(diceSides, modifier.bonusDamageDices[diceSides] + 1)
+                }
+                onDecrement={() =>
+                  modifier.bonusDamageDices.set(diceSides, modifier.bonusDamageDices[diceSides] - 1)
+                }
+                disableDecrement={modifier.bonusDamageDices[diceSides] === 0}
+              />
+            )}
+          />
+        </Span>
+      ))}
+      <Span as="hr" />
+      <Span>
         <FormGroup
           label="Free reroll for"
           input={({ id }) => (
@@ -203,12 +218,13 @@ export const ModifierForm = observer(function ModifierFormFn({
             />
           )}
         />
-        {([
-          ['forbiddenEdges', 'Unavailable Edges'],
-          ['grantedEdges', 'Grants Edges'],
-        ] as const).map(([key, label]) => (
+      </Span>
+      {([
+        ['forbiddenEdges', 'Unavailable Edges'],
+        ['grantedEdges', 'Grants Edges'],
+      ] as const).map(([key, label]) => (
+        <Span key={key}>
           <FormGroup
-            key={key}
             label={label}
             input={({ id }) => (
               <Select
@@ -225,21 +241,35 @@ export const ModifierForm = observer(function ModifierFormFn({
               />
             )}
           />
-        ))}
+        </Span>
+      ))}
 
+      <Span>
         <AddedHindrances modifier={modifier} />
+      </Span>
+      <Span>
         <GrantedPowers modifier={modifier} />
+      </Span>
+      <Span>
         <GrantedSkills modifier={modifier} />
+      </Span>
+      <Span as="hr" />
+      <Span>
         <Range rangeModifier={modifier.rangeModifier} />
-        <Footer>
-          <Button variant="danger" size="big" onClick={() => cancel()}>
-            Cancel
-          </Button>
-          <Button variant="success" size="big" onClick={() => saveModifier()}>
-            Save Modifier
-          </Button>
-        </Footer>
-      </TwoColumns>
-    </Form>
+      </Span>
+      <Span as={Flex} horizontal="end">
+        <Button variant="danger" size="big" onClick={() => cancel()}>
+          Cancel
+        </Button>
+        <Button
+          disabled={!modifier.isValid}
+          variant="success"
+          size="big"
+          onClick={() => saveModifier()}
+        >
+          Save Modifier
+        </Button>
+      </Span>
+    </Grid>
   );
 });

@@ -9,15 +9,16 @@ type formGroupStylingProps = { inline: boolean; direction: 'column' | 'row' };
 const StyledFormGroup = styled.div<formGroupStylingProps>`
   ${({ inline, direction = 'row' }) =>
     !inline && direction === 'row'
-      ? gridStyles
+      ? css`
+          ${gridStyles}
+          align-items: center;
+        `
       : css<formGroupStylingProps>`
-          display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
-          /* height: ${({ direction }) => direction === 'column' && '100%'}; */
-          flex-direction: ${({ direction = 'row' }) => direction};
+          display: flex;
+          flex-direction: column;
           column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
           row-gap: ${({ theme }) => theme.rhythms.inside.vertical}px;
-          align-items: ${({ direction = 'row' }) =>
-            direction === 'column' ? 'stretch' : 'baseline'};
+          align-items: stretch;
         `}
 `;
 
@@ -26,7 +27,7 @@ const Label = styled.label<formGroupStylingProps>`
     !inline && direction === 'row'
       ? css`
           ${gridSpanStyles}
-          grid-column: 1 / 5;
+          grid-column: 1 / 7;
           width: 100%;
           text-align: right;
         `
@@ -52,7 +53,7 @@ const InputContainer = styled.div<{ inline: boolean; direction: 'column' | 'row'
     !inline && direction === 'row'
       ? css`
           ${gridSpanStyles}
-          grid-column: 5 / 13;
+          grid-column: 7 / 13;
           justify-self: stretch;
         `
       : css<formGroupStylingProps>`

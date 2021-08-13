@@ -1,13 +1,15 @@
 import React, { useContext } from 'react';
 import { observer, useLocalStore } from 'mobx-react';
-import styled from 'styled-components';
-import Select from 'react-select';
 import { kebabCase } from 'lodash';
 
 import { RadioGroup } from 'ui/RadioGroup';
 import { FormGroup } from 'ui/FormGroup';
 import { IncDec } from 'ui/IncDec';
 import { Button } from 'ui/Button';
+import { Box } from 'ui/Box';
+import { Input } from 'ui/Input';
+import { Select } from 'ui/Select';
+import { Flex, Grid, Span } from 'ui/Grid';
 
 import { StoreContext } from 'components/StoreContext';
 
@@ -18,33 +20,23 @@ import { ItraitModifier, traitModifierModelTypes } from 'store/modifiers/traitMo
 import { attributeNames } from 'store/consts';
 import { IbaseSkill } from 'store/skills';
 
-import { formGrid, TwoColumns } from '../styled';
-import { Box } from 'ui/Box';
-
-const Form = styled.form`
-  ${formGrid}
-`;
-
 const NONE_OPTION = {
   label: 'None',
   value: '',
 };
 
-const Footer = styled(TwoColumns)`
-  margin-top: ${({ theme }) => theme.rhythms.outside.vertical}px;
-  justify-content: end;
-`;
-
 interface TraitModifierFormProps {
   title: string;
   traitModifier: ItraitModifier;
   saveTraitModifier: () => void;
+  discardTraitModifier: () => void;
 }
 
 export const TraitModifierForm = observer(function TraitModifierFormFn({
   title,
   traitModifier,
   saveTraitModifier,
+  discardTraitModifier,
   ...otherProps
 }: TraitModifierFormProps) {
   const store = useContext<Istore>(StoreContext);
@@ -62,20 +54,6 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
             label: name,
             value: _id,
           })),
-        ];
-      } else if (traitModifier.type === 'pace') {
-        return [
-          {
-            label: 'Pace',
-            value: 'pace',
-          },
-        ];
-      } else if (traitModifier.type === 'all') {
-        return [
-          {
-            label: 'All',
-            value: 'all',
-          },
         ];
       } else {
         return [];
@@ -107,15 +85,15 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
     get selectedSpecializationOption() {
       return this.specializationsOptions?.find(
         ({ value }) => value === traitModifier.specialization.specializationName
-      );
+      )?.value;
     },
   }));
 
   return (
     <>
-      <h4>{title}</h4>
-      <Form>
-        <Box title="Type">
+      <h3>{title}</h3>
+      <Grid>
+        <Span start={1} end={7} as={Box} title="Type">
           <RadioGroup
             radios={traitModifierModelTypes.map((type) => [type, capitalizeFirstLetter(type)])}
             selectedValue={traitModifier.type}
@@ -123,27 +101,30 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
               traitModifier.setType(value as typeof traitModifierModelTypes[number])
             }
           />
-        </Box>
-        {localStore.traitOptions ? (
-          <FormGroup
-            inline
-            label="Applicable Traits"
-            input={({ id }) => (
-              <Select
-                id={id}
-                input={traitModifier.traitName}
-                options={localStore.traitOptions!}
-                onChange={(option) => {
-                  if (option) {
-                    traitModifier.set('traitName', option.value);
-                  }
-                }}
-              />
-            )}
-          />
-        ) : (
-          <div />
-        )}
+        </Span>
+        <Span start={7} end={13} vertical="center">
+          {localStore.traitOptions ? (
+            <FormGroup
+              label="Applicable Traits"
+              input={({ id }) =>
+                ['pace', 'all'].includes(traitModifier.type) ? (
+                  <Input id={id} disabled value={capitalizeFirstLetter(traitModifier.type)} />
+                ) : (
+                  <Select
+                    id={id}
+                    value={traitModifier.traitName}
+                    options={localStore.traitOptions!}
+                    onValueChange={(value) => {
+                      traitModifier.set('traitName', value);
+                    }}
+                  />
+                )
+              }
+            />
+          ) : (
+            <div />
+          )}
+        </Span>
         {([
           'bonusValue',
           'bonusDice',
@@ -151,22 +132,22 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
           'diceMaximum',
           'bonusMinimum',
           'bonusMaximum',
-        ] as const).map((key) => (
-          <FormGroup
-            key={key}
-            inline
-            label={kebabCase(key)
-              .split('-')
-              .map((word, index) => (index === 0 ? capitalizeFirstLetter(word) : word))
-              .join(' ')}
-            input={(id) => (
-              <IncDec
-                value={traitModifier[key]}
-                onIncrement={() => traitModifier.set(key, traitModifier[key] + 1)}
-                onDecrement={() => traitModifier.set(key, traitModifier[key] - 1)}
-              />
-            )}
-          />
+        ] as const).map((key, index) => (
+          <Span key={key} start={!(index % 2) ? 1 : 7} end={!(index % 2) ? 7 : 13}>
+            <FormGroup
+              label={kebabCase(key)
+                .split('-')
+                .map((word, index) => (index === 0 ? capitalizeFirstLetter(word) : word))
+                .join(' ')}
+              input={(id) => (
+                <IncDec
+                  value={traitModifier[key]}
+                  onIncrement={() => traitModifier.set(key, traitModifier[key] + 1)}
+                  onDecrement={() => traitModifier.set(key, traitModifier[key] - 1)}
+                />
+              )}
+            />
+          </Span>
         ))}
         {localStore.settingSkill &&
           localStore.settingSkill.availableSkillSpezializations.array.length > 0 && (
@@ -179,10 +160,8 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
                     id={id}
                     value={localStore.selectedSpecializationOption}
                     options={localStore.specializationsOptions}
-                    onChange={(option) => {
-                      if (option) {
-                        traitModifier.specialization.set('specializationName', option.value);
-                      }
+                    onValueChange={(value) => {
+                      traitModifier.specialization.set('specializationName', value);
                     }}
                   />
                 )}
@@ -216,12 +195,15 @@ export const TraitModifierForm = observer(function TraitModifierFormFn({
               ))}
             </>
           )}
-        <Footer>
-          <Button variant="success" onClick={saveTraitModifier}>
+        <Span as={Flex} horizontal="end" spacing="inside">
+          <Button variant="danger" onClick={discardTraitModifier}>
+            Cancel
+          </Button>
+          <Button variant="success" disabled={!traitModifier.isValid} onClick={saveTraitModifier}>
             Save
           </Button>
-        </Footer>
-      </Form>
+        </Span>
+      </Grid>
     </>
   );
 });

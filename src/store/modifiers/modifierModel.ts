@@ -114,6 +114,15 @@ export const modifierModel = _modelPrototype
       const source = getParent(2) as unknown;
       return source;
     },
+
+    getValidationErrors() {
+      return {
+        name: !Boolean(self.name) ? ('name_missing' as const) : false,
+      };
+    },
+    get isValid() {
+      return Object.values(this.getValidationErrors()).every((value) => !value);
+    },
   }))
   .actions((self) => ({
     afterCreate() {

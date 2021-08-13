@@ -13,8 +13,13 @@ interface NewWeaponProps {
 export const NewWeapon = observer(function NewWeaponFn({ ...otherProps }: NewWeaponProps) {
   const store = useContext<Istore>(StoreContext);
   const history = useHistory();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => store.weapons.new(), []);
+  useEffect(() => {
+    store.weapons.new();
+    return () => {
+      store.weapons.discardNewModel();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div {...otherProps}>

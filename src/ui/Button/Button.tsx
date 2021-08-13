@@ -5,13 +5,13 @@ import { focusStyles } from 'lib/utils/focus-styles';
 
 type buttonVariants = 'default' | 'danger' | 'success' | 'link' | 'icon' | undefined;
 type buttonSizes = 'default' | 'big';
-type StyledButtonProps = {
+export type StyledButtonProps = {
   icon?: JSX.Element;
   variant?: buttonVariants;
   size?: buttonSizes;
 };
 
-const BUTTON_SIZES: { [key in buttonSizes]: string } = {
+export const BUTTON_SIZES: { [key in buttonSizes]: string } = {
   default: '2px 6px',
   big: '6px 18px',
 };
@@ -110,7 +110,12 @@ const InnerIcon = styled.span<{ variant: buttonVariants }>`
 
 export type ButtonProps = React.ComponentProps<typeof StyledButton>;
 
-export function Button({ icon, children, variant, ...otherProps }: ButtonProps) {
+export function Button({
+  icon,
+  children,
+  variant,
+  ...otherProps
+}: ButtonProps & Omit<React.HTMLProps<HTMLSelectElement>, 'size'>) {
   return (
     <StyledButton type="button" variant={variant} {...otherProps}>
       <Inner>

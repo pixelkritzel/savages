@@ -205,7 +205,6 @@ export const WeaponForm = observer(function WeaponFormFn({
                       key={weaponType}
                       start={index % 2 === 0 ? 1 : 7}
                       end={index % 2 === 0 ? 7 : 13}
-                      row={Math.ceil((1 + 1 * index) / 2)}
                       horizontal="start"
                     >
                       <Checkbox

@@ -8,6 +8,7 @@ import ReactModal from 'react-modal';
 import { FormGroup } from 'ui/FormGroup';
 import { Button } from 'ui/Button';
 import { List } from 'ui/List';
+import { Flex, Grid, Span } from 'ui/Grid';
 
 import { Imodifier } from 'store/modifiers';
 import { ItraitModifier, traitModifierModel } from 'store/modifiers/traitModifierModel';
@@ -16,17 +17,8 @@ import { padWithMathOperator } from 'lib/utils/padWithMathOpertor';
 import { capitalizeFirstLetter } from 'lib/strings';
 
 import { TraitModifierForm } from '../TraitModifierForm';
-import { formGrid, TwoColumns } from '../styled';
 
-const GridContainer = styled.div`
-  ${formGrid}
-`;
-
-const NewTraitButton = styled(Button)`
-  justify-self: end;
-`;
-
-const NoTraitModifiers = styled(TwoColumns)`
+const NoTraitModifiers = styled(Span)`
   color: ${({ theme }) => theme.colors.disabled};
   text-align: center;
 `;
@@ -72,11 +64,15 @@ export const Traits = observer(function TraitsFn({
     }
     localStore.traitModifier = undefined;
   });
+
+  const discardTraitModifier = action(() => {
+    localStore.traitModifier = undefined;
+  });
+
   return (
-    <GridContainer>
-      <TwoColumns>
+    <Grid>
+      <Span>
         <FormGroup
-          inline
           label="Applicable Traits"
           input={({ id }) => (
             <Select
@@ -93,11 +89,13 @@ export const Traits = observer(function TraitsFn({
             />
           )}
         />
-      </TwoColumns>
-      <h3>Trait modifiers</h3>
-      <NewTraitButton type="button" variant="success" onClick={() => openTraitModifier()}>
-        New Trait modifier
-      </NewTraitButton>
+      </Span>
+      <Span as={Flex} horizontal="space-between">
+        <h3>Trait modifiers</h3>
+        <Button type="button" variant="success" onClick={() => openTraitModifier()}>
+          New Trait modifier
+        </Button>
+      </Span>
       {localStore.traitModifier && (
         <ReactModal
           isOpen={Boolean(localStore.traitModifier)}
@@ -109,10 +107,11 @@ export const Traits = observer(function TraitsFn({
             traitModifier={localStore.traitModifier}
             title="New trait modifier"
             saveTraitModifier={saveTraitModifier}
+            discardTraitModifier={discardTraitModifier}
           />
         </ReactModal>
       )}
-      <TwoColumns>
+      <Span>
         {Boolean(modifier.traitModifiers.length) ? (
           <TraitModifierList>
             {modifier.traitModifiers.array.map((traitMod) => (
@@ -133,7 +132,7 @@ export const Traits = observer(function TraitsFn({
         ) : (
           <NoTraitModifiers>No trait modifiers yet</NoTraitModifiers>
         )}
-      </TwoColumns>
-    </GridContainer>
+      </Span>
+    </Grid>
   );
 });

@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 
-import { Button, buttonStyles } from 'ui/Button';
+import { buttonStyles, BUTTON_SIZES } from 'ui/Button';
 
 const StyledSelect = styled.select`
-  ${buttonStyles}
+  ${buttonStyles};
+  padding: ${BUTTON_SIZES.big};
 `;
 
 export interface SelectProps extends React.HTMLProps<HTMLSelectElement> {

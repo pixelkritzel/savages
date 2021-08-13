@@ -13,8 +13,13 @@ interface NewHindranceProps {
 export const NewHindrance = observer(function NewHindranceFn({ ...otherProps }: NewHindranceProps) {
   const store = useContext<Istore>(StoreContext);
   const history = useHistory();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => store.hindrances.new(), []);
+  useEffect(() => {
+    store.hindrances.new();
+    return () => {
+      store.hindrances.discardNewModel();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div {...otherProps}>

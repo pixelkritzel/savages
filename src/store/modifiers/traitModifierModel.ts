@@ -38,10 +38,13 @@ export const traitModifierModel = types
     get source() {
       return getParent(self, 2);
     },
-    get validationErrors() {
+    getValidationErrors() {
       return {
-        traitName: self.traitName === 'undefined' ? ('trait_name_missing' as const) : false,
+        traitName: !Boolean(self.traitName) ? ('trait_name_missing' as const) : false,
       };
+    },
+    get isValid() {
+      return Object.values(this.getValidationErrors()).every((value) => !value);
     },
   }))
   .actions((self) => ({
@@ -61,6 +64,7 @@ export const traitModifierModel = types
         self.traitName = '';
       }
       self.type = type;
+      console.log(self.traitName);
     },
   }));
 
