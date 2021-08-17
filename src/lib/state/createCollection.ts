@@ -62,6 +62,9 @@ export function createCollection<
           self.all.delete(id);
           pouchAdapter.delete(id);
         },
+        async saveModel(id: string) {
+          return await pouchAdapter.set(id, getSnapshot(self.get(id)) as any);
+        },
         async set(id: string, value: IActualModel) {
           const pouchModel = await pouchAdapter.set(id, getSnapshot(value) as any);
           self._set(id, pouchModel);

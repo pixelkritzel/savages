@@ -9,7 +9,7 @@ import { InfoPopover } from 'components/InfoPopover';
 import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
 import { Ihindrance } from 'store/hindrances/hindranceModel';
-import { IedgeModel } from 'store/settings/settingEdgeModel';
+import { Iedge } from 'store/edges/edgeModel';
 import { TwoColumns } from '../OptionalModifiers';
 
 const GridContainer = styled.div`
@@ -96,7 +96,7 @@ export const NonOptionalModifiers: React.FC<NonOptionalModifiersProps> = observe
                     onChange={() => modifier.set('isActive', !modifier.isActive)}
                   />
                   <StyledInfoPopover
-                    content={(getParent(modifier, 2) as IedgeModel).description}
+                    content={(getParent(modifier, 2) as Iedge).description}
                     title="Edge description"
                   />
                 </React.Fragment>

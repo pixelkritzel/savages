@@ -28,6 +28,7 @@ export const EditHindrance = observer(function NewHindranceFn({
         hindrance={hindrance}
         title={`Edit ${copyOfHindrance.name}`}
         saveHindrance={() => {
+          store.hindrances.saveModel(hindrance._id);
           history.push('/hindrances');
         }}
         discardHindrance={() => {

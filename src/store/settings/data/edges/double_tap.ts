@@ -1,6 +1,6 @@
-import { SIedgeModel } from 'store/settings/settingEdgeModel';
+import { SIedge } from 'store/edges/edgeModel';
 
-export const doubleTap: SIedgeModel = {
+export const doubleTap: SIedge = {
   _id: 'double_tap',
   name: 'Double Tap',
   summary: '+1 to hit and damage when firing no more than RoF 1 per action.',

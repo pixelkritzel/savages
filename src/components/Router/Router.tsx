@@ -8,6 +8,7 @@ import { Modifiers } from 'components/Modifiers';
 import { Skills } from 'components/Skills';
 import { Weapons } from 'components/Weapons';
 import { Hindrances } from 'components/Hindrances';
+import { Edges } from 'components/Edges';
 
 export function Router() {
   return (
@@ -32,6 +33,9 @@ export function Router() {
       </Route>
       <Route path="/hindrances">
         <Hindrances />
+      </Route>
+      <Route path="/edges">
+        <Edges />
       </Route>
       <Route path="/">{/* <Redirect to="/characters" /> */}</Route>
     </Switch>

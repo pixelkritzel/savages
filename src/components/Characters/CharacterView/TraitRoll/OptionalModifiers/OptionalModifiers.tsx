@@ -11,7 +11,7 @@ import { Icharacter } from 'store/characters';
 import { Itrait } from 'store/characters/traitModel';
 import { Iskill, isSkill } from 'store/characters/skillModel';
 import { Ihindrance } from 'store/hindrances/hindranceModel';
-import { IedgeModel } from 'store/settings/settingEdgeModel';
+import { Iedge } from 'store/edges/edgeModel';
 
 const GridContainer = styled.div`
   display: grid;
@@ -89,7 +89,7 @@ export const OptionalModifiers: React.FC<OptionalModifiersProps> = observer(
                     onChange={() => modifier.set('isActive', !modifier.isActive)}
                   />
                   <StyledInfoPopover
-                    content={(getParent(modifier, 2) as IedgeModel).description}
+                    content={(getParent(modifier, 2) as Iedge).description}
                     title="Edge description"
                   />
                 </React.Fragment>

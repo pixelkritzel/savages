@@ -4,11 +4,11 @@ import { generateId } from 'lib/utils/generateId';
 import styled, { css } from 'styled-components';
 import { gridSpanStyles, gridStyles } from 'ui/Grid';
 
-type formGroupStylingProps = { inline: boolean; direction: 'column' | 'row' };
+type formGroupStylingProps = { inline: boolean; $direction: 'column' | 'row' };
 
 const StyledFormGroup = styled.div<formGroupStylingProps>`
-  ${({ inline, direction = 'row' }) =>
-    !inline && direction === 'row'
+  ${({ inline, $direction = 'row' }) =>
+    !inline && $direction === 'row'
       ? css`
           ${gridStyles}
           align-items: center;
@@ -19,12 +19,14 @@ const StyledFormGroup = styled.div<formGroupStylingProps>`
           column-gap: ${({ theme }) => theme.rhythms.inside.horizontal}px;
           row-gap: ${({ theme }) => theme.rhythms.inside.vertical}px;
           align-items: stretch;
+          width: 100%;
+          height: 100%;
         `}
 `;
 
 const Label = styled.label<formGroupStylingProps>`
-  ${({ inline, direction = 'row' }) =>
-    !inline && direction === 'row'
+  ${({ inline, $direction = 'row' }) =>
+    !inline && $direction === 'row'
       ? css`
           ${gridSpanStyles}
           grid-column: 1 / 7;
@@ -32,25 +34,25 @@ const Label = styled.label<formGroupStylingProps>`
           text-align: right;
         `
       : css<formGroupStylingProps>`
-          ${({ theme, direction }) =>
-            direction === 'column'
+          ${({ theme, $direction }) =>
+            $direction === 'column'
               ? css`
                   padding-left: ${theme.input.padding.default};
                 `
-              : css<{ inline: boolean; direction: 'column' | 'row' }>`
-                  margin-top: ${({ theme, inline, direction = 'row' }) =>
-                    theme.input.padding[inline || direction === 'column' ? 'inline' : 'default']};
+              : css<{ inline: boolean; $direction: 'column' | 'row' }>`
+                  margin-top: ${({ theme, inline, $direction = 'row' }) =>
+                    theme.input.padding[inline || $direction === 'column' ? 'inline' : 'default']};
                 `}
-          text-align: ${({ inline, direction = 'row' }) =>
-            inline || direction === 'column' ? 'left' : 'right'};
-          width: ${({ inline }) => !inline && direction === 'row' && '30%'};
+          text-align: ${({ inline, $direction = 'row' }) =>
+            inline || $direction === 'column' ? 'left' : 'right'};
+          width: ${({ inline }) => !inline && $direction === 'row' && '30%'};
           flex-shrink: 0;
         `}
 `;
 
-const InputContainer = styled.div<{ inline: boolean; direction: 'column' | 'row' }>`
-  ${({ inline, direction = 'row' }) =>
-    !inline && direction === 'row'
+const InputContainer = styled.div<formGroupStylingProps>`
+  ${({ inline, $direction = 'row' }) =>
+    !inline && $direction === 'row'
       ? css`
           ${gridSpanStyles}
           grid-column: 7 / 13;
@@ -58,7 +60,7 @@ const InputContainer = styled.div<{ inline: boolean; direction: 'column' | 'row'
         `
       : css<formGroupStylingProps>`
           width: 100%;
-          height: ${({ direction }) => direction === 'column' && '100%'};
+          height: ${({ $direction }) => $direction === 'column' && '100%'};
         `}
   input:not([type="radio"]), select {
     min-width: 100%;
@@ -79,11 +81,11 @@ export const FormGroup: React.FC<FormGroupProps> = observer(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const _id = React.useMemo(() => id ?? generateId(), [false]);
     return (
-      <StyledFormGroup direction={direction} inline={inline} {...otherProps}>
-        <Label direction={direction} htmlFor={_id} inline={inline}>
+      <StyledFormGroup $direction={direction} inline={inline} {...otherProps}>
+        <Label $direction={direction} htmlFor={_id} inline={inline}>
           {label}
         </Label>
-        <InputContainer direction={direction} inline={inline}>
+        <InputContainer $direction={direction} inline={inline}>
           {input({ id: _id })}
         </InputContainer>
       </StyledFormGroup>

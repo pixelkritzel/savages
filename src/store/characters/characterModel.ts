@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Imodifier } from 'store/modifiers';
 import { weaponModel } from 'store/weapons/weaponModel';
-import { settingEdgeModel } from 'store/settings/settingEdgeModel';
+import { edgeModel } from 'store/edges/edgeModel';
 import { hindranceModel } from 'store/hindrances/hindranceModel';
 import { settingModel } from 'store/settings/settingModel';
 import { sizeType } from 'store/consts';
@@ -45,7 +45,7 @@ export const characterModel = types
     ),
     setting: types.reference(settingModel),
     skills: types.map(types.late(() => skillModel)),
-    edges: types.array(types.reference(settingEdgeModel)),
+    edges: types.array(types.reference(edgeModel)),
     hindrances: types.array(types.reference(hindranceModel)),
     powers: types.map(powerModel),
     basePowerPoints: 0,

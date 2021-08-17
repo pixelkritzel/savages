@@ -23,6 +23,7 @@ export const EditWeapon = observer(function NewWeaponFn({ ...otherProps }: EditW
         weapon={weapon}
         title={`Edit ${copyOfWeapon.name}`}
         saveWeapon={() => {
+          store.weapons.saveModel(weapon._id);
           history.push('/weapons');
         }}
         discardWeapon={() => {

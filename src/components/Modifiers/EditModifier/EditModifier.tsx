@@ -26,6 +26,7 @@ export const EditModifier = observer(function NewModifierFn({ ...otherProps }: E
         modifier={modifier}
         title={`Edit ${copyOfModifier.name}`}
         saveModifier={() => {
+          store.modifiers.saveModel(modifier._id);
           history.push('/modifiers');
         }}
         cancel={() => {

@@ -43,6 +43,7 @@ export const buttonStyles = css<StyledButtonProps>`
   position: relative;
   padding: ${({ variant = 'default', size = 'default' }) =>
     variant === 'link' || variant === 'icon' ? '0' : BUTTON_SIZES[size]};
+  justify-content: center;
   text-decoration: ${({ variant = 'default' }) =>
     variant === 'link' ? 'underline' : 'none !important'};
   cursor: ${({ variant = 'default' }) => (variant === 'link' ? 'pointer' : 'default')};

@@ -13,7 +13,11 @@ export const skillsCollection = createCollection<
   // @ts-expect-error
   SIbaseSkill,
   SObaseSkill
->('skillsCollection', baseSkillModel, createBaseSkillScaffold);
+>('skillsCollection', baseSkillModel, createBaseSkillScaffold).views((self) => ({
+  get allSkillIds() {
+    return self.asArray.map(({ _id }) => _id);
+  },
+}));
 
 export interface IskillsCollection extends Instance<typeof skillsCollection> {}
 export interface SIskillsCollection extends SnapshotIn<typeof skillsCollection> {}

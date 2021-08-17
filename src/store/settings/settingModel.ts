@@ -7,7 +7,7 @@ import { powerModel } from 'store/powers';
 import { creationRulesModel } from './creationRulesModel';
 
 import { vanillaSetting } from './data/SavageWorldsVanilla';
-import { settingEdgeModel } from './settingEdgeModel';
+import { edgeModel } from '../edges/edgeModel';
 import { hindranceModel } from '../hindrances/hindranceModel';
 import { weaponModel } from '../weapons/weaponModel';
 
@@ -16,7 +16,7 @@ export const settingModel = types
     _id: types.identifier,
     name: types.optional(types.string, ''),
     creation: creationRulesModel,
-    availableEdges: types.array(settingEdgeModel),
+    availableEdges: createBoxedArray('', types.reference(edgeModel)),
     availableSkills: createBoxedArray('', types.reference(baseSkillModel)),
     availableHindrances: createBoxedArray('settingHindrances', types.reference(hindranceModel)),
     availablePowers: createBoxedArray('', types.reference(powerModel)),

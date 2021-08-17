@@ -1,3 +1,4 @@
+import { edgesCollectionModel } from './edges/edgesCollection';
 import { hindrancesCollectionModel } from './hindrances/hindrancesCollection';
 import { weaponsCollection } from './weapons/weaponsCollection';
 import { types, Instance } from 'mobx-state-tree';
@@ -23,6 +24,7 @@ const store = types
     selectedSetting: types.reference(settingModel),
     skills: skillsCollection,
     weapons: weaponsCollection,
+    edges: edgesCollectionModel,
   })
   .views((self) => ({
     get isAllLoaded() {
@@ -30,7 +32,9 @@ const store = types
         self.modifiers.isLoaded &&
         self.powers.isLoaded &&
         self.skills.isLoaded &&
-        self.weapons.isLoaded
+        self.weapons.isLoaded &&
+        self.hindrances.isLoaded &&
+        self.edges.isLoaded
       );
     },
   }))
@@ -56,5 +60,6 @@ export function createStore() {
     powers: createCollectionScaffold(),
     selectedSetting: 'vanilla_setting',
     weapons: createCollectionScaffold(),
+    edges: createCollectionScaffold(),
   });
 }

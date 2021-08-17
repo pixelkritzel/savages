@@ -1,6 +1,6 @@
-import { SIedgeModel } from 'store/settings/settingEdgeModel';
+import { SIedge } from 'store/edges/edgeModel';
 
-export const giantKiller: SIedgeModel = {
+export const giantKiller: SIedge = {
   _id: 'giant_killer',
   name: 'Giant Killer',
   summary: '+1d6 damage vs. creatures three Sizes larger or more.',

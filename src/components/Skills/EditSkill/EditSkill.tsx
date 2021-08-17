@@ -22,6 +22,7 @@ export const EditSkill = observer(function NewModifierFn() {
         skill={skill}
         title={`Edit ${clonedSkill.name}`}
         saveSkill={() => {
+          store.skills.saveModel(skill._id);
           history.push('/skills');
         }}
         discardSkill={() => {

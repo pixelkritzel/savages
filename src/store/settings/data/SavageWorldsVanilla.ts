@@ -1,7 +1,4 @@
-import { giantKiller } from './edges/giant_killer';
 import { SIsetting } from './../settingModel';
-
-import { doubleTap } from './edges/double_tap';
 
 export const vanillaSetting: SIsetting = {
   _id: 'vanilla_setting',
@@ -9,7 +6,7 @@ export const vanillaSetting: SIsetting = {
   creation: {
     attributePoints: 5,
   },
-  availableEdges: [doubleTap, giantKiller],
+  availableEdges: { array: [] },
   availableHindrances: { array: [] },
   availableSkills: {
     array: [],

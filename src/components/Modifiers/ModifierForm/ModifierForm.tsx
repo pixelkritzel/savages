@@ -61,7 +61,7 @@ export const ModifierForm = observer(function ModifierFormFn({
       ];
     },
     get edgesOptions() {
-      return store.selectedSetting.availableEdges.map(({ name, _id }) => ({
+      return store.selectedSetting.availableEdges.array.map(({ name, _id }) => ({
         label: name,
         value: _id,
       }));
