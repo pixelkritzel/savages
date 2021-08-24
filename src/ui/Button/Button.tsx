@@ -1,4 +1,4 @@
-import React from 'react';
+import { ComponentPropsWithoutRef, ElementType } from 'react';
 import styled, { css } from 'styled-components';
 
 import { focusStyles } from 'lib/utils/focus-styles';
@@ -39,11 +39,11 @@ export const buttonStyles = css<StyledButtonProps>`
     padding: 0;
   }
   display: inline-flex;
-
+  justify-content: center;
+  align-items: center;
   position: relative;
   padding: ${({ variant = 'default', size = 'default' }) =>
     variant === 'link' || variant === 'icon' ? '0' : BUTTON_SIZES[size]};
-  justify-content: center;
   text-decoration: ${({ variant = 'default' }) =>
     variant === 'link' ? 'underline' : 'none !important'};
   cursor: ${({ variant = 'default' }) => (variant === 'link' ? 'pointer' : 'default')};
@@ -109,14 +109,16 @@ const InnerIcon = styled.span<{ variant: buttonVariants }>`
     `}
 `;
 
-export type ButtonProps = React.ComponentProps<typeof StyledButton>;
+export type ButtonProps<T extends ElementType> = StyledButtonProps & {
+  as?: T;
+};
 
-export function Button({
+export function Button<T extends ElementType = 'button'>({
   icon,
   children,
   variant,
   ...otherProps
-}: ButtonProps & Omit<React.HTMLProps<HTMLSelectElement>, 'size'>) {
+}: ButtonProps<T> & Omit<ComponentPropsWithoutRef<T>, keyof ButtonProps<T>>) {
   return (
     <StyledButton type="button" variant={variant} {...otherProps}>
       <Inner>

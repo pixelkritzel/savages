@@ -1,13 +1,7 @@
-import styled from 'styled-components';
+import React from 'react';
+import { Form } from 'react-bootstrap';
 
-import { buttonStyles, BUTTON_SIZES } from 'ui/Button';
-
-const StyledSelect = styled.select`
-  ${buttonStyles};
-  padding: ${BUTTON_SIZES.big};
-`;
-
-export interface SelectProps extends React.HTMLProps<HTMLSelectElement> {
+export interface SelectProps extends React.ComponentProps<typeof Form.Select> {
   value?: string;
   onValueChange?: (value: string) => void;
   options: { label: string; value: string }[];
@@ -21,14 +15,19 @@ export function Select({
 }: SelectProps) {
   return (
     <div>
-      <StyledSelect value={value} onChange={(event) => onValueChange(event.target.value)}>
+      <Form.Select
+        value={value}
+        onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+          onValueChange(event.target.value)
+        }
+        {...otherProps}
+      >
         {options.map(({ label, value }) => (
           <option key={value} value={value}>
             {label}
           </option>
         ))}
-      </StyledSelect>
-      <div>{}</div>
+      </Form.Select>
     </div>
   );
 }
