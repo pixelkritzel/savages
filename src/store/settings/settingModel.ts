@@ -14,23 +14,33 @@ import { weaponModel } from '../weapons/weaponModel';
 export const settingModel = types
   .model('setting', {
     _id: types.identifier,
-    name: types.optional(types.string, ''),
+    name: types.string,
     creation: creationRulesModel,
     availableEdges: createBoxedArray('', types.reference(edgeModel)),
     availableSkills: createBoxedArray('', types.reference(baseSkillModel)),
     availableHindrances: createBoxedArray('settingHindrances', types.reference(hindranceModel)),
     availablePowers: createBoxedArray('', types.reference(powerModel)),
     availableWeapons: createBoxedArray('', types.reference(weaponModel)),
+    fatigueLimit: 2,
     rules: types.model({
-      skillSpezializations: types.array(types.string),
+      skillSpezializations: types.map(
+        types.model({
+          name: '',
+          spezializations: types.array(types.string),
+        })
+      ),
+      isConviction: false,
+      isDumbLuck: false,
+      isNoPowerPoints: false,
+      isUnarmoredHero: false,
     }),
   })
   .views((self) => ({
     get isSkillSpezializations() {
-      return !!self.rules.skillSpezializations.length;
+      return !!self.rules.skillSpezializations.entries.length;
     },
     isSpezializedSkill(skillName: string) {
-      return self.rules.skillSpezializations.includes(skillName);
+      return self.rules.skillSpezializations.has(skillName);
     },
   }))
   .actions((self) => ({
@@ -43,7 +53,7 @@ export const settingModel = types
     },
   }));
 
-export function createSettingsScaffold() {
+export function createSettingScaffold() {
   return {
     ...vanillaSetting,
   };

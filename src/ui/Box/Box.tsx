@@ -37,7 +37,7 @@ const StyledTitle = styled.div<{ type: BOX_TYPES }>`
   ${titleStyles}
 `;
 
-interface BoxProps extends React.ComponentProps<typeof StyledBox> {
+interface BoxProps extends React.ComponentPropsWithoutRef<typeof StyledBox> {
   title?: string | React.ReactNode;
   children: React.ReactNode;
   type?: BOX_TYPES;

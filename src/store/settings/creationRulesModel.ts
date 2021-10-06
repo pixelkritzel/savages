@@ -4,7 +4,9 @@ import { customTypes } from 'lib/state/cumstomTypes';
 
 export const creationRulesModel = types
   .model('creationRules', {
-    attributePoints: customTypes.positiveNumber,
+    attributePoints: types.optional(customTypes.positiveNumber, 5),
+    skillPoints: types.optional(customTypes.positiveNumber, 12),
+    isBornHero: false,
   })
   .actions((self) => ({
     set<K extends keyof SnapshotIn<typeof self>, T extends SnapshotIn<typeof self>>(

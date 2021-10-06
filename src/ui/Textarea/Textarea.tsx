@@ -26,7 +26,7 @@ const TextareaContainer = styled.div<{ hasFocus: boolean }>`
   ${({ hasFocus }) => hasFocus && focusStyles}
 `;
 
-interface TextareaProps extends React.ComponentProps<typeof StyledTextarea> {
+interface TextareaProps extends React.ComponentPropsWithoutRef<typeof StyledTextarea> {
   className?: string;
   style?: React.CSSProperties;
   onValueChange?: (value: string) => void;
@@ -57,7 +57,7 @@ export const Textarea = observer(function TextareaFn({
 
   return (
     <TextareaContainer hasFocus={hasFocus} className={className} style={style}>
-      <StyledTextarea res onBlur={onBlur} onChange={onChange} onFocus={onFocus} {...otherProps} />
+      <StyledTextarea onBlur={onBlur} onChange={onChange} onFocus={onFocus} {...otherProps} />
     </TextareaContainer>
   );
 });

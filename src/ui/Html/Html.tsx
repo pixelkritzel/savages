@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const HTMLContainer = styled.div``;
 
-interface HtmlProps extends React.ComponentProps<typeof HTMLContainer> {
+interface HtmlProps extends React.ComponentPropsWithoutRef<typeof HTMLContainer> {
   html: string;
 }
 

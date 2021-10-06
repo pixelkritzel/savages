@@ -1,1 +1,1 @@
-export * from "./SettingForm"
+export * from './SettingForm';

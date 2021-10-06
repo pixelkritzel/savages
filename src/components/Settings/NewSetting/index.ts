@@ -1,1 +1,1 @@
-export * from "./NewSetting"
+export * from './NewSetting';

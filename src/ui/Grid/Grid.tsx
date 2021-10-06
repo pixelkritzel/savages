@@ -37,7 +37,7 @@ const StyledSpan = styled.div`
   ${gridSpanStyles}
 `;
 
-interface SpanProps extends React.ComponentProps<typeof StyledSpan> {}
+interface SpanProps extends React.ComponentPropsWithoutRef<typeof StyledSpan> {}
 
 export function Span({ children, ...otherProps }: SpanProps) {
   return <StyledSpan {...otherProps}>{children}</StyledSpan>;

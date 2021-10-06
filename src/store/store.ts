@@ -1,3 +1,4 @@
+import { settingsCollectionModel } from './settings/settingsCollection';
 import { edgesCollectionModel } from './edges/edgesCollection';
 import { hindrancesCollectionModel } from './hindrances/hindrancesCollection';
 import { weaponsCollection } from './weapons/weaponsCollection';
@@ -18,7 +19,7 @@ const store = types
   .model('stores', {
     characters: types.array(characterModel),
     hindrances: hindrancesCollectionModel,
-    settings: types.array(settingModel),
+    settings: settingsCollectionModel,
     modifiers: modifiersCollectionModel,
     powers: powersCollection,
     selectedSetting: types.reference(settingModel),
@@ -55,7 +56,7 @@ export function createStore() {
     hindrances: createCollectionScaffold(),
     skills: createCollectionScaffold(),
     characters: [single_character_mock],
-    settings: [vanillaSetting],
+    settings: createCollectionScaffold(),
     modifiers: createCollectionScaffold(),
     powers: createCollectionScaffold(),
     selectedSetting: 'vanilla_setting',

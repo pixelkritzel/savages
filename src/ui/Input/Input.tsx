@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { focusStyles } from 'lib/utils/focus-styles';
 
-const StyledInput = styled.input<{ hasError?: boolean; variant?: 'default' | 'inline' }>`
+type StyledInputProps = { hasError?: boolean; variant?: 'default' | 'inline' };
+
+const StyledInput = styled.input<StyledInputProps>`
   height: ${({ variant }) => variant === 'default' && '36px'};
 
   padding: ${({ theme, variant = 'default' }) => theme.input.padding[variant]};
@@ -26,52 +28,57 @@ const InputContainer = styled.div<{ hasFocus: boolean }>`
   ${({ hasFocus }) => hasFocus && focusStyles}
 `;
 
-interface InputProps extends React.ComponentProps<typeof StyledInput> {
+type InputProps = {
   onValueChange?: (value: string) => void;
-  hasError?: boolean;
-  className?: string;
-  style?: React.CSSProperties;
-}
+} & Omit<JSX.IntrinsicElements['input'], 'ref'> &
+  StyledInputProps;
 
-export class Input extends React.Component<InputProps, { hasFocus: boolean }> {
-  state = { hasFocus: false };
+export const Input = React.forwardRef(function Input(
+  props: InputProps,
+  ref: React.Ref<HTMLInputElement>
+) {
+  const [hasFocus, setHasFocus] = useState(false);
 
-  onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    this.setState({ hasFocus: false });
-    this.props.onBlur && this.props.onBlur(event);
-  };
+  const onBlur = useMemo(
+    () => (event: React.FocusEvent<HTMLInputElement>) => {
+      setHasFocus(false);
+      props.onBlur && props.onBlur(event);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
-  onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.props.onValueChange && this.props.onValueChange(event.target.value);
-    this.props.onChange && this.props.onChange(event);
-  };
+  const onChange = useMemo(
+    () => (event: React.ChangeEvent<HTMLInputElement>) => {
+      props.onValueChange && props.onValueChange(event.target.value);
+      props.onChange && props.onChange(event);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
-  onFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    this.setState({ hasFocus: true });
-    this.props.onFocus && this.props.onFocus(event);
-  };
+  const onFocus = useMemo(
+    () => (event: React.FocusEvent<HTMLInputElement>) => {
+      setHasFocus(true);
+      props.onFocus && props.onFocus(event);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
-  render() {
-    const {
-      className,
-      style,
-      hasError,
-      variant = 'default',
-      onValueChange,
-      ...otherProps
-    } = this.props;
+  const { className, style, hasError, variant = 'default', onValueChange, ...otherProps } = props;
 
-    return (
-      <InputContainer className={className} style={style} hasFocus={this.state.hasFocus}>
-        <StyledInput
-          onBlur={this.onBlur}
-          onChange={this.onChange}
-          onFocus={this.onFocus}
-          variant={variant}
-          hasError={hasError}
-          {...otherProps}
-        />
-      </InputContainer>
-    );
-  }
-}
+  return (
+    <InputContainer className={className} style={style} hasFocus={hasFocus}>
+      <StyledInput
+        onBlur={onBlur}
+        onChange={onChange}
+        onFocus={onFocus}
+        variant={variant}
+        hasError={hasError}
+        ref={ref}
+        {...otherProps}
+      />
+    </InputContainer>
+  );
+});

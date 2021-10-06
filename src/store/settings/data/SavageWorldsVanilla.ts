@@ -21,6 +21,8 @@ export const vanillaSetting: SIsetting = {
   },
   availablePowers: { array: [] },
   rules: {
-    skillSpezializations: ['fighting', 'shooting'],
+    skillSpezializations: {
+      fighting: { name: 'fighting', spezializations: ['unarmed', 'knifes'] },
+    },
   },
 };

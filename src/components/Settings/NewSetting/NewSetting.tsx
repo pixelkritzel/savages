@@ -1,48 +1,37 @@
-import React, { useEffect, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
-
-import { Button } from 'ui/Button';
-
-import { SettingForm } from 'components/Settings/SettingForm';
+import React, { useContext } from 'react';
+import { observer } from 'mobx-react';
+import { SettingForm } from '../SettingForm';
 import { StoreContext } from 'components/StoreContext';
+import { Istore } from 'store';
+import { useHistory } from 'react-router-dom';
+import { useEffect } from 'react';
 
-export const NewSetting: React.FC = () => {
+interface NewSettingProps {
+  children?: React.ReactNode;
+}
+
+export const NewSetting = observer(function NewSettingFn({ ...otherProps }: NewSettingProps) {
+  const store = useContext<Istore>(StoreContext);
   const history = useHistory();
-  const { settings } = useContext(StoreContext);
-
-  useEffect(() => {
-    settings.new();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => store.settings.new(), []);
 
   return (
-    <form onSubmit={(event) => event.preventDefault()}>
-      <h2>Create a new character</h2>
-
-      <SettingForm setting={settings.newModel!} />
-
-      <div className="pull-right">
-        <Button
-          onClick={() => {
-            if (window.confirm('Are you sure?')) {
-              settings.discardNewModel();
-              history.replace(`/characters`);
-            }
+    <div {...otherProps}>
+      {store.settings.newModel && (
+        <SettingForm
+          setting={store.settings.newModel}
+          title="New setting"
+          saveSetting={() => {
+            store.settings.saveNewModel();
+            history.push('/settings');
           }}
-          type="button"
-        >
-          Discard Character
-        </Button>
-        <Button
-          onClick={async () => {
-            if ((await settings.saveNewModel()) === 'SUCCESS') {
-              history.replace(`/characters`);
-            }
+          discardSetting={() => {
+            store.settings.discardNewModel();
+            history.push('/settings');
           }}
-          type="button"
-        >
-          Save character
-        </Button>
-      </div>
-    </form>
+        />
+      )}
+    </div>
   );
-};
+});

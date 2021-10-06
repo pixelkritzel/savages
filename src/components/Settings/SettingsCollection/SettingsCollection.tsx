@@ -1,17 +1,21 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { observer } from 'mobx-react';
-import { useRouteMatch } from 'react-router-dom';
 
-import { StoreContext } from 'components/StoreContext';
 import { CRUDTable } from 'components/CRUDTable';
+import { StoreContext } from 'components/StoreContext';
 
-export const SettingsCollection: React.FC = observer(() => {
-  const store = React.useContext(StoreContext);
-  const match = useRouteMatch();
+import { Istore } from 'store';
+
+interface SettingsProps {}
+
+export const SettingsCollection = observer(function SettingsFn({ ...otherProps }: SettingsProps) {
+  const { settings } = useContext<Istore>(StoreContext);
+
   return (
     <CRUDTable
-      collection={store.settings}
-      baseUrl={match.url}
+      // @ts-expect-error
+      collection={settings}
+      baseUrl="settings"
       newLinkLabel="Create new setting"
       title="Settings"
     />

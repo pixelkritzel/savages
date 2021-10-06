@@ -1,41 +1,92 @@
-import React from 'react';
-import { observer } from 'mobx-react';
+import React, { useContext } from 'react';
 
-import { DiceFormGroup } from 'components/Characters/CharacterView/Dice/DiceFormGroup/DiceFormgroup';
+import { observer } from 'mobx-react';
+import { Flex, Grid, Span } from 'ui/Grid';
+
+import { StoreContext } from 'components/StoreContext';
+
+import { Istore } from 'store';
+
 import { Isetting } from 'store/settings';
+import { FormGroup } from 'ui/FormGroup';
+import { Input } from 'ui/Input';
+import { Checkbox } from 'ui/Checkbox';
 
 interface SettingFormProps {
-  setting?: Isetting;
+  title: string;
+  setting: Isetting;
+  saveSetting: () => void;
+  discardSetting: () => void;
 }
 
-export const SettingForm: React.FC<SettingFormProps> = observer(({ setting }) => {
-  if (!setting) {
-    return null;
-  }
+export const SettingForm = observer(function SettingFormFn({
+  setting,
+  title,
+  saveSetting,
+  discardSetting,
+  ...otherProps
+}: SettingFormProps) {
+  const store = useContext<Istore>(StoreContext);
 
   return (
-    <div>
-      <DiceFormGroup id="name" label="Name">
-        <input
-          type="text"
-          id="name"
-          placeholder="Setting name"
-          value={setting._id}
-          onChange={(event) => setting.set('_id', event.target.value)}
+    <Grid as="form">
+      <Span as="h1">Setting Form</Span>
+      <Span>
+        <FormGroup
+          label="Setting name"
+          input={({ id }) => (
+            <Input
+              id={id}
+              value={setting.name}
+              onValueChange={(value) => setting.set('name', value)}
+            />
+          )}
         />
-      </DiceFormGroup>
-
-      <hr />
-      <h3>Creation Rules</h3>
-      <DiceFormGroup id="attributePoints" label="Attribute points">
-        <input
-          type="number"
-          id="attributePoints"
-          placeholder="5"
-          value={setting.creation.attributePoints}
-          onChange={(event) => setting.creation.set('attributePoints', Number(event.target.value))}
+      </Span>
+      <Span as="hr"></Span>
+      <Span as="h2">Creation Rules</Span>
+      <Span>
+        <Checkbox
+          label="Born A Hero"
+          checked={setting.creation.isBornHero}
+          onChange={() => setting.creation.set('isBornHero', !setting.creation.isBornHero)}
         />
-      </DiceFormGroup>
-    </div>
+      </Span>
+      <Span start={1} end={7}>
+        <FormGroup
+          label="Attribute Points"
+          input={({ id }) => (
+            <Input
+              id={id}
+              type="number"
+              min={0}
+              step={1}
+              value={setting.creation.attributePoints}
+              onValueChange={(value) => setting.creation.set('attributePoints', Number(value))}
+            />
+          )}
+        />
+      </Span>
+      <Span start={7} end={13}>
+        <FormGroup
+          label="Skill Points"
+          input={({ id }) => (
+            <Input
+              id={id}
+              type="number"
+              min={0}
+              step={1}
+              value={setting.creation.skillPoints}
+              onValueChange={(value) => setting.creation.set('skillPoints', Number(value))}
+            />
+          )}
+        />
+      </Span>
+      <Span as="hr"></Span>
+      <Span as="h2"> Races</Span>
+      <Span as="hr"></Span>
+      <Span as="h2">Hindrances</Span>
+      <Span start={1} end={10}></Span>
+    </Grid>
   );
 });

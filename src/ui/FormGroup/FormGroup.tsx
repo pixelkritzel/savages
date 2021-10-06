@@ -68,7 +68,7 @@ const InputContainer = styled.div<formGroupStylingProps>`
   }
 `;
 
-interface FormGroupProps extends React.ComponentProps<typeof StyledFormGroup> {
+interface FormGroupProps extends React.ComponentPropsWithoutRef<typeof StyledFormGroup> {
   label: JSX.Element | string;
   id?: string;
   inline?: boolean;
