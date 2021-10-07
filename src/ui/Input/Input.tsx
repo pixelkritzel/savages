@@ -6,12 +6,12 @@ type StyledInputProps = { hasError?: boolean; variant?: 'default' | 'inline' };
 
 const StyledInput = styled.input<StyledInputProps>`
   height: ${({ variant }) => variant === 'default' && '36px'};
-
+  min-width: 100%;
+  max-width: 100%;
   padding: ${({ theme, variant = 'default' }) => theme.input.padding[variant]};
   border: 1px solid
     ${({ theme, hasError }) =>
       hasError ? theme.input.borderColor.error : theme.input.borderColor.normal};
-  border-radius: 4px;
   background-color: white;
 
   &:focus {

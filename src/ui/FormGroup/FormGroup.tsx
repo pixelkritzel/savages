@@ -71,22 +71,23 @@ const InputContainer = styled.div<formGroupStylingProps>`
 interface FormGroupProps extends React.ComponentPropsWithoutRef<typeof StyledFormGroup> {
   label: JSX.Element | string;
   id?: string;
+  inputId?: string;
   inline?: boolean;
   direction?: 'column' | 'row';
   input: (id: { id: string }) => React.ReactNode;
 }
 
 export const FormGroup: React.FC<FormGroupProps> = observer(
-  ({ label, direction = 'row', id, inline = false, input, ...otherProps }) => {
+  ({ label, direction = 'row', id, inputId, inline = false, input, ...otherProps }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const _id = React.useMemo(() => id ?? generateId(), [false]);
+    const _inputId = React.useMemo(() => inputId ?? generateId(), [false]);
     return (
       <StyledFormGroup $direction={direction} inline={inline} {...otherProps}>
-        <Label $direction={direction} htmlFor={_id} inline={inline}>
+        <Label $direction={direction} id={id} htmlFor={_inputId} inline={inline}>
           {label}
         </Label>
         <InputContainer $direction={direction} inline={inline}>
-          {input({ id: _id })}
+          {input({ id: _inputId })}
         </InputContainer>
       </StyledFormGroup>
     );

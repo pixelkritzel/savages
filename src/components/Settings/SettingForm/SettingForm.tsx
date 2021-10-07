@@ -11,6 +11,7 @@ import { Isetting } from 'store/settings';
 import { FormGroup } from 'ui/FormGroup';
 import { Input } from 'ui/Input';
 import { Checkbox } from 'ui/Checkbox';
+import { Resources } from './Resources';
 
 interface SettingFormProps {
   title: string;
@@ -85,8 +86,23 @@ export const SettingForm = observer(function SettingFormFn({
       <Span as="hr"></Span>
       <Span as="h2"> Races</Span>
       <Span as="hr"></Span>
-      <Span as="h2">Hindrances</Span>
-      <Span start={1} end={10}></Span>
+      <Resources
+        name="hindrace"
+        availableSettingResources={setting.availableHindrances}
+        resourcesFromStore={store.hindrances}
+      />
+      <Span as="hr" />
+      <Resources
+        name="edge"
+        availableSettingResources={setting.availableEdges}
+        resourcesFromStore={store.edges}
+      />
+      <Span as="hr" />
+      <Resources
+        name="skill"
+        availableSettingResources={setting.availableSkills}
+        resourcesFromStore={store.skills}
+      />
     </Grid>
   );
 });

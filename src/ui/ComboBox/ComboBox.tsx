@@ -1,44 +1,74 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
+import styled from 'styled-components';
 
 import { Input } from 'ui/Input';
 
 import { generateId } from 'lib/utils/generateId';
-import styled from 'styled-components';
+
+const ComboBoxContainer = styled.div`
+  position: relative;
+`;
+
+const StyledList = styled.ul<{ noOfItems: number; activeIndex: number }>`
+  position: absolute;
+  display: ${({ noOfItems }) => (noOfItems > 0 ? 'flex' : 'none')};
+  flex-direction: column;
+  border: 1px solid ${({ theme }) => theme.colors.grays[600]};
+  width: 100%;
+  top: calc(100% + 2px);
+  box-shadow: ${({ theme }) => theme.shadows.default};
+  overflow-x: hidden;
+
+  &:before {
+    content: '';
+    position: absolute;
+    height: calc(100% / ${({ noOfItems }) => noOfItems});
+    width: 6px;
+    left: 0px;
+    top: calc((100% / ${({ noOfItems }) => noOfItems}) * ${({ activeIndex }) => activeIndex});
+    background-color: cornflowerblue;
+    transition: top 0.4s ease-in-out;
+  }
+`;
 
 const StyledListItem = styled.li<{ isActive: boolean }>`
-  border: ${({ isActive }) => isActive && '1px solid cornflowerblue'};
+  padding: ${({ theme }) => theme.input.padding.default};
+
   cursor: default;
 
   &:hover {
     background-color: lightblue;
   }
 `;
-
-interface ComboBoxProps {
+export type ComboBoxProps = Omit<JSX.IntrinsicElements['input'], 'ref'> & {
   items: {
     value: string;
     display: string | { component: React.ReactNode; searchableText: string };
   }[];
-  label: string | React.ReactNode;
+  labelId: string;
   onHide?: () => void;
-  onValueChange?: (value: string, index: number) => void;
-}
+  onValueSelect?: (value: string, index: number) => void;
+};
+
+const COMBO_BOX_INITIAL_STATE = {
+  inputText: '',
+  filteredItems: [] as ComboBoxProps['items'],
+  activeItemIndex: -1,
+};
 
 export const ComboBox = observer(function ComboBoxFn({
+  id,
   items,
-  label,
+  labelId,
   onHide,
-  onValueChange,
+  onValueSelect,
   ...otherProps
 }: ComboBoxProps) {
-  const [inputText, setInputText] = useState('');
-  const [filteredItems, setFilteredItems] = useState<ComboBoxProps['items']>([]);
-  const [activeItemIndex, setActiveItemIndex] = useState(-1);
+  const [state, setState] = useState(COMBO_BOX_INITIAL_STATE);
+
   const ids = useMemo(
     () => ({
-      input: generateId('input'),
-      label: generateId('label'),
       listbox: generateId('listbox'),
       listitem: generateId('listitem'),
     }),
@@ -46,46 +76,51 @@ export const ComboBox = observer(function ComboBoxFn({
   );
 
   const closeListBox = useCallback(() => {
-    setFilteredItems([]);
-    setInputText('');
-    setActiveItemIndex(-1);
+    setState(COMBO_BOX_INITIAL_STATE);
     onHide && onHide();
   }, [onHide]);
 
-  const comboBoxRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const checkHide = useMemo(
-    () => (event: MouseEvent) => {
-      if (
-        event.target === inputRef.current ||
-        comboBoxRef.current?.contains(event.target as Node)
-      ) {
-        return;
+  const checkBlur = useMemo(
+    () => (event: FocusEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        closeListBox();
       }
-      closeListBox();
+    },
+    [closeListBox]
+  );
+
+  const checkClick = useMemo(
+    () => (event: MouseEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        closeListBox();
+      }
     },
     [closeListBox]
   );
 
   const selectItem = useCallback(
     (index) => {
-      const { display, value: selectedValue } = filteredItems[index];
-      setInputText(typeof display === 'string' ? display : display.searchableText);
-      setFilteredItems([]);
-      if (onValueChange) {
+      const { display, value: selectedValue } = state.filteredItems[index];
+      setState({
+        ...COMBO_BOX_INITIAL_STATE,
+        inputText: typeof display === 'string' ? display : display.searchableText,
+      });
+
+      if (onValueSelect) {
         const originalIndex = items.findIndex(
           ({ value: itemValue }) => itemValue === selectedValue
         );
-        onValueChange(selectedValue, originalIndex);
+        onValueSelect(selectedValue, originalIndex);
       }
     },
-    [filteredItems, items, onValueChange]
+    [items, onValueSelect, state.filteredItems]
   );
 
   const updateResults = useCallback(() => {
-    const lowerCaseInputText = inputText.toLowerCase();
-    const currentlyFilteredItems =
+    const lowerCaseInputText = state.inputText.toLowerCase();
+    let currentlyFilteredItems =
       lowerCaseInputText.length > 0
         ? items.filter(({ display }) =>
             typeof display === 'string'
@@ -94,12 +129,11 @@ export const ComboBox = observer(function ComboBoxFn({
           )
         : [];
     if (currentlyFilteredItems.length === 0) {
-      closeListBox();
+      setState({ ...state, filteredItems: [], activeItemIndex: -1 });
     } else {
-      setFilteredItems(currentlyFilteredItems);
-      setActiveItemIndex(-1);
+      setState({ ...state, filteredItems: currentlyFilteredItems, activeItemIndex: -1 });
     }
-  }, [closeListBox, inputText, items]);
+  }, [items, state]);
 
   const onKeyUp = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -122,78 +156,98 @@ export const ComboBox = observer(function ComboBoxFn({
         return;
       }
 
-      if (key === 'ArrowDown' && filteredItems.length > 0) {
-        setActiveItemIndex(activeItemIndex < filteredItems.length - 1 ? activeItemIndex + 1 : 0);
+      if (key === 'ArrowDown' && state.filteredItems.length > 0) {
+        setState({
+          ...state,
+          activeItemIndex:
+            state.activeItemIndex < state.filteredItems.length - 1 ? state.activeItemIndex + 1 : 0,
+        });
       }
 
-      if (key === 'ArrowUp' && filteredItems.length > 0) {
-        setActiveItemIndex(activeItemIndex !== 0 ? activeItemIndex - 1 : filteredItems.length - 1);
+      if (key === 'ArrowUp' && state.filteredItems.length > 0) {
+        setState({
+          ...state,
+          activeItemIndex:
+            state.activeItemIndex !== 0
+              ? state.activeItemIndex - 1
+              : state.filteredItems.length - 1,
+        });
       }
 
-      if (key === 'Enter' && activeItemIndex > -1) {
-        selectItem(activeItemIndex);
+      if (key === 'Enter' && state.activeItemIndex > -1) {
+        selectItem(state.activeItemIndex);
       }
     },
-    [activeItemIndex, closeListBox, filteredItems.length, selectItem]
+    [closeListBox, selectItem, state]
   );
 
   useEffect(() => {
-    document.addEventListener('click', checkHide);
+    document.addEventListener('focusin', checkBlur);
+    document.addEventListener('click', checkClick);
     return () => {
-      document.removeEventListener('click', checkHide);
+      document.removeEventListener('focusin', checkBlur);
+      document.removeEventListener('click', checkClick);
     };
-  }, [checkHide]);
+  }, [checkBlur, checkClick]);
 
-  const isListBoxShown = useMemo(() => Boolean(filteredItems.length), [filteredItems]);
+  const isListBoxShown = useMemo(() => Boolean(state.filteredItems.length), [state.filteredItems]);
 
   return (
-    <>
-      <label id={ids.label} htmlFor={ids.input} className="combobox-label">
-        {label}
-      </label>
-      <div className="combobox-wrapper">
-        <div
-          // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-          role="combobox"
-          aria-expanded={isListBoxShown}
-          aria-owns={ids.listbox}
-          aria-haspopup="listbox"
-          id="ex2-combobox"
-          ref={comboBoxRef}
-        >
-          <Input
-            type="text"
-            aria-autocomplete="list"
-            aria-controls={ids.listbox}
-            aria-labelledby={ids.label}
-            aria-activedescendant={
-              activeItemIndex > -1 ? `${ids.listitem}-${filteredItems[activeItemIndex].value}` : ''
-            }
-            value={inputText}
-            onChange={(event) => setInputText(event.target.value)}
-            onKeyUp={onKeyUp}
-            onKeyDown={onKeyDown}
-            onBlur={closeListBox}
-            id={ids.input}
-            ref={inputRef}
-          />
-        </div>
-        <ul aria-labelledby={ids.label} role="listbox" id={ids.listbox} className="listbox hidden">
-          {isListBoxShown &&
-            filteredItems.map(({ value, display }, index) => (
-              <StyledListItem
-                key={value}
-                id={`${ids.listitem}-${value}`}
-                role="option"
-                aria-selected={activeItemIndex === index}
-                isActive={activeItemIndex === index}
-                onClick={() => selectItem(index)}
-              >
-                {typeof display === 'string' ? display : display.component}
-              </StyledListItem>
-            ))}
-        </ul>
+    <ComboBoxContainer ref={containerRef}>
+      <div
+        // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+        role="combobox"
+        aria-expanded={isListBoxShown}
+        aria-owns={ids.listbox}
+        aria-haspopup="listbox"
+      >
+        <Input
+          type="text"
+          aria-autocomplete="list"
+          aria-controls={ids.listbox}
+          aria-activedescendant={
+            state.activeItemIndex > -1
+              ? `${ids.listitem}-${state.filteredItems[state.activeItemIndex].value}`
+              : ''
+          }
+          value={state.inputText}
+          onKeyUp={onKeyUp}
+          onKeyDown={onKeyDown}
+          onChange={(event) =>
+            setState({
+              ...state,
+              inputText: event.target.value,
+            })
+          }
+          id={id}
+          autoComplete="off"
+          {...otherProps}
+        />
       </div>
-    </>
+      <StyledList
+        aria-labelledby={labelId}
+        role="listbox"
+        id={ids.listbox}
+        noOfItems={state.filteredItems.length}
+        activeIndex={state.activeItemIndex}
+      >
+        {isListBoxShown &&
+          state.filteredItems.map(({ value, display }, index) => (
+            <StyledListItem
+              key={value}
+              id={`${ids.listitem}-${value}`}
+              role="option"
+              aria-selected={state.activeItemIndex === index}
+              isActive={state.activeItemIndex === index}
+              onMouseUp={() => {
+                console.log('Clicked');
+                selectItem(index);
+              }}
+            >
+              {typeof display === 'string' ? display : display.component}
+            </StyledListItem>
+          ))}
+      </StyledList>
+    </ComboBoxContainer>
   );
 });

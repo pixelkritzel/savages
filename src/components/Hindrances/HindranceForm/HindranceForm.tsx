@@ -173,6 +173,15 @@ export const HindranceForm = observer(function HindranceFormFn({
           </ReactModal>
         )}
       </Span>
+      <Span as="hr" />
+      <Span as={Flex} horizontal="end">
+        <Button size="big" onClick={discardHindrance}>
+          Cancel
+        </Button>
+        <Button variant="success" size="big" onClick={saveHindrance}>
+          Save Hindrance
+        </Button>
+      </Span>
     </Grid>
   );
 });

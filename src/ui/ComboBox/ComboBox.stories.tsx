@@ -1,4 +1,7 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { useState } from 'react';
+import { FormGroup } from 'ui/FormGroup';
+import { Input } from 'ui/Input';
 
 import { ComboBox } from './ComboBox';
 
@@ -8,7 +11,18 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof ComboBox>;
 
-const Template: ComponentStory<typeof ComboBox> = (args) => <ComboBox {...args} />;
+const labelId = 'combobox-label-id';
+
+const Template: ComponentStory<typeof ComboBox> = (args) => (
+  <>
+    <FormGroup
+      label="Search here"
+      id={labelId}
+      input={({ id }) => <ComboBox id={id} {...args} />}
+      direction="column"
+    />
+  </>
+);
 
 export const Default = Template.bind({});
 Default.args = {
@@ -22,5 +36,6 @@ Default.args = {
       display: { component: <span>👩‍🚀 One Astronaut </span>, searchableText: 'One Astronaut' },
     },
   ],
-  label: 'ComboBox Example',
+  labelId,
+  placeholder: 'Search here',
 };

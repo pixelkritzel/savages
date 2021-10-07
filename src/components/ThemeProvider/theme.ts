@@ -31,8 +31,13 @@ const colors = {
   },
 };
 
+const shadows = {
+  default: '2px 2px 2px rgba(128, 128, 128, 0.3)',
+};
+
 export const theme = {
   colors,
+  shadows,
   fonts: {
     default: [
       '-apple-system',
