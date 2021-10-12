@@ -29,6 +29,9 @@ const colors = {
     800: '#ddd',
     900: '#fafafa',
   },
+  backgrounds: {
+    default: '#fff',
+  },
 };
 
 const shadows = {

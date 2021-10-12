@@ -1,34 +1,44 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { Input } from 'ui/Input';
 
 import { generateId } from 'lib/utils/generateId';
+import { theme } from 'components/ThemeProvider/theme';
 
 const ComboBoxContainer = styled.div`
   position: relative;
 `;
 
-const StyledList = styled.ul<{ noOfItems: number; activeIndex: number }>`
+const StyledList = styled.ul<{
+  noOfItems: number;
+  activeIndex: number;
+  height?: string;
+  itemHeight: string;
+  activeItemIndicatorOffset: string;
+}>`
   position: absolute;
   display: ${({ noOfItems }) => (noOfItems > 0 ? 'flex' : 'none')};
   flex-direction: column;
   border: 1px solid ${({ theme }) => theme.colors.grays[600]};
   width: 100%;
+  height: ${({ height = 'auto' }) => height};
   top: calc(100% + 2px);
   box-shadow: ${({ theme }) => theme.shadows.default};
   overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: ${({ theme }) => theme.colors.backgrounds.default};
 
   &:before {
     content: '';
     position: absolute;
-    height: calc(100% / ${({ noOfItems }) => noOfItems});
+    height: ${({ itemHeight }) => itemHeight};
     width: 6px;
     left: 0px;
-    top: calc((100% / ${({ noOfItems }) => noOfItems}) * ${({ activeIndex }) => activeIndex});
+    top: ${({ activeItemIndicatorOffset }) => activeItemIndicatorOffset};
     background-color: cornflowerblue;
-    transition: top 0.4s ease-in-out;
+    transition: top 0.1s;
   }
 `;
 
@@ -66,6 +76,14 @@ export const ComboBox = observer(function ComboBoxFn({
   ...otherProps
 }: ComboBoxProps) {
   const [state, setState] = useState(COMBO_BOX_INITIAL_STATE);
+  const [resultsListHeight, setResultsListHeight] = useState<number>(-1);
+  const [resultsListItemHeight, setResultsListItemHeight] = useState<number>(-1);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  const activeItemIndicatorOffset = useMemo(() => state.activeItemIndex * resultsListItemHeight, [
+    resultsListItemHeight,
+    state.activeItemIndex,
+  ]);
 
   const ids = useMemo(
     () => ({
@@ -81,6 +99,8 @@ export const ComboBox = observer(function ComboBoxFn({
   }, [onHide]);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const resultsListRef = useRef<HTMLUListElement>(null);
+  const resultsListItemRef = useRef<HTMLLIElement>(null);
 
   const checkBlur = useMemo(
     () => (event: FocusEvent) => {
@@ -192,6 +212,49 @@ export const ComboBox = observer(function ComboBoxFn({
 
   const isListBoxShown = useMemo(() => Boolean(state.filteredItems.length), [state.filteredItems]);
 
+  const handleResize = useCallback(() => {
+    setWindowHeight(window.innerHeight);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  });
+
+  useLayoutEffect(() => {
+    if (isListBoxShown) {
+      const { bottom: containerBottom } = containerRef.current!.getBoundingClientRect();
+      const currentResultsListHeight = resultsListRef.current!.clientHeight;
+      const availableResultsListHeight =
+        windowHeight - containerBottom - theme.rhythms.outside.vertical;
+      setResultsListHeight(
+        currentResultsListHeight > availableResultsListHeight ? availableResultsListHeight : -1
+      );
+      const resultsListItemHeight = resultsListItemRef.current!.clientHeight;
+      setResultsListItemHeight(resultsListItemHeight);
+    }
+  }, [isListBoxShown, windowHeight, state.filteredItems.length]);
+
+  useEffect(() => {
+    if (state.activeItemIndex > -1 && isListBoxShown) {
+      if (activeItemIndicatorOffset + resultsListItemHeight > resultsListHeight / 2)
+        resultsListRef.current!.scrollTo({
+          top: activeItemIndicatorOffset + resultsListItemHeight - resultsListHeight / 2,
+        });
+      if (state.activeItemIndex === 0) {
+        resultsListRef.current!.scrollTo({ top: 0 });
+      }
+    }
+  }, [
+    resultsListHeight,
+    resultsListItemHeight,
+    state.activeItemIndex,
+    isListBoxShown,
+    activeItemIndicatorOffset,
+  ]);
+
   return (
     <ComboBoxContainer ref={containerRef}>
       <div
@@ -230,6 +293,10 @@ export const ComboBox = observer(function ComboBoxFn({
         id={ids.listbox}
         noOfItems={state.filteredItems.length}
         activeIndex={state.activeItemIndex}
+        ref={resultsListRef}
+        height={resultsListHeight > -1 ? `${resultsListHeight}px` : 'auto'}
+        itemHeight={`${resultsListItemHeight}px`}
+        activeItemIndicatorOffset={`${activeItemIndicatorOffset}px`}
       >
         {isListBoxShown &&
           state.filteredItems.map(({ value, display }, index) => (
@@ -239,10 +306,10 @@ export const ComboBox = observer(function ComboBoxFn({
               role="option"
               aria-selected={state.activeItemIndex === index}
               isActive={state.activeItemIndex === index}
-              onMouseUp={() => {
-                console.log('Clicked');
+              onClick={() => {
                 selectItem(index);
               }}
+              ref={index === 0 ? resultsListItemRef : undefined}
             >
               {typeof display === 'string' ? display : display.component}
             </StyledListItem>

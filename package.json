@@ -86,7 +86,8 @@
     "@types/pouchdb": "^6.4.0",
     "@types/react-modal": "^3.12.1",
     "@types/react-select": "^4.0.17",
-    "@types/styled-components": "^5.1.9"
+    "@types/styled-components": "^5.1.9",
+    "supervillains": "^3.0.0"
   },
   "resolutions": {
     "babel-loader": "8.1.0"
