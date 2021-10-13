@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import throttle from 'lodash/throttle';
 
 import { Input } from 'ui/Input';
 
@@ -67,7 +67,7 @@ const COMBO_BOX_INITIAL_STATE = {
   activeItemIndex: -1,
 };
 
-export const ComboBox = observer(function ComboBoxFn({
+export const ComboBox = function ComboBoxFn({
   id,
   items,
   labelId,
@@ -79,6 +79,7 @@ export const ComboBox = observer(function ComboBoxFn({
   const [resultsListHeight, setResultsListHeight] = useState<number>(-1);
   const [resultsListItemHeight, setResultsListItemHeight] = useState<number>(-1);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [isListBoxShown, setIsListBoxShown] = useState(false);
 
   const activeItemIndicatorOffset = useMemo(() => state.activeItemIndex * resultsListItemHeight, [
     resultsListItemHeight,
@@ -95,6 +96,7 @@ export const ComboBox = observer(function ComboBoxFn({
 
   const closeListBox = useCallback(() => {
     setState(COMBO_BOX_INITIAL_STATE);
+    setIsListBoxShown(false);
     onHide && onHide();
   }, [onHide]);
 
@@ -147,7 +149,7 @@ export const ComboBox = observer(function ComboBoxFn({
               ? display.toLowerCase().includes(lowerCaseInputText)
               : display.searchableText.toLowerCase().includes(lowerCaseInputText)
           )
-        : [];
+        : items;
     if (currentlyFilteredItems.length === 0) {
       setState({ ...state, filteredItems: [], activeItemIndex: -1 });
     } else {
@@ -210,11 +212,13 @@ export const ComboBox = observer(function ComboBoxFn({
     };
   }, [checkBlur, checkClick]);
 
-  const isListBoxShown = useMemo(() => Boolean(state.filteredItems.length), [state.filteredItems]);
-
-  const handleResize = useCallback(() => {
-    setWindowHeight(window.innerHeight);
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleResize = useCallback(
+    throttle(() => {
+      setWindowHeight(window.innerHeight);
+    }, 64),
+    []
+  );
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -224,14 +228,15 @@ export const ComboBox = observer(function ComboBoxFn({
   });
 
   useLayoutEffect(() => {
-    if (isListBoxShown) {
+    if (isListBoxShown && state.filteredItems.length > 0) {
       const { bottom: containerBottom } = containerRef.current!.getBoundingClientRect();
-      const currentResultsListHeight = resultsListRef.current!.clientHeight;
+      const currentResultsListHeight = resultsListRef.current!.offsetHeight;
       const availableResultsListHeight =
         windowHeight - containerBottom - theme.rhythms.outside.vertical;
       setResultsListHeight(
-        currentResultsListHeight > availableResultsListHeight ? availableResultsListHeight : -1
+        currentResultsListHeight >= availableResultsListHeight ? availableResultsListHeight : -1
       );
+      console.log(windowHeight, currentResultsListHeight, availableResultsListHeight);
       const resultsListItemHeight = resultsListItemRef.current!.clientHeight;
       setResultsListItemHeight(resultsListItemHeight);
     }
@@ -274,6 +279,10 @@ export const ComboBox = observer(function ComboBoxFn({
               : ''
           }
           value={state.inputText}
+          onFocus={() => {
+            updateResults();
+            setIsListBoxShown(true);
+          }}
           onKeyUp={onKeyUp}
           onKeyDown={onKeyDown}
           onChange={(event) =>
@@ -287,34 +296,38 @@ export const ComboBox = observer(function ComboBoxFn({
           {...otherProps}
         />
       </div>
-      <StyledList
-        aria-labelledby={labelId}
-        role="listbox"
-        id={ids.listbox}
-        noOfItems={state.filteredItems.length}
-        activeIndex={state.activeItemIndex}
-        ref={resultsListRef}
-        height={resultsListHeight > -1 ? `${resultsListHeight}px` : 'auto'}
-        itemHeight={`${resultsListItemHeight}px`}
-        activeItemIndicatorOffset={`${activeItemIndicatorOffset}px`}
-      >
-        {isListBoxShown &&
-          state.filteredItems.map(({ value, display }, index) => (
-            <StyledListItem
-              key={value}
-              id={`${ids.listitem}-${value}`}
-              role="option"
-              aria-selected={state.activeItemIndex === index}
-              isActive={state.activeItemIndex === index}
-              onClick={() => {
-                selectItem(index);
-              }}
-              ref={index === 0 ? resultsListItemRef : undefined}
-            >
-              {typeof display === 'string' ? display : display.component}
-            </StyledListItem>
-          ))}
-      </StyledList>
+      {isListBoxShown &&
+        (state.filteredItems.length > 0 ? (
+          <StyledList
+            aria-labelledby={labelId}
+            role="listbox"
+            id={ids.listbox}
+            noOfItems={state.filteredItems.length}
+            activeIndex={state.activeItemIndex}
+            ref={resultsListRef}
+            height={resultsListHeight > -1 ? `${resultsListHeight}px` : 'auto'}
+            itemHeight={`${resultsListItemHeight}px`}
+            activeItemIndicatorOffset={`${activeItemIndicatorOffset}px`}
+          >
+            {state.filteredItems.map(({ value, display }, index) => (
+              <StyledListItem
+                key={value}
+                id={`${ids.listitem}-${value}`}
+                role="option"
+                aria-selected={state.activeItemIndex === index}
+                isActive={state.activeItemIndex === index}
+                onClick={() => {
+                  selectItem(index);
+                }}
+                ref={index === 0 ? resultsListItemRef : undefined}
+              >
+                {typeof display === 'string' ? display : display.component}
+              </StyledListItem>
+            ))}
+          </StyledList>
+        ) : (
+          <div>No results</div>
+        ))}
     </ComboBoxContainer>
   );
-});
+};

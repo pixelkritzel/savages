@@ -37,6 +37,7 @@ const Template: ComponentStory<typeof ComboBox> = (args) => {
         )}
         direction="column"
       />
+
       <ol>
         {results.map(([value, itemIndex], index) => (
           <li key={index}>
