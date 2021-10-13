@@ -24,28 +24,51 @@ const Template: ComponentStory<typeof ComboBox> = (args) => {
   const [results, setResult] = useState<[string, number][]>([]);
 
   return (
-    <>
-      <FormGroup
-        label="Search here"
-        id={labelId}
-        input={({ id }) => (
-          <ComboBox
-            id={id}
-            onValueSelect={(value, index) => setResult([...results, [value, index]])}
-            {...args}
-          />
-        )}
-        direction="column"
-      />
-
-      <ol>
-        {results.map(([value, itemIndex], index) => (
-          <li key={index}>
-            Selected {value} with label <code>{items[itemIndex].display}</code>
-          </li>
-        ))}
-      </ol>
-    </>
+    <div
+      style={{
+        height: '80vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+    >
+      <div>
+        <FormGroup
+          label="Search here"
+          id={labelId}
+          input={({ id }) => (
+            <ComboBox
+              id={id}
+              noResultsMessage="No villains available"
+              onValueSelect={(value, index) => setResult([...results, [value, index]])}
+              {...args}
+            />
+          )}
+          direction="column"
+        />
+        <ol>
+          {results.map(([value, itemIndex], index) => (
+            <li key={index}>
+              Selected {value} with label <code>{items[itemIndex].display}</code>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div>
+        <FormGroup
+          label="Search here"
+          id={labelId + '2'}
+          input={({ id }) => (
+            <ComboBox
+              id={id}
+              onValueSelect={(value, index) => setResult([...results, [value, index]])}
+              {...args}
+            />
+          )}
+          direction="column"
+        />
+      </div>
+    </div>
   );
 };
 

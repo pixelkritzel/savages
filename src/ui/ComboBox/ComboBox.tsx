@@ -7,28 +7,42 @@ import { Input } from 'ui/Input';
 import { generateId } from 'lib/utils/generateId';
 import { theme } from 'components/ThemeProvider/theme';
 
+const LIST_BOX_OFFSET = 2;
+
 const ComboBoxContainer = styled.div`
   position: relative;
 `;
 
-const StyledList = styled.ul<{
-  noOfItems: number;
-  activeIndex: number;
+type PopoutProps = {
   height?: string;
-  itemHeight: string;
-  activeItemIndicatorOffset: string;
-}>`
+  verticalAnchor: 'top' | 'bottom';
+};
+
+const Popout = styled.div<PopoutProps>`
   position: absolute;
-  display: ${({ noOfItems }) => (noOfItems > 0 ? 'flex' : 'none')};
-  flex-direction: column;
   border: 1px solid ${({ theme }) => theme.colors.grays[600]};
   width: 100%;
   height: ${({ height = 'auto' }) => height};
-  top: calc(100% + 2px);
+  top: ${({ verticalAnchor }) => verticalAnchor === 'top' && `calc(100% + ${LIST_BOX_OFFSET}px)`};
+  bottom: ${({ verticalAnchor }) =>
+    verticalAnchor === 'bottom' && `calc(100% + ${LIST_BOX_OFFSET}px)`};
   box-shadow: ${({ theme }) => theme.shadows.default};
   overflow-x: hidden;
   overflow-y: scroll;
   background-color: ${({ theme }) => theme.colors.backgrounds.default};
+  z-index: 10;
+`;
+
+type ResultsListProps = {
+  noOfItems: number;
+  itemHeight: string;
+  activeItemIndicatorOffset: string;
+};
+
+const ResultsList = styled.ul<ResultsListProps>`
+  position: relative;
+  display: ${({ noOfItems }) => (noOfItems > 0 ? 'flex' : 'none')};
+  flex-direction: column;
 
   &:before {
     content: '';
@@ -51,12 +65,20 @@ const StyledListItem = styled.li<{ isActive: boolean }>`
     background-color: lightblue;
   }
 `;
+
+const NoResults = styled.div`
+  padding: ${({ theme }) => theme.input.padding.default};
+  text-align: center;
+  font-style: italic;
+`;
+
 export type ComboBoxProps = Omit<JSX.IntrinsicElements['input'], 'ref'> & {
   items: {
     value: string;
     display: string | { component: React.ReactNode; searchableText: string };
   }[];
   labelId: string;
+  noResultsMessage?: string;
   onHide?: () => void;
   onValueSelect?: (value: string, index: number) => void;
 };
@@ -71,15 +93,19 @@ export const ComboBox = function ComboBoxFn({
   id,
   items,
   labelId,
+  noResultsMessage = 'No Results',
   onHide,
   onValueSelect,
   ...otherProps
 }: ComboBoxProps) {
   const [state, setState] = useState(COMBO_BOX_INITIAL_STATE);
-  const [resultsListHeight, setResultsListHeight] = useState<number>(-1);
+  const [poputHeight, setPopoutHeight] = useState<number>(-1);
   const [resultsListItemHeight, setResultsListItemHeight] = useState<number>(-1);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-  const [isListBoxShown, setIsListBoxShown] = useState(false);
+  const [isPopoutOpen, setPopoutOpen] = useState(false);
+  const [popoutVerticalAnchor, setpopoutVerticalAnchor] = useState<PopoutProps['verticalAnchor']>(
+    'top'
+  );
 
   const activeItemIndicatorOffset = useMemo(() => state.activeItemIndex * resultsListItemHeight, [
     resultsListItemHeight,
@@ -88,38 +114,39 @@ export const ComboBox = function ComboBoxFn({
 
   const ids = useMemo(
     () => ({
-      listbox: generateId('listbox'),
-      listitem: generateId('listitem'),
+      popout: generateId('results-list'),
+      resultsListItem: generateId('results-list-item'),
     }),
     []
   );
 
-  const closeListBox = useCallback(() => {
+  const closeResultsList = useCallback(() => {
     setState(COMBO_BOX_INITIAL_STATE);
-    setIsListBoxShown(false);
+    setPopoutOpen(false);
     onHide && onHide();
   }, [onHide]);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const popoutRef = useRef<HTMLDivElement>(null);
   const resultsListRef = useRef<HTMLUListElement>(null);
   const resultsListItemRef = useRef<HTMLLIElement>(null);
 
   const checkBlur = useMemo(
     () => (event: FocusEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) {
-        closeListBox();
+        closeResultsList();
       }
     },
-    [closeListBox]
+    [closeResultsList]
   );
 
   const checkClick = useMemo(
     () => (event: MouseEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) {
-        closeListBox();
+        closeResultsList();
       }
     },
-    [closeListBox]
+    [closeResultsList]
   );
 
   const selectItem = useCallback(
@@ -164,6 +191,7 @@ export const ComboBox = function ComboBoxFn({
         event.preventDefault();
         return;
       }
+      setPopoutOpen(true);
       updateResults();
     },
     [updateResults]
@@ -174,7 +202,7 @@ export const ComboBox = function ComboBoxFn({
       const { key } = event;
 
       if (key === 'Escape') {
-        closeListBox();
+        closeResultsList();
         return;
       }
 
@@ -200,7 +228,7 @@ export const ComboBox = function ComboBoxFn({
         selectItem(state.activeItemIndex);
       }
     },
-    [closeListBox, selectItem, state]
+    [closeResultsList, selectItem, state]
   );
 
   useEffect(() => {
@@ -228,35 +256,43 @@ export const ComboBox = function ComboBoxFn({
   });
 
   useLayoutEffect(() => {
-    if (isListBoxShown && state.filteredItems.length > 0) {
-      const { bottom: containerBottom } = containerRef.current!.getBoundingClientRect();
-      const currentResultsListHeight = resultsListRef.current!.offsetHeight;
-      const availableResultsListHeight =
-        windowHeight - containerBottom - theme.rhythms.outside.vertical;
-      setResultsListHeight(
-        currentResultsListHeight >= availableResultsListHeight ? availableResultsListHeight : -1
+    if (isPopoutOpen) {
+      const {
+        bottom: containerBottom,
+        top: containerTop,
+      } = containerRef.current!.getBoundingClientRect();
+      const currentPopoutChildHeight = (popoutRef.current!.children[0] as HTMLElement).offsetHeight;
+      const availablePopoutHeightBottom =
+        windowHeight - containerBottom - LIST_BOX_OFFSET - theme.rhythms.outside.vertical;
+      const availablePopoutHeightTop =
+        containerTop - LIST_BOX_OFFSET - theme.rhythms.outside.vertical;
+      const availablePopoutHeight = Math.max(availablePopoutHeightBottom, availablePopoutHeightTop);
+      setPopoutHeight(
+        currentPopoutChildHeight >= availablePopoutHeight ? availablePopoutHeight : -1
       );
-      console.log(windowHeight, currentResultsListHeight, availableResultsListHeight);
-      const resultsListItemHeight = resultsListItemRef.current!.clientHeight;
-      setResultsListItemHeight(resultsListItemHeight);
+      setpopoutVerticalAnchor(
+        availablePopoutHeightBottom >= availablePopoutHeightTop ? 'top' : 'bottom'
+      );
     }
-  }, [isListBoxShown, windowHeight, state.filteredItems.length]);
+  }, [isPopoutOpen, windowHeight, state.filteredItems.length]);
 
   useEffect(() => {
-    if (state.activeItemIndex > -1 && isListBoxShown) {
-      if (activeItemIndicatorOffset + resultsListItemHeight > resultsListHeight / 2)
-        resultsListRef.current!.scrollTo({
-          top: activeItemIndicatorOffset + resultsListItemHeight - resultsListHeight / 2,
+    if (state.activeItemIndex > -1 && isPopoutOpen) {
+      const resultsListItemHeight = resultsListItemRef.current!.clientHeight;
+      setResultsListItemHeight(resultsListItemHeight);
+      if (activeItemIndicatorOffset + resultsListItemHeight > poputHeight / 2)
+        popoutRef.current!.scrollTo({
+          top: activeItemIndicatorOffset + resultsListItemHeight - poputHeight / 2,
         });
       if (state.activeItemIndex === 0) {
-        resultsListRef.current!.scrollTo({ top: 0 });
+        popoutRef.current!.scrollTo({ top: 0 });
       }
     }
   }, [
-    resultsListHeight,
+    poputHeight,
     resultsListItemHeight,
     state.activeItemIndex,
-    isListBoxShown,
+    isPopoutOpen,
     activeItemIndicatorOffset,
   ]);
 
@@ -265,23 +301,23 @@ export const ComboBox = function ComboBoxFn({
       <div
         // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
         role="combobox"
-        aria-expanded={isListBoxShown}
-        aria-owns={ids.listbox}
+        aria-expanded={isPopoutOpen}
+        aria-owns={ids.popout}
         aria-haspopup="listbox"
       >
         <Input
           type="text"
           aria-autocomplete="list"
-          aria-controls={ids.listbox}
+          aria-controls={ids.popout}
           aria-activedescendant={
             state.activeItemIndex > -1
-              ? `${ids.listitem}-${state.filteredItems[state.activeItemIndex].value}`
+              ? `${ids.resultsListItem}-${state.filteredItems[state.activeItemIndex].value}`
               : ''
           }
           value={state.inputText}
           onFocus={() => {
             updateResults();
-            setIsListBoxShown(true);
+            setPopoutOpen(true);
           }}
           onKeyUp={onKeyUp}
           onKeyDown={onKeyDown}
@@ -296,38 +332,43 @@ export const ComboBox = function ComboBoxFn({
           {...otherProps}
         />
       </div>
-      {isListBoxShown &&
-        (state.filteredItems.length > 0 ? (
-          <StyledList
-            aria-labelledby={labelId}
-            role="listbox"
-            id={ids.listbox}
-            noOfItems={state.filteredItems.length}
-            activeIndex={state.activeItemIndex}
-            ref={resultsListRef}
-            height={resultsListHeight > -1 ? `${resultsListHeight}px` : 'auto'}
-            itemHeight={`${resultsListItemHeight}px`}
-            activeItemIndicatorOffset={`${activeItemIndicatorOffset}px`}
-          >
-            {state.filteredItems.map(({ value, display }, index) => (
-              <StyledListItem
-                key={value}
-                id={`${ids.listitem}-${value}`}
-                role="option"
-                aria-selected={state.activeItemIndex === index}
-                isActive={state.activeItemIndex === index}
-                onClick={() => {
-                  selectItem(index);
-                }}
-                ref={index === 0 ? resultsListItemRef : undefined}
-              >
-                {typeof display === 'string' ? display : display.component}
-              </StyledListItem>
-            ))}
-          </StyledList>
-        ) : (
-          <div>No results</div>
-        ))}
+      {isPopoutOpen && (
+        <Popout
+          aria-labelledby={labelId}
+          role="listbox"
+          id={ids.popout}
+          height={poputHeight > -1 ? `${poputHeight}px` : 'auto'}
+          verticalAnchor={popoutVerticalAnchor}
+          ref={popoutRef}
+        >
+          {state.filteredItems.length > 0 ? (
+            <ResultsList
+              noOfItems={state.filteredItems.length}
+              ref={resultsListRef}
+              itemHeight={`${resultsListItemHeight}px`}
+              activeItemIndicatorOffset={`${activeItemIndicatorOffset}px`}
+            >
+              {state.filteredItems.map(({ value, display }, index) => (
+                <StyledListItem
+                  key={value}
+                  id={`${ids.resultsListItem}-${value}`}
+                  role="option"
+                  aria-selected={state.activeItemIndex === index}
+                  isActive={state.activeItemIndex === index}
+                  onClick={() => {
+                    selectItem(index);
+                  }}
+                  ref={index === 0 ? resultsListItemRef : undefined}
+                >
+                  {typeof display === 'string' ? display : display.component}
+                </StyledListItem>
+              ))}
+            </ResultsList>
+          ) : (
+            <NoResults>{noResultsMessage}</NoResults>
+          )}
+        </Popout>
+      )}
     </ComboBoxContainer>
   );
 };
