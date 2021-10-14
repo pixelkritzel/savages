@@ -1,23 +1,23 @@
 import React, { useContext } from 'react';
-
+import { action } from 'mobx';
+import ReactModal from 'react-modal';
 import { observer, useLocalStore } from 'mobx-react';
+
+import { Button } from 'ui/Button';
+import { ComboBox } from 'ui/ComboBox';
 import { Flex, Grid, Span } from 'ui/Grid';
-
-import { StoreContext } from 'components/StoreContext';
-
-import { Istore } from 'store';
-
-import { Ihindrance } from 'store/hindrances';
 import { FormGroup } from 'ui/FormGroup';
 import { Input } from 'ui/Input';
 import { RadioGroup } from 'ui/RadioGroup';
 import { Textarea } from 'ui/Textarea';
-import { EditModifier } from './EditModifier';
-import { Button } from 'ui/Button';
-import { action } from 'mobx';
-import ReactModal from 'react-modal';
+
 import { ModifierForm } from 'components/Modifiers/ModifierForm';
-import { Imodifier } from 'store/modifiers';
+import { ModifierFormContent } from 'components/Modifiers/ModifierForm/ModfierFormContent';
+import { StoreContext } from 'components/StoreContext';
+import { SubResourcesList } from 'components/SubResourcesList';
+
+import { Istore } from 'store';
+import { Ihindrance } from 'store/hindrances';
 
 interface HindranceFormProps {
   title: string;
@@ -59,7 +59,7 @@ export const HindranceForm = observer(function HindranceFormFn({
   });
 
   return (
-    <Grid as="form">
+    <Grid as="form" {...otherProps}>
       <Span as="h3">{title}</Span>
       <Span
         as={FormGroup}
@@ -124,41 +124,26 @@ export const HindranceForm = observer(function HindranceFormFn({
       </Span>
       <Span as="hr" />
       <Span as="h3">Modifiers</Span>
-      <Span>
-        <Grid spacing="inside">
-          {hindrance.modifiers.length === 0 ? (
-            <Span>This hindrance doesn't have any modifiers</Span>
-          ) : (
-            hindrance.modifiers.array.map((modifier: Imodifier) => (
-              <Span as={Flex} key={modifier._id} horizontal="space-between" spacing="inside">
-                <div>{modifier.name}</div>
-                <div>
-                  <Flex spacing="inside">
-                    <EditModifier modifier={modifier} />
-                    <Button onClick={() => hindrance.modifiers.delete(modifier._id)}>Remove</Button>
-                  </Flex>
-                </div>
-              </Span>
-            ))
-          )}
-        </Grid>
-      </Span>
       <Span as={Flex} horizontal="space-between">
-        <select
-          disabled={!store.modifiers.asArray.length}
-          value=""
-          onChange={(event) => hindrance.modifiers.add(store.modifiers.get(event?.target.value))}
-        >
-          <option>Add an existing modifier</option>
-          {store.modifiers.asArray
-            .filter((modifier) => !hindrance.modifiers.array.includes(modifier))
-            .map((modifier) => (
-              <option key={modifier._id} value={modifier._id}>
-                {modifier.name}
-              </option>
-            ))}
-        </select>
-
+        <FormGroup
+          inline
+          id="hindrance-form-existing-modifiers-search"
+          label="Search"
+          input={({ id }) => (
+            <ComboBox
+              id={id}
+              labelId="hindrance-form-existing-modifiers-search"
+              placeholder="Existing modifiers"
+              items={store.modifiers.asArray
+                .filter((modifier) => !hindrance.modifiers.has(modifier))
+                .map(({ _id, name }) => ({
+                  value: _id,
+                  display: name,
+                }))}
+              onValueSelect={(modifierId) => hindrance.modifiers.add(modifierId)}
+            />
+          )}
+        />
         <Button variant="success" onClick={newModifier}>
           New modifier
         </Button>
@@ -173,6 +158,19 @@ export const HindranceForm = observer(function HindranceFormFn({
           </ReactModal>
         )}
       </Span>
+      <Span>
+        <SubResourcesList
+          ressources={hindrance.modifiers}
+          emptyText="This hindrance doesn't have any modifiers"
+          editForm={(modifier) => (
+            <ModifierFormContent
+              // @ts-expect-error
+              modifier={modifier}
+            />
+          )}
+        />
+      </Span>
+
       <Span as="hr" />
       <Span as={Flex} horizontal="end">
         <Button size="big" onClick={discardHindrance}>

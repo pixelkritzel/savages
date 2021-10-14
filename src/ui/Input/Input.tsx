@@ -22,6 +22,12 @@ const StyledInput = styled.input<StyledInputProps>`
     color: ${({ theme }) => theme.colors.grays['600']};
     border-color: ${({ theme }) => theme.colors.grays['800']};
   }
+  &:disabled {
+    color: ${({ theme }) => theme.colors.grays['600']};
+    background-color: ${({ theme }) => theme.colors.grays['800']};
+    border-color: ${({ theme }) => theme.colors.grays['700']};
+    cursor: not-allowed;
+  }
 `;
 
 const InputContainer = styled.div<{ hasFocus: boolean }>`

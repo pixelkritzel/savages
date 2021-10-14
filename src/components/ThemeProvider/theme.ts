@@ -8,7 +8,6 @@ const colors = {
   warning: {
     default: 'hsla(20, 100%, 50%, 1)',
   },
-
   text: {
     default: 'black',
   },
@@ -31,6 +30,7 @@ const colors = {
   },
   backgrounds: {
     default: '#fff',
+    highlight_light: '#DDF2F1',
   },
 };
 

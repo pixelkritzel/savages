@@ -35,4 +35,4 @@ export function createBoxedArray<T extends IAnyType | string>(
   );
 }
 
-export interface IstringSet extends Instance<ReturnType<typeof createBoxedArray>> {}
+export interface IboxedArray extends Instance<ReturnType<typeof createBoxedArray>> {}

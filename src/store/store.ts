@@ -1,3 +1,4 @@
+import { racialAbilitiesCollection } from './racialAbilities/racialAbilitiesCollection';
 import { settingsCollectionModel } from './settings/settingsCollection';
 import { edgesCollectionModel } from './edges/edgesCollection';
 import { hindrancesCollectionModel } from './hindrances/hindrancesCollection';
@@ -14,6 +15,7 @@ import { single_character_mock } from 'components/Characters/CharacterView/singl
 import { vanillaSetting } from 'store/settings/data/SavageWorldsVanilla';
 import { settingModel } from 'store/settings/settingModel';
 import { characterModel } from 'store/characters';
+import { racessCollection } from './races';
 
 const store = types
   .model('stores', {
@@ -26,6 +28,8 @@ const store = types
     skills: skillsCollection,
     weapons: weaponsCollection,
     edges: edgesCollectionModel,
+    races: racessCollection,
+    racialAbilities: racialAbilitiesCollection,
   })
   .views((self) => ({
     get isAllLoaded() {
@@ -46,8 +50,10 @@ const store = types
     ) {
       self[key] = value;
     },
-  }))
-  .actions((self) => ({}));
+    async afterCreate() {
+      self.settings.add(vanillaSetting);
+    },
+  }));
 
 export interface Istore extends Instance<typeof store> {}
 
@@ -62,5 +68,7 @@ export function createStore() {
     selectedSetting: 'vanilla_setting',
     weapons: createCollectionScaffold(),
     edges: createCollectionScaffold(),
+    races: createCollectionScaffold(),
+    racialAbilities: createCollectionScaffold(),
   });
 }

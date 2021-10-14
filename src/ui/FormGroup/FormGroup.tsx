@@ -11,7 +11,12 @@ const StyledFormGroup = styled.div<formGroupStylingProps>`
     !inline && $direction === 'row'
       ? css`
           ${gridStyles}
-          align-items: center;
+          align-items: baseline;
+        `
+      : inline
+      ? css<formGroupStylingProps>`
+          display: inline-flex;
+          align-items: baseline;
         `
       : css<formGroupStylingProps>`
           display: flex;
@@ -33,6 +38,8 @@ const Label = styled.label<formGroupStylingProps>`
           width: 100%;
           text-align: right;
         `
+      : inline
+      ? css<formGroupStylingProps>``
       : css<formGroupStylingProps>`
           ${({ theme, $direction }) =>
             $direction === 'column'
@@ -57,6 +64,10 @@ const InputContainer = styled.div<formGroupStylingProps>`
           ${gridSpanStyles}
           grid-column: 7 / 13;
           justify-self: stretch;
+        `
+      : inline
+      ? css<formGroupStylingProps>`
+          margin-left: ${({ theme }) => theme.rhythms.inside.horizontal}px;
         `
       : css<formGroupStylingProps>`
           width: 100%;

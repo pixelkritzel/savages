@@ -1,19 +1,13 @@
 import { SnapshotIn, Instance } from 'mobx-state-tree';
 import { createCollection } from 'lib/state';
 
-import {
-  createBaseSkillScaffold,
-  baseSkillModel,
-  SIbaseSkill,
-  SObaseSkill,
-} from './baseSkillModel';
+import { createBaseSkillScaffold, baseSkillModel, IbaseSkill, SIbaseSkill } from './baseSkillModel';
 
-export const skillsCollection = createCollection<
-  typeof baseSkillModel,
-  // @ts-expect-error
-  SIbaseSkill,
-  SObaseSkill
->('skillsCollection', baseSkillModel, createBaseSkillScaffold).views((self) => ({
+export const skillsCollection = createCollection<typeof baseSkillModel, IbaseSkill, SIbaseSkill>(
+  'skillsCollection',
+  baseSkillModel,
+  createBaseSkillScaffold
+).views((self) => ({
   get allSkillIds() {
     return self.asArray.map(({ _id }) => _id);
   },

@@ -64,7 +64,6 @@ export const traitModifierModel = types
         self.traitName = '';
       }
       self.type = type;
-      console.log(self.traitName);
     },
   }));
 

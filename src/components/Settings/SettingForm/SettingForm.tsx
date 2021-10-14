@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { observer } from 'mobx-react';
-import { Flex, Grid, Span } from 'ui/Grid';
+import { Grid, Span } from 'ui/Grid';
 
 import { StoreContext } from 'components/StoreContext';
 
@@ -102,6 +102,18 @@ export const SettingForm = observer(function SettingFormFn({
         name="skill"
         availableSettingResources={setting.availableSkills}
         resourcesFromStore={store.skills}
+      />
+      <Span as="hr" />
+      <Resources
+        name="power"
+        availableSettingResources={setting.availablePowers}
+        resourcesFromStore={store.powers}
+      />
+      <Span as="hr" />
+      <Resources
+        name="weapons"
+        availableSettingResources={setting.availableWeapons}
+        resourcesFromStore={store.weapons}
       />
     </Grid>
   );

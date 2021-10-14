@@ -66,5 +66,5 @@ export function createBaseSkillScaffold(initalValue?: Partial<SIbaseSkill>): SIb
     associatedAttribute: 'agility',
     availableSkillSpezializations: { array: [] },
     ...initalValue,
-  };
+  } as SIbaseSkill;
 }

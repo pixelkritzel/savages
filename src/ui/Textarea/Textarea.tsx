@@ -24,6 +24,7 @@ const StyledTextarea = styled.textarea<{ hasError?: boolean }>`
 
 const TextareaContainer = styled.div<{ hasFocus: boolean }>`
   ${({ hasFocus }) => hasFocus && focusStyles}
+  height: 100%;
 `;
 
 interface TextareaProps extends React.ComponentPropsWithoutRef<typeof StyledTextarea> {

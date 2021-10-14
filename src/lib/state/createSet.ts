@@ -1,8 +1,8 @@
-import { types, Instance, IAnyModelType, ISimpleType } from 'mobx-state-tree';
+import { types, Instance, IAnyType, ISimpleType } from 'mobx-state-tree';
 
-export function createSet<T extends IAnyModelType | string>(
+export function createSet<T extends IAnyType | string>(
   name: string,
-  type: T extends IAnyModelType ? IAnyModelType : ISimpleType<T>
+  type: T extends IAnyType ? IAnyType : ISimpleType<T>
 ) {
   return types
     .model(name, {

@@ -6,6 +6,7 @@ import {
   getSnapshot,
   isStateTreeNode,
   detach,
+  SnapshotOut,
 } from 'mobx-state-tree';
 import PouchDB from 'pouchdb';
 
@@ -20,12 +21,18 @@ export const _modelPrototype = types.model({
 });
 
 export type Tmodel = typeof _modelPrototype;
+export interface ImodelPrototype extends Instance<Tmodel> {}
+export interface SOmodelPrototype extends SnapshotOut<Tmodel> {}
 
 export function createCollection<
   T extends Tmodel,
   IActualModel extends Instance<T>,
   SIActualModel extends SnapshotIn<T>
->(name: string, model: T, createModelScaffoldFn: () => SIActualModel) {
+>(
+  name: string,
+  model: T,
+  createModelScaffoldFn: (snapshotIn?: Partial<SIActualModel>) => SIActualModel
+) {
   const db = new PouchDB<SIActualModel>(name);
   const pouchAdapter = createPouchAdapter(db);
 
@@ -73,13 +80,18 @@ export function createCollection<
           if (self.has(value._id)) {
             throw new Error(`collectionModel ${name} tried to add already existing model!`);
           }
-          const dbModel = await pouchAdapter.add(
-            (isStateTreeNode(value) ? getSnapshot(value) : value) as any
-          );
-          self._set(value._id, dbModel);
-          console.log(JSON.stringify(self, undefined, 2));
+          let dbModel: SIActualModel | undefined = undefined;
+          try {
+            dbModel = await pouchAdapter.add(
+              (isStateTreeNode(value) ? getSnapshot(value) : value) as any
+            );
+          } catch (_) {}
+          if (dbModel) {
+            self._set(value._id, dbModel);
+            console.log(JSON.stringify(self, undefined, 2));
 
-          return self.get(dbModel._id);
+            return self.get(dbModel._id);
+          }
         },
         setIsLoaded(isLoaded: typeof self['isLoaded']) {
           self.isLoaded = isLoaded;
@@ -101,21 +113,25 @@ export function createCollection<
       };
     })
     .actions((self) => {
-      function afterCreate() {
-        loadCollection();
-      }
-
       const loadCollection = flow(function* () {
         const collectionData = (yield pouchAdapter.loadAll()) as SIActualModel[];
         collectionData.forEach((modelData) => self.all.set(modelData._id, modelData));
         self.setIsLoaded(true);
       });
 
+      return { loadCollection };
+    })
+    .actions((self) => {
+      function afterCreate() {
+        self.loadCollection();
+      }
+
       return { afterCreate };
     });
 }
 
 export interface Icollection extends Instance<ReturnType<typeof createCollection>> {}
+export interface SIcollection extends SnapshotIn<ReturnType<typeof createCollection>> {}
 
 export const createCollectionScaffold = () => ({
   all: {},
