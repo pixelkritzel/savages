@@ -1,6 +1,6 @@
 import { SnapshotIn, types } from 'mobx-state-tree';
 
-import { customTypes } from 'lib/state/cumstomTypes';
+import { customTypes } from 'lib/mst-types/cumstomTypes';
 
 export const creationRulesModel = types
   .model('creationRules', {

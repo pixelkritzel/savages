@@ -18,6 +18,7 @@ import { SubResourcesList } from 'components/SubResourcesList';
 
 import { Istore } from 'store';
 import { Ihindrance } from 'store/hindrances';
+import { Imodifier } from 'store/modifiers';
 
 interface HindranceFormProps {
   title: string;
@@ -159,15 +160,10 @@ export const HindranceForm = observer(function HindranceFormFn({
         )}
       </Span>
       <Span>
-        <SubResourcesList
-          ressources={hindrance.modifiers}
+        <SubResourcesList<Imodifier>
+          resources={hindrance.modifiers}
           emptyText="This hindrance doesn't have any modifiers"
-          editForm={(modifier) => (
-            <ModifierFormContent
-              // @ts-expect-error
-              modifier={modifier}
-            />
-          )}
+          editForm={(modifier) => <ModifierFormContent modifier={modifier} />}
         />
       </Span>
 

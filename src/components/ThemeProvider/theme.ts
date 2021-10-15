@@ -31,6 +31,7 @@ const colors = {
   backgrounds: {
     default: '#fff',
     highlight_light: '#DDF2F1',
+    highlight_dark: '#B5C7C6',
   },
 };
 

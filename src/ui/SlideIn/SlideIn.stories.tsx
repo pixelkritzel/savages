@@ -1,31 +1,31 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { useState } from 'react';
 
-import { SlightIn } from './SlightIn';
+import { SlideIn } from './SlideIn';
 
 export default {
-  title: 'ui/SlightIn',
-  component: SlightIn,
+  title: 'ui/SlideIn',
+  component: SlideIn,
   argTypes: {},
-} as ComponentMeta<typeof SlightIn>;
+} as ComponentMeta<typeof SlideIn>;
 
-const slightInId = 'slight-in-control';
+const slideInId = 'slide-in-control';
 
-const Template: ComponentStory<typeof SlightIn> = (args) => {
+const Template: ComponentStory<typeof SlideIn> = (args) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <button
         aria-expanded={isOpen}
-        aria-controls={slightInId}
+        aria-controls={slideInId}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? 'Hide the cats!' : 'Show me cats!'}
       </button>
-      <SlightIn id={slightInId} isOpen={isOpen}>
+      <SlideIn id={slideInId} isOpen={isOpen}>
         <img src="http://placekitten.com/200/300" alt="Some placed kitten" />
-      </SlightIn>
+      </SlideIn>
     </>
   );
 };

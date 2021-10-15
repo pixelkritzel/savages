@@ -47,7 +47,7 @@ export const Textarea = observer(function TextareaFn({
   };
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    otherProps.onValueChange && otherProps.onValueChange(event.target.value);
+    onValueChange && onValueChange(event.target.value);
     otherProps.onChange && otherProps.onChange(event);
   };
 

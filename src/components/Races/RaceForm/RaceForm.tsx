@@ -1,4 +1,4 @@
-import { useContext, useRef, useMemo } from 'react';
+import { useContext, useRef, useMemo, useCallback } from 'react';
 
 import { observer } from 'mobx-react';
 import { Flex, Grid, Span } from 'ui/Grid';
@@ -14,10 +14,11 @@ import { Textarea } from 'ui/Textarea';
 import { ComboBox } from 'ui/ComboBox';
 import { generateId } from 'lib/utils/generateId';
 import { Button } from 'ui/Button';
-import { action } from 'mobx';
 import styled from 'styled-components';
-import { SlightIn } from 'ui/SlightIn';
+import { SlideIn } from 'ui/SlideIn';
 import { RacialAbilityForm } from './RacialAbilityForm';
+import { SubResourcesList } from 'components/SubResourcesList';
+import { IRacialAbility } from 'store/racialAbilities';
 
 const NewRacialAbility = styled.div`
   padding: ${({ theme }) => theme.rhythms.outside.vertical}px
@@ -51,16 +52,20 @@ export const RaceForm = observer(function RaceFormFn({
     racialAbilitySearchLabel: generateId('label'),
   });
 
-  const newRacialAbility = action(() => {
-    store.racialAbilities.new();
-  });
+  const saveNewRacialAbility = useCallback(async () => {
+    if (store.racialAbilities.newModel) {
+      const newRacialAbilityId = store.racialAbilities.newModel?._id;
+      await store.racialAbilities.saveNewModel();
+      race.abilities.add(store.racialAbilities.get(newRacialAbilityId));
+    }
+  }, [race.abilities, store.racialAbilities]);
 
   return (
     <Grid as="form">
       <Span as="h1"> Race Form</Span>
       <Span>
         <FormGroup
-          label="Name"
+          label="Name *"
           input={({ id }) => (
             <Input id={id} value={race.name} onValueChange={(value) => race.set('name', value)} />
           )}
@@ -68,7 +73,7 @@ export const RaceForm = observer(function RaceFormFn({
       </Span>
       <Span>
         <FormGroup
-          label="Description"
+          label="Description *"
           input={({ id }) => (
             <Textarea
               id={id}
@@ -104,24 +109,45 @@ export const RaceForm = observer(function RaceFormFn({
           aria-expanded={isNewRacialAbility}
           aria-controls={ids.current.newRacialAbility}
           variant="success"
-          onClick={newRacialAbility}
+          onClick={() => {
+            store.racialAbilities.new();
+          }}
         >
           New
         </Button>
       </Span>
       <Span>
-        <SlightIn id={ids.current.newRacialAbility} isOpen={isNewRacialAbility}>
+        <SlideIn id={ids.current.newRacialAbility} isOpen={isNewRacialAbility}>
           <NewRacialAbility>
             {store.racialAbilities.newModel && (
-              <>
-                <Grid>
-                  <Span as="h2">New racial ability</Span>
-                </Grid>
-                <RacialAbilityForm ability={store.racialAbilities.newModel} />
-              </>
+              <Grid>
+                <Span as="h2">New racial ability</Span>
+                <Span>
+                  <RacialAbilityForm ability={store.racialAbilities.newModel} />
+                </Span>
+                <Span as={Flex} horizontal="end">
+                  <Button variant="danger" onClick={() => store.racialAbilities.discardNewModel()}>
+                    Discard
+                  </Button>
+                  <Button
+                    disabled={store.racialAbilities.newModel.isInvalid}
+                    variant="success"
+                    onClick={saveNewRacialAbility}
+                  >
+                    Save
+                  </Button>
+                </Span>
+              </Grid>
             )}
           </NewRacialAbility>
-        </SlightIn>
+        </SlideIn>
+      </Span>
+      <Span>
+        <SubResourcesList<IRacialAbility>
+          resources={race.abilities}
+          emptyText="No racial abilities yet"
+          editForm={(racialAbility) => <RacialAbilityForm ability={racialAbility} />}
+        />
       </Span>
     </Grid>
   );

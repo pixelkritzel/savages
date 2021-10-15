@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { Button } from 'ui/Button';
 import { Flex, Grid, Span } from 'ui/Grid';
-import { SlightIn } from 'ui/SlightIn';
+import { SlideIn } from 'ui/SlideIn';
 
 import { IboxedArray } from 'lib/state/createBoxedArray';
 import { ImodelPrototype, SOmodelPrototype } from 'lib/state';
@@ -17,8 +17,7 @@ const ResourceBlock = styled(Span)<{ isEdit: boolean }>`
   padding: ${({ theme }) => theme.rhythms.inside.vertical}px
     ${({ theme }) => theme.rhythms.inside.horizontal}px;
   margin: ${({ theme }) => theme.rhythms.inside.vertical}px -${({ theme }) => theme.rhythms.inside.horizontal}px;
-  background-color: ${({ isEdit, theme }) =>
-    isEdit ? theme.colors.backgrounds.highlight_light : theme.colors.backgrounds.default};
+  background-color: ${({ isEdit, theme }) => (isEdit ? 'rgba(0,0,0,0.3)' : 'transparent')};
   transition: background-color ${EDIT_AREA_ANIMATION_TIMING}ms;
 `;
 
@@ -26,20 +25,20 @@ const EditAreaFooter = styled(Flex)`
   margin-top: ${({ theme }) => theme.rhythms.inside.vertical}px;
 `;
 
-interface SubResourcesListProps {
-  ressources: IboxedArray;
+interface SubResourcesListProps<T extends ImodelPrototype> {
+  resources: IboxedArray;
   emptyText: string;
   onEdit?: (_id?: ImodelPrototype['_id']) => void;
   editLabel?: string;
   onRemove?: (_id: ImodelPrototype['_id']) => void;
   removeLabel?: string;
-  editForm: <T extends ImodelPrototype>(resourceModel: T) => JSX.Element;
+  editForm: (resourceModel: T) => JSX.Element;
   onDiscard?: () => void;
   onSave?: () => void;
 }
 
-export const SubResourcesList = observer(function SubResourcesListFn({
-  ressources,
+export const SubResourcesList = observer(function SubResourcesListFn<T extends ImodelPrototype>({
+  resources,
   emptyText,
   onEdit,
   editLabel = 'Edit',
@@ -49,7 +48,7 @@ export const SubResourcesList = observer(function SubResourcesListFn({
   editForm,
   onSave,
   ...otherProps
-}: SubResourcesListProps) {
+}: SubResourcesListProps<T>) {
   const localStore = useLocalStore<{
     currentlyEditedResouce: null | SOmodelPrototype;
     editAreaHeight: 0 | 'auto';
@@ -96,18 +95,18 @@ export const SubResourcesList = observer(function SubResourcesListFn({
   const remove = useMemo(
     () =>
       action((resource: ImodelPrototype) => {
-        ressources.delete(resource);
+        resources.delete(resource);
         onRemove && onRemove(resource._id);
       }),
-    [onRemove, ressources]
+    [onRemove, resources]
   );
 
   return (
     <Grid spacing="inside" {...otherProps} role="list">
-      {ressources.length === 0 ? (
+      {resources.length === 0 ? (
         <Span>{emptyText}</Span>
       ) : (
-        ressources.array.map((resource: ImodelPrototype) => (
+        resources.array.map((resource: ImodelPrototype) => (
           <ResourceBlock
             isEdit={isEdit}
             key={resource._id}
@@ -132,20 +131,20 @@ export const SubResourcesList = observer(function SubResourcesListFn({
                 </Flex>
               </div>
             </Flex>
-            <SlightIn
+            <SlideIn
               id={`resource-edit-area-${resource._id}`}
               duration={EDIT_AREA_ANIMATION_TIMING}
             >
               {localStore.currentlyEditedResouce?._id === resource._id && (
                 <>
-                  {editForm(resource)}
+                  {editForm(resource as any)}
                   <EditAreaFooter horizontal="end">
                     <Button onClick={() => discard(resource)}>Discard changes</Button>
                     <Button onClick={save}>Save changes</Button>
                   </EditAreaFooter>
                 </>
               )}
-            </SlightIn>
+            </SlideIn>
           </ResourceBlock>
         ))
       )}

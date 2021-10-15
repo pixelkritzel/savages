@@ -1,4 +1,4 @@
-import { createSet } from 'lib/state/createSet';
+import { createBoxedArray } from 'lib/state/createBoxedArray';
 import { Instance, SnapshotIn, SnapshotOut, types } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,8 +9,23 @@ export const raceModel = _modelPrototype
   .named('raceModel')
   .props({
     description: types.string,
-    abilities: createSet('raceAbilities', types.reference(racialAbilityModel)),
+    abilities: createBoxedArray('raceAbilities', types.reference(racialAbilityModel)),
   })
+  .views((self) => ({
+    get invalidFields() {
+      const invalidFields: Partial<Record<keyof typeof self, boolean>> = {};
+      invalidFields.name = self.name.length < 2;
+      invalidFields.description = self.description.length === 0;
+      invalidFields.abilities = self.abilities.array.length === 0;
+      return invalidFields;
+    },
+  }))
+  .views((self) => ({
+    get isInvalid() {
+      console.log(Object.values(self.invalidFields));
+      return Object.values(self.invalidFields).some((isInvalid) => isInvalid);
+    },
+  }))
   .actions((self) => ({
     set<K extends keyof Instance<typeof self>, T extends Instance<typeof self>>(
       key: K,

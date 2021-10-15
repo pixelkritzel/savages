@@ -1,2 +1,2 @@
 export * from './createCollection';
-export * from './cumstomTypes';
+export * from '../mst-types/cumstomTypes';
