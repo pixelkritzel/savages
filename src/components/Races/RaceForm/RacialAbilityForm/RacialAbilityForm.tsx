@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useMemo, useCallback } from 'react';
+import React, { useContext, useRef, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { IRacialAbility } from 'store/racialAbilities';
 import { Flex, Grid, Span } from 'ui/Grid';
@@ -33,15 +33,12 @@ export const RacialAbilityForm = observer(function RacialAbilityFormFn({
   ...otherProps
 }: RacialAbilityFormProps) {
   const store = useContext<Istore>(StoreContext);
+  const isNewModifier = !!store.modifiers.newModel;
 
   const ids = useRef({
     modifiersSearch: generateId(),
     newModifierArea: generateId(),
   });
-
-  const isNewModifier = useMemo(() => !!store.racialAbilities.newModel, [
-    store.racialAbilities.newModel,
-  ]);
 
   const saveNewModifier = useCallback(async () => {
     if (store.modifiers.newModel) {
@@ -150,28 +147,36 @@ export const RacialAbilityForm = observer(function RacialAbilityFormFn({
           New
         </Button>
       </Span>
-      <Span>
-        <SlideIn id={ids.current.newModifierArea} isOpen={isNewModifier}>
+
+      <SlideIn
+        id={ids.current.newModifierArea}
+        isOpen={isNewModifier}
+        slide={
           <NewModifier>
-            {store.modifiers.newModel && (
-              <Grid>
-                <Span as="h2">New modifier</Span>
-                <Span>
-                  <ModifierFormContent modifier={store.modifiers.newModel} />
-                </Span>
-                <Span as={Flex} horizontal="end">
-                  <Button variant="danger" onClick={() => store.modifiers.discardNewModel()}>
-                    Discard
-                  </Button>
-                  <Button variant="success" onClick={saveNewModifier}>
-                    Save
-                  </Button>
-                </Span>
-              </Grid>
-            )}
+            <Grid>
+              <Span as="h2">New modifier</Span>
+              <Span>
+                <ModifierFormContent modifier={store.modifiers.newModel!} />
+              </Span>
+              <Span as={Flex} horizontal="end">
+                <Button
+                  variant="danger"
+                  onClick={() => {
+                    store.modifiers.discardNewModel();
+                  }}
+                >
+                  Discard
+                </Button>
+                <Button variant="success" onClick={saveNewModifier}>
+                  Save
+                </Button>
+              </Span>
+            </Grid>
           </NewModifier>
-        </SlideIn>
-      </Span>
+        }
+        slideTitle="New modifier"
+      />
+
       <Span>
         <SubResourcesList<Imodifier>
           resources={ability.modifiers}

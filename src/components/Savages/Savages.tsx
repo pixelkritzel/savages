@@ -9,6 +9,8 @@ import { StoreContext } from 'components/StoreContext';
 import { createStore } from 'store';
 import { ThemeProvider } from 'components/ThemeProvider';
 import { GlobalStyles } from 'components/GlobalStyles';
+import { UiContextProvider } from 'ui/UiContext';
+import { SlideManager } from 'ui/SlideManager';
 
 @observer
 export class Savages extends React.Component {
@@ -19,12 +21,16 @@ export class Savages extends React.Component {
     return (
       <ErrorBoundary>
         <StoreContext.Provider value={this.store}>
-          <BrowserRouter>
+          <UiContextProvider>
             <ThemeProvider>
-              <GlobalStyles />
-              {this.store.isAllLoaded && <Layout />}
+              <SlideManager>
+                <BrowserRouter>
+                  <GlobalStyles />
+                  {this.store.isAllLoaded && <Layout />}
+                </BrowserRouter>
+              </SlideManager>
             </ThemeProvider>
-          </BrowserRouter>
+          </UiContextProvider>
         </StoreContext.Provider>
       </ErrorBoundary>
     );

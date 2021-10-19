@@ -131,11 +131,11 @@ export const SubResourcesList = observer(function SubResourcesListFn<T extends I
                 </Flex>
               </div>
             </Flex>
+
             <SlideIn
               id={`resource-edit-area-${resource._id}`}
-              duration={EDIT_AREA_ANIMATION_TIMING}
-            >
-              {localStore.currentlyEditedResouce?._id === resource._id && (
+              isOpen={localStore.currentlyEditedResouce?._id === resource._id}
+              slide={
                 <>
                   {editForm(resource as any)}
                   <EditAreaFooter horizontal="end">
@@ -143,8 +143,9 @@ export const SubResourcesList = observer(function SubResourcesListFn<T extends I
                     <Button onClick={save}>Save changes</Button>
                   </EditAreaFooter>
                 </>
-              )}
-            </SlideIn>
+              }
+              slideTitle={`Editing ${resource.name}`}
+            />
           </ResourceBlock>
         ))
       )}

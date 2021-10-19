@@ -1,50 +1,45 @@
-import React, { useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
-import ReactDOM from 'react-dom';
-import styled from 'styled-components';
+import React, { useRef, useEffect, useContext } from 'react';
+import { v4 as uuid4 } from 'uuid';
 
-const SlideInContainer = styled.div<{ isOpen: boolean }>`
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: ${({ isOpen }) => (isOpen ? '50vw' : 0)};
-  border-left: 1px solid ${({ theme }) => theme.colors.grays[700]};
-  background-color: ${({ theme }) => theme.colors.backgrounds.default};
-  padding: ${({ isOpen, theme }) =>
-    isOpen ? `${theme.rhythms.outside.vertical}px ${theme.rhythms.outside.horizontal}px` : 0};
-  box-shadow: ${({ isOpen }) => (isOpen ? '0 0 3px rgb(0 0 0 / 20%)' : 'none')};
-  overflow: scroll;
-  transition: width 0.8s ease-in;
-`;
+import { SlideManagerContext } from '../SlideManager';
 
 interface SlideInProps {
   id: string;
-  duration?: number;
   isOpen?: boolean;
-  children?: React.ReactNode;
+  slide: React.ReactNode;
+  slideTitle: string;
 }
 
-export const SlideIn = observer(function SlideInFn({
+export const SlideIn = function SlideInFn({
   id,
-  duration = 300,
   isOpen = false,
-  children,
+  slide,
+  slideTitle,
   ...otherProps
 }: SlideInProps) {
-  const anchorElementRef = useRef(document.createElement('div'));
+  const slideManagerContext = useContext(SlideManagerContext);
+
+  const slideId = useRef(uuid4());
 
   useEffect(() => {
-    const anchorElement = anchorElementRef.current;
-    document.body.append(anchorElement);
-    return () => {
-      anchorElement.remove();
-    };
-  }, []);
+    if (isOpen) {
+      slideManagerContext.addSlide(slideId.current, { element: slide, title: slideTitle });
+    } else {
+      slideManagerContext.removeSlide(slideId.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, slide, slideTitle]);
 
-  return ReactDOM.createPortal(
-    <SlideInContainer isOpen={isOpen}>{children}</SlideInContainer>,
-
-    anchorElementRef.current
+  useEffect(
+    () => {
+      const slideIdCopy = slideId.current;
+      return () => {
+        slideManagerContext.removeSlide(slideIdCopy);
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [true]
   );
-});
+
+  return null;
+};

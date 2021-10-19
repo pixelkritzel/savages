@@ -117,30 +117,38 @@ export const RaceForm = observer(function RaceFormFn({
         </Button>
       </Span>
       <Span>
-        <SlideIn id={ids.current.newRacialAbility} isOpen={isNewRacialAbility}>
-          <NewRacialAbility>
-            {store.racialAbilities.newModel && (
-              <Grid>
-                <Span as="h2">New racial ability</Span>
-                <Span>
-                  <RacialAbilityForm ability={store.racialAbilities.newModel} />
-                </Span>
-                <Span as={Flex} horizontal="end">
-                  <Button variant="danger" onClick={() => store.racialAbilities.discardNewModel()}>
-                    Discard
-                  </Button>
-                  <Button
-                    disabled={store.racialAbilities.newModel.isInvalid}
-                    variant="success"
-                    onClick={saveNewRacialAbility}
-                  >
-                    Save
-                  </Button>
-                </Span>
-              </Grid>
-            )}
-          </NewRacialAbility>
-        </SlideIn>
+        <SlideIn
+          id={ids.current.newRacialAbility}
+          isOpen={isNewRacialAbility}
+          slide={
+            <NewRacialAbility>
+              {store.racialAbilities.newModel && (
+                <Grid>
+                  <Span as="h2">New racial ability</Span>
+                  <Span>
+                    <RacialAbilityForm ability={store.racialAbilities.newModel} />
+                  </Span>
+                  <Span as={Flex} horizontal="end">
+                    <Button
+                      variant="danger"
+                      onClick={() => store.racialAbilities.discardNewModel()}
+                    >
+                      Discard
+                    </Button>
+                    <Button
+                      disabled={store.racialAbilities.newModel.isInvalid}
+                      variant="success"
+                      onClick={saveNewRacialAbility}
+                    >
+                      Save
+                    </Button>
+                  </Span>
+                </Grid>
+              )}
+            </NewRacialAbility>
+          }
+          slideTitle="New racial ability"
+        />
       </Span>
       <Span>
         <SubResourcesList<IRacialAbility>

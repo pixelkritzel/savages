@@ -22,7 +22,6 @@ export const raceModel = _modelPrototype
   }))
   .views((self) => ({
     get isInvalid() {
-      console.log(Object.values(self.invalidFields));
       return Object.values(self.invalidFields).some((isInvalid) => isInvalid);
     },
   }))
