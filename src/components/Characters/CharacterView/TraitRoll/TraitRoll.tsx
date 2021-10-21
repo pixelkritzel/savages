@@ -1,7 +1,7 @@
 import React from 'react';
 import { action, computed, makeObservable, observable } from 'mobx';
 import { observer } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { StoreContext } from 'components/StoreContext';
 import { FormGroup } from 'ui/FormGroup';
@@ -100,8 +100,6 @@ export class TraitRoll extends React.Component<RollDiceProps> {
   get rollConfiguration() {
     const { trait } = this.props;
     const numberOfDices = isSkill(trait) && isShooting(trait) ? trait.skillOptions.rateOfFire : 1;
-    console.log(trait.modifierSum);
-
     return {
       ...trait.modifierSum,
       numberOfDices,

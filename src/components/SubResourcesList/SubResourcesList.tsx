@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { action } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react';
 import { applySnapshot, getSnapshot } from 'mobx-state-tree';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { Button } from 'ui/Button';
 import { Flex, Grid, Span } from 'ui/Grid';

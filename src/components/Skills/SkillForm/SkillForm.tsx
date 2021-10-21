@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer, useLocalStore } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { action } from 'mobx';
 import { clone } from 'mobx-state-tree';
 

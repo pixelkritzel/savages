@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import throttle from 'lodash/throttle';
 
 import { Input } from 'ui/Input';

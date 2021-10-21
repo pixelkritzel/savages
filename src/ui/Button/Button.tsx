@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef, ElementType } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components/macro';
 
 import { focusStyles } from 'lib/utils/focus-styles';
 

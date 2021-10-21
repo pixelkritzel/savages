@@ -8,7 +8,7 @@ import { StoreContext } from 'components/StoreContext';
 import { generateId } from 'lib/utils/generateId';
 import { Isetting } from 'store/settings';
 import { Button } from 'ui/Button';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { capitalizeFirstLetter } from 'lib/strings';
 
 const AvailableRessoucesList = styled.ul`

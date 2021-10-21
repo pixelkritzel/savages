@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { action } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { Box } from 'ui/Box';
 import { Button } from 'ui/Button';

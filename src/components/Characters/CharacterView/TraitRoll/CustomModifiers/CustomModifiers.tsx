@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { Itrait } from 'store/characters/traitModel';
 import { FormGroup } from 'ui/FormGroup';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 const Container = styled.div`
   display: grid;

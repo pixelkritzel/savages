@@ -23,12 +23,12 @@ export class Savages extends React.Component {
         <StoreContext.Provider value={this.store}>
           <UiContextProvider>
             <ThemeProvider>
-              <SlideManager>
-                <BrowserRouter>
+              <BrowserRouter>
+                <SlideManager>
                   <GlobalStyles />
                   {this.store.isAllLoaded && <Layout />}
-                </BrowserRouter>
-              </SlideManager>
+                </SlideManager>
+              </BrowserRouter>
             </ThemeProvider>
           </UiContextProvider>
         </StoreContext.Provider>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
+import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components/macro';
 
 import { theme } from './theme';
 

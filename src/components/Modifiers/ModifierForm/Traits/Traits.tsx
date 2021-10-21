@@ -1,7 +1,7 @@
 import React from 'react';
 import { action } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import Select, { OptionsType, OptionTypeBase } from 'react-select';
 import ReactModal from 'react-modal';
 

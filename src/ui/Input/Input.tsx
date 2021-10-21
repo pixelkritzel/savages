@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { focusStyles } from 'lib/utils/focus-styles';
 
 type StyledInputProps = { hasError?: boolean; variant?: 'default' | 'inline' };

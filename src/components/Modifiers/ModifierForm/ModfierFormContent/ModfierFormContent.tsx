@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { observer, useLocalStore } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import Select from 'react-select';
 
 import { Checkbox } from 'ui/Checkbox';

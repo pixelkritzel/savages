@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { observer, useLocalStore } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { Alert } from 'ui/Alert';
 import { Button } from 'ui/Button';

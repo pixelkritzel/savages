@@ -1,7 +1,7 @@
 import React from 'react';
 import { observable, makeObservable } from 'mobx';
 import { observer } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { BsCheck, BsPencil } from 'react-icons/bs';
 

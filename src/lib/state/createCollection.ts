@@ -88,8 +88,6 @@ export function createCollection<
           } catch (_) {}
           if (dbModel) {
             self._set(value._id, dbModel);
-            console.log(JSON.stringify(self, undefined, 2));
-
             return self.get(dbModel._id);
           }
         },

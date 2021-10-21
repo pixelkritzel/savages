@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { Box } from 'ui/Box';
 import { Icharacter } from 'store/characters';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Checkbox } from 'ui/Checkbox';
 
 interface StatesProps {

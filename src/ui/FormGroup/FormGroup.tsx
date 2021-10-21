@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import { generateId } from 'lib/utils/generateId';
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components/macro';
 import { gridSpanStyles, gridStyles } from 'ui/Grid';
 
 type formGroupStylingProps = { inline: boolean; $direction: 'column' | 'row' };

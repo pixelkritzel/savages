@@ -205,8 +205,6 @@ const _skillModel = traitModel
             modifierAccumulator.boni.aim = 2;
           }
         }
-
-        console.log(JSON.stringify(modifierAccumulator, undefined, 2));
         return modifierAccumulator;
       },
     };

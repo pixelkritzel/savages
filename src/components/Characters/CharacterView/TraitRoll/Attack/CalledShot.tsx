@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { Iskill } from 'store/characters/skillModel';
 import { IncDec } from 'ui/IncDec';

@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import { observable, makeObservable, action } from 'mobx';
 import { observer } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import ReactModal from 'react-modal';
 
 import { Button } from 'ui/Button';

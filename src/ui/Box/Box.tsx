@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components/macro';
 import { IReactComponent } from 'mobx-react/dist/types/IReactComponent';
 
 export type BOX_TYPES = 'info' | 'success' | 'warning' | 'danger';

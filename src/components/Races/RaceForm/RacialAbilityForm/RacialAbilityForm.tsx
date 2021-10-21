@@ -15,7 +15,7 @@ import { StoreContext } from 'components/StoreContext';
 import { Istore } from 'store';
 import { Button } from 'ui/Button';
 import { SlideIn } from 'ui/SlideIn';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 const NewModifier = styled.div`
   padding: ${({ theme }) => theme.rhythms.outside.vertical}px

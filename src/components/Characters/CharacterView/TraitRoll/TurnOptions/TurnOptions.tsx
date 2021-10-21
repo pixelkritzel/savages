@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 
 import { Itrait } from 'store/characters/traitModel';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { FormGroup } from 'ui/FormGroup';
 import { Checkbox } from 'ui/Checkbox';
 import { generateId } from 'lib/utils/generateId';

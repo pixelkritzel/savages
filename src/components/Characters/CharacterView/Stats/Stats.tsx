@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { Icharacter } from 'store/characters';
 import { observer } from 'mobx-react';

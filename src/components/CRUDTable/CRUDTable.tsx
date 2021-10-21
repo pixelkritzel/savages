@@ -7,7 +7,7 @@ import { BsPencil, BsTrash } from 'react-icons/bs';
 import { Button, buttonStyles } from 'ui/Button';
 // import { Icollection } from 'lib/state/createCollection';
 
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Icollection } from 'lib/state';
 import { capitalizeFirstLetter } from 'lib/strings';
 

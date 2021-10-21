@@ -6,7 +6,7 @@ import { Router } from 'components/Router';
 import { StoreContext } from 'components/StoreContext';
 
 import { Container } from 'ui/Container';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 const StyledLayout = styled.div`
   padding-top: ${({ theme }) => theme.rhythms.outside.vertical}px;

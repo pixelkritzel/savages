@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Popover } from 'ui/Popover';
 
 const StyledInfoPopover = styled.button`

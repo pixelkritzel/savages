@@ -14,7 +14,7 @@ import { Textarea } from 'ui/Textarea';
 import { ComboBox } from 'ui/ComboBox';
 import { generateId } from 'lib/utils/generateId';
 import { Button } from 'ui/Button';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { SlideIn } from 'ui/SlideIn';
 import { RacialAbilityForm } from './RacialAbilityForm';
 import { SubResourcesList } from 'components/SubResourcesList';

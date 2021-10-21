@@ -1,5 +1,5 @@
 import React, { HTMLProps, useContext } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { UiContext } from 'ui/UiContext';
 

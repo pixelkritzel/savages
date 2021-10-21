@@ -1,9 +1,10 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ReactNode } from 'react-router/node_modules/@types/react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { UiContext } from 'ui/UiContext';
 import immer from 'immer';
+import { useHistory } from 'react-router';
 
 const SlideInContainer = styled.div<{ isOpen: boolean }>`
   position: fixed;
@@ -51,6 +52,14 @@ export const SlideManager = function SlideManagerFn({
     activeSlide: null,
     slides: {},
     slidesOrder: [],
+  });
+
+  const history = useHistory();
+  useEffect(() => {
+    const unblock = history.block();
+    if (state.slidesOrder.length === 0) {
+      unblock();
+    }
   });
 
   const anchorElementRef = useRef(document.createElement('div'));
