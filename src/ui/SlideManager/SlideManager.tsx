@@ -1,31 +1,44 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { ReactNode } from 'react-router/node_modules/@types/react';
 import styled from 'styled-components/macro';
 import { UiContext } from 'ui/UiContext';
 import immer from 'immer';
 import { useHistory } from 'react-router';
 
-const SlideInContainer = styled.div<{ isOpen: boolean }>`
+import { SwitchTransition, Transition, TransitionGroup } from 'react-transition-group';
+
+const SlideInContainer = styled.div<{ isOpen: boolean; isSeveralSlides: boolean }>`
   position: fixed;
   top: 0;
   right: 0;
   height: 100vh;
-  width: ${({ isOpen }) => (isOpen ? '50vw' : 0)};
+  width: 50vw;
   border-left: 1px solid ${({ theme }) => theme.colors.grays[700]};
   background-color: ${({ theme }) => theme.colors.backgrounds.default};
-  padding: ${({ isOpen, theme }) =>
-    isOpen ? `${theme.rhythms.outside.vertical}px ${theme.rhythms.outside.horizontal}px` : 0};
+  padding: ${({ isOpen, isSeveralSlides, theme }) =>
+    `${theme.rhythms.outside.vertical}px ${theme.rhythms.outside.horizontal}px ${
+      theme.rhythms.outside.vertical
+    }px ${
+      isSeveralSlides ? theme.rhythms.outside.horizontal + 40 : theme.rhythms.outside.horizontal
+    }px`};
   box-shadow: ${({ isOpen }) => (isOpen ? '0 0 3px rgb(0 0 0 / 20%)' : 'none')};
   overflow: scroll;
-  transition: width 0.8s ease-in;
+  transform: translateX(${({ isOpen }) => (isOpen ? 0 : '50vw')});
+  transition: transform 0.3s ease-in;
   z-index: 10;
 `;
-
 SlideInContainer.displayName = 'SlideInContainer';
 
-const Toggle = styled.div<{ isShown: boolean }>`
-  display: ${({ isShown }) => (isShown ? 'unset' : 'none')};
+const Title = styled.div`
+  position: absolute;
+  left: ${({ theme }) => theme.rhythms.outside.horizontal}px;
+  --width: calc(100vh - ${({ theme }) => theme.rhythms.outside.vertical * 2}px);
+  --negative-width: calc(var(--width) * -1);
+  width: var(--width);
+  top: ${({ theme }) => theme.rhythms.outside.vertical}px;
+  transform-origin: 0 0;
+  transform: rotate(-90deg) translateX(var(--negative-width));
+  text-align: center;
 `;
 
 type SlideManageContextType = {
@@ -55,18 +68,23 @@ export const SlideManager = function SlideManagerFn({
   });
 
   const history = useHistory();
+  const unblockRef = useRef<ReturnType<typeof history['block']> | null>(null);
   useEffect(() => {
-    const unblock = history.block();
-    if (state.slidesOrder.length === 0) {
-      unblock();
+    if (!unblockRef.current) {
+      unblockRef.current = history.block();
     }
-  });
+    if (state.slidesOrder.length === 0 && unblockRef.current) {
+      unblockRef.current();
+      unblockRef.current = null;
+    }
+  }, [history, state.slidesOrder.length]);
 
   const anchorElementRef = useRef(document.createElement('div'));
 
   const addSlide = useCallback(
     (slideId: string, slide: { element: React.ReactNode; title: string }) => {
       setState((currentState) => ({
+        ...currentState,
         activeSlide: slideId,
         slides: { ...currentState.slides, [slideId]: slide },
         slidesOrder: !currentState.slidesOrder.includes(slideId)
@@ -82,11 +100,15 @@ export const SlideManager = function SlideManagerFn({
       if (state.slidesOrder.includes(slideId)) {
         setState((currentState) => {
           return immer(currentState, (nextState) => {
-            const indexOfSlideId = nextState.slidesOrder.indexOf(slideId);
-            nextState.activeSlide =
-              indexOfSlideId > 0 ? currentState.slidesOrder[indexOfSlideId - 1] : null;
-            delete nextState.slides[slideId];
+            const indexOfSlideId = currentState.slidesOrder.indexOf(slideId);
             nextState.slidesOrder.splice(indexOfSlideId, 1);
+            nextState.activeSlide =
+              indexOfSlideId > 0
+                ? currentState.slidesOrder[indexOfSlideId - 1]
+                : nextState.slidesOrder.length > 0
+                ? nextState.slidesOrder[nextState.slidesOrder.length - 1]
+                : null;
+            delete nextState.slides[slideId];
           });
         });
       }
@@ -106,10 +128,31 @@ export const SlideManager = function SlideManagerFn({
 
   useEffect(() => uiContext.dispatch({ type: 'setIsSliderOpen', data: isOpen }));
 
+  const slideTitles: Array<{
+    slideId: string;
+    title: string;
+    ref: React.RefObject<HTMLDivElement>;
+  }> = useMemo(() => {
+    const indexOfActiveSlideInSlidesOrder = state.activeSlide
+      ? state.slidesOrder.indexOf(state.activeSlide)
+      : 0;
+    if (indexOfActiveSlideInSlidesOrder > 0) {
+      return state.slidesOrder.slice(0, indexOfActiveSlideInSlidesOrder).map((slideId) => ({
+        slideId,
+        title: state.slides[slideId].title,
+        ref: React.createRef(),
+      }));
+    } else {
+      return [];
+    }
+  }, [state.activeSlide, state.slides, state.slidesOrder]);
+
   const sliderManagerContextValue: SlideManageContextType = useMemo(
     () => ({ addSlide, removeSlide }),
     [addSlide, removeSlide]
   );
+
+  const activeSlideRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
@@ -117,19 +160,26 @@ export const SlideManager = function SlideManagerFn({
         {children}
 
         {ReactDOM.createPortal(
-          <SlideInContainer isOpen={isOpen}>
-            {state.slidesOrder.map((slideId) => (
-              <div key={slideId}>
-                <div>
-                  <Toggle isShown={slideId !== state.activeSlide}>
-                    {state.slidesOrder.length > 0 && state.slides[slideId].title}
-                  </Toggle>
-                  <Toggle isShown={slideId === state.activeSlide}>
-                    {state.slides[slideId].element}
-                  </Toggle>
+          <SlideInContainer isOpen={isOpen} isSeveralSlides={state.slidesOrder.length > 0}>
+            <TransitionGroup>
+              {slideTitles.map(({ ref, slideId, title }) => (
+                <Transition
+                  nodeRef={ref}
+                  in={slideId === state.activeSlide}
+                  timeout={300}
+                  key={slideId}
+                >
+                  {(transitionPhase) => <Title ref={ref}>{title}</Title>}
+                </Transition>
+              ))}
+            </TransitionGroup>
+            <SwitchTransition>
+              <Transition nodeRef={activeSlideRef} in={!!state.activeSlide} timeout={300}>
+                <div ref={activeSlideRef}>
+                  {state.activeSlide && state.slides[state.activeSlide].element}
                 </div>
-              </div>
-            ))}
+              </Transition>
+            </SwitchTransition>
           </SlideInContainer>,
           anchorElementRef.current
         )}

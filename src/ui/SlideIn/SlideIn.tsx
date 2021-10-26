@@ -19,7 +19,7 @@ export const SlideIn = function SlideInFn({
 }: SlideInProps) {
   const slideManagerContext = useContext(SlideManagerContext);
 
-  const slideId = useRef(uuid4());
+  const slideId = useRef(id ?? uuid4());
 
   useEffect(() => {
     if (isOpen) {
