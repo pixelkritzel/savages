@@ -27,3 +27,5 @@ yarn-error.log*
 .vscode
 .history
 storybook-static
+.prompts
+*.code-workspace
